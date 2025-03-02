@@ -6811,6 +6811,20 @@ textarea.form-control-lg {
     z-index: 1020;
 }
 
+.products-grid {
+    margin-bottom: 8rem;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    margin-top: 18rem;
+}
+
+
 @media (min-width: 576px) {
     .sticky-sm-top {
         position: sticky;

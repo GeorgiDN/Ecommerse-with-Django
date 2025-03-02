@@ -1,5 +1,6 @@
 from django.core.validators import MinLengthValidator
 from django.db import models
+from PIL import Image
 
 from ecommerseApp.accounts.models import Customer
 from ecommerseApp.common.custom_validators import validate_phone_number
@@ -12,6 +13,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = 'Categories'
 
 
 class Product(models.Model):
@@ -40,6 +44,26 @@ class Product(models.Model):
         blank=True,
         null=True,
     )
+    is_on_sale = models.BooleanField(
+        default=False,
+    )
+    sale_price = models.DecimalField(
+        default=0,
+        decimal_places=2,
+        max_digits=10,
+        null=True,
+        blank=True
+    )
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        img = Image.open(self.image.path)
+
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.image.path)
 
     def __str__(self):
         return f'Product {self.name}'
@@ -115,8 +139,10 @@ class OrderItem(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        if not self.price_at_time_of_order:
+        if not self.product.is_on_sale:
             self.price_at_time_of_order = self.product.price * self.quantity
+        else:
+            self.price_at_time_of_order = self.product.sale_price * self.quantity
         super().save(*args, **kwargs)
 
     def __str__(self):
