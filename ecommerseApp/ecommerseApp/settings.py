@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'ecommerseApp.store.apps.StoreConfig',
     'ecommerseApp.accounts.apps.AccountsConfig',
     'ecommerseApp.common.apps.CommonConfig',
+    'crispy_forms',
+    'crispy_bootstrap4',
 ]
 
 MIDDLEWARE = [
@@ -144,8 +146,14 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = 'login'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 AUTH_USER_MODEL = 'accounts.CustomUser'

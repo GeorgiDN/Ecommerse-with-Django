@@ -27,6 +27,8 @@ class Customer(models.Model):
                 message='The length of the name must be between 1 and 50 characters.'),
             validate_lettres
         ],
+        null=True,
+        blank=True,
     )
     last_name = models.CharField(
         max_length=50,
@@ -36,6 +38,8 @@ class Customer(models.Model):
                 message='The length of the name must be between 1 and 50 characters.'),
             validate_lettres
         ],
+        null=True,
+        blank=True,
     )
     phone = models.CharField(
         max_length=20,
@@ -43,10 +47,14 @@ class Customer(models.Model):
             MinLengthValidator(
                 4,
                 message='Phone number must be between 4 and 20 digits.'),
-            validate_phone_number]
+            validate_phone_number],
+        null=True,
+        blank=True,
     )
     email = models.EmailField(
         unique=True,
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
