@@ -11,3 +11,9 @@
     flex-direction: column;
     gap: 0.6rem;
 }
+
+.messages-container {
+    display: flex;
+    justify-content: center;
+    max-width: 360px;
+}

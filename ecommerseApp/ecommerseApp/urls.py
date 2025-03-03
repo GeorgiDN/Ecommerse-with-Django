@@ -1,32 +1,12 @@
-"""
-URL configuration for ecommerseApp project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
 from ecommerseApp import settings
 from django.conf.urls.static import static
-from django.contrib.auth import views as auth_views
-from ecommerseApp.accounts import views as account_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('ecommerseApp.store.urls')),
-    path('register/', account_views.UserRegisterView.as_view(), name='register'),
-    path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='accounts/logout.html'), name='logout'),
+    path('accounts/', include('ecommerseApp.accounts.urls')),
 ]
 
 if settings.DEBUG:

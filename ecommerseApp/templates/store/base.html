@@ -17,6 +17,18 @@
     </head>
     <body>
         {% include 'store/navbar.html' %}
+        <div class="d-flex justify-content-center">
+            <div class="messages-container col-md-6">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} text-center shadow-sm" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
         <!-- Header-->
         <header class="bg-dark py-5">
             <div class="container px-4 px-lg-5 my-5">
