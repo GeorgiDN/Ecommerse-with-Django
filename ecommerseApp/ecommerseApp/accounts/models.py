@@ -55,6 +55,7 @@ class Customer(models.Model):
         unique=True,
         null=True,
         blank=True,
+        help_text='Email for notifications about orders'
     )
 
     def __str__(self):
