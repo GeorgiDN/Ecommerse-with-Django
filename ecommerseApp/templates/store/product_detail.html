@@ -1,0 +1,36 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container product-page mt-5">
+        <div class="card mb-3" style="max-width: 1000px;">
+            <div class="row g-0">
+                <div class="col-md-8">
+                    <img src="{{ object.image.url }}" class="img-fluid rounded-start" alt="{{ object.name }}">
+                </div>
+                <div class="col-md-4">
+                    <div class="card-body">
+                        <center>
+                            <h1 class="card-title">{{ object.name }}</h1>
+
+                            <p class="card-text fs-3"> <b >Price: </b>
+                            {% if not product.is_on_sale %}
+                                {{ product.price }}
+                            {% else %}
+
+                                <s class="fs-3">{{ product.price }}</s>
+                                <br>
+                                <small class="fs-3">{{ product.sale_price }}</small>
+                            {% endif %}
+                            </p>
+                            <p class="card-text">
+                                {{ object.description }}
+                            </p>
+
+                            <a href="#" class="btn btn-primary">Buy</a>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
