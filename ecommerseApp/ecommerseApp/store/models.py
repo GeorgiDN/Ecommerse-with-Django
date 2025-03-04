@@ -10,6 +10,17 @@ class Category(models.Model):
     name = models.CharField(
         max_length=50,
     )
+    description = models.CharField(
+        max_length=1500,
+        blank=True,
+        null=True,
+    )
+    image = models.ImageField(
+        upload_to='category_images',
+        blank=True,
+        null=True,
+        default='default.png',
+    )
 
     def __str__(self):
         return self.name
@@ -43,6 +54,7 @@ class Product(models.Model):
         upload_to='product_images',
         blank=True,
         null=True,
+        default='default.png',
     )
     is_on_sale = models.BooleanField(
         default=False,
@@ -66,7 +78,7 @@ class Product(models.Model):
     #         img.save(self.image.path)
 
     def __str__(self):
-        return f'Product {self.name}'
+        return f'{self.name}'
 
 
 class Order(models.Model):
