@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+
+from ecommerseApp.cart import cart
+
 load_dotenv()
 
 
@@ -45,6 +48,7 @@ INSTALLED_APPS = [
     'ecommerseApp.store.apps.StoreConfig',
     'ecommerseApp.accounts.apps.AccountsConfig',
     'ecommerseApp.common.apps.CommonConfig',
+    'ecommerseApp.cart.apps.CartConfig',
     'crispy_forms',
     'crispy_bootstrap4',
 ]
@@ -73,6 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ecommerseApp.cart.context_processors.cart',
             ],
         },
     },

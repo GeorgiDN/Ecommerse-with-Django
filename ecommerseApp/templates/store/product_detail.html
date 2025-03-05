@@ -12,25 +12,54 @@
                         <center>
                             <h1 class="card-title">{{ object.name }}</h1>
 
-                            <p class="card-text fs-3"> <b >Price: </b>
-                            {% if not product.is_on_sale %}
-                                {{ product.price }}
-                            {% else %}
+                            <p class="card-text fs-3"><b>Price: </b>
+                                {% if not product.is_on_sale %}
+                                    {{ product.price }}
+                                {% else %}
 
-                                <s class="fs-3">{{ product.price }}</s>
-                                <br>
-                                <small class="fs-3">{{ product.sale_price }}</small>
-                            {% endif %}
+                                    <s class="fs-3">{{ product.price }}</s>
+                                    <br>
+                                    <small class="fs-3">{{ product.sale_price }}</small>
+                                {% endif %}
                             </p>
                             <p class="card-text">
                                 {{ object.description }}
                             </p>
 
-                            <a href="#" class="btn btn-primary">Buy</a>
+                            <button type="button" value="{{ product.id }}"
+                                    class="btn btn-secondary" id="add-cart">Add to Cart
+                            </button>
                         </center>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).on('click', '#add-cart', function (e) {
+            e.preventDefault();
+
+            let productID = $(this).val();
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'cart_add' %}",
+                data: {
+                    product_id: productID,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post' 
+                },
+
+                success: function (json) {
+                    console.log("Success:", json);
+                },
+
+                error: function (xhr, errmsg, err) {
+                    console.log("Error:", xhr.responseText);
+                }
+            });
+        });
+
+    </script>
 {% endblock %}
