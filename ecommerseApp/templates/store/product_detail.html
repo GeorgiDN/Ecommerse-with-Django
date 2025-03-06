@@ -52,7 +52,7 @@
                 },
 
                 success: function (json) {
-                    console.log("Success:", json);
+                    document.getElementById("cart_quantity").textContent = json.qty
                 },
 
                 error: function (xhr, errmsg, err) {

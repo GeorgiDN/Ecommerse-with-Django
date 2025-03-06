@@ -17,7 +17,10 @@ def cart_add(request):
 
         cart.add(product=product)
 
-        return JsonResponse({'Product Name': product.name})
+        cart_quantity = cart.__len__()
+
+        # return JsonResponse({'Product Name': product.name})
+        return JsonResponse({'qty': cart_quantity})
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
