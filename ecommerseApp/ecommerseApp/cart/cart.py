@@ -16,5 +16,11 @@ class Cart:
 
         self.session.modified = True
 
+    def get_products(self):
+        from ecommerseApp.store.models import Product
+        product_ids = self.cart.keys()
+        products = Product.objects.filter(id__in=product_ids)
+        return products
+
     def __len__(self):
         return len(self.cart)

@@ -2,5 +2,37 @@
 {% block content %}
     <div class="container">
         <h1 class="p-4">Shopping cart</h1>
+        {% for product in cart_products %}
+            <p>
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            <a href="{% url 'product-detail' product.pk %}">{{ product }}</a>
+            <small class="product-price">
+            {% if not product.is_on_sale %}
+                {{ product.price }}
+            {% else %}
+                {{ product.sale_price }}
+            {% endif %}
+        {% endfor %}
+        </small>
+        </p>
+    <p class="total_price"></p>
     </div>
+    
+    <script>
+        let prices = document.querySelectorAll(".product-price");
+        let totalPrice = 0;
+
+        prices.forEach(price => {
+            let priceValue = parseFloat(price.textContent.trim()); 
+            if (!isNaN(priceValue)) {
+                totalPrice += priceValue;
+            }
+        });
+
+        let pPriceEl = document.querySelector(".total_price");
+        pPriceEl.textContent = `Total: ${totalPrice.toFixed(2)}`;
+
+    </script>
+
 {% endblock %}
+
