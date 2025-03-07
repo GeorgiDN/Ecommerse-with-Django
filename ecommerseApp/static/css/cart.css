@@ -51,6 +51,12 @@
     gap: 1rem;
 }
 
+.cart-summary .quantity-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 
 @media (max-width: 420px) {
     .cart-summary .image-container {

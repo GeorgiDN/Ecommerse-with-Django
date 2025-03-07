@@ -26,9 +26,20 @@
                                 {{ object.description }}
                             </p>
 
-                            <button type="button" value="{{ product.id }}"
-                                    class="btn btn-secondary" id="add-cart">Add to Cart
-                            </button>
+                            <div class="product-add">
+                                <p>Quantity</p>
+                                <select class="form-select" id="qty-cart">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+
+                                <button type="button" value="{{ product.id }}"
+                                        class="btn btn-secondary" id="add-cart">Add to Cart
+                                </button>
+                                </div>
                         </center>
                     </div>
                 </div>
@@ -47,8 +58,9 @@
                 url: "{% url 'cart_add' %}",
                 data: {
                     product_id: productID,
+                    product_qty: $('#qty-cart option:selected').text(),
                     csrfmiddlewaretoken: '{{ csrf_token }}',
-                    action: 'post' 
+                    action: 'post'
                 },
 
                 success: function (json) {

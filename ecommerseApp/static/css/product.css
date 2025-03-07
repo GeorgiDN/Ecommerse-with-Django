@@ -1,0 +1,11 @@
+.card .product-add {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.card .product-add .form-select {
+    max-width: 110px;
+}

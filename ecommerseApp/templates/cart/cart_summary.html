@@ -29,8 +29,23 @@
                     </section>
 
                     <section class="quantity-section">
+                        <p>Quantity</p>
+                        <select class="form-select" id="qty-cart">
+
+                            {% for key, value in quantities.items %}
+                                {% if key == product.id|slugify %}
+                                    <option selected>{{ value }}</option>
+                                {% endif %}
+                            {% endfor %}
+
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
                         <button type="button" value="{{ product.id }}"
-                                class="btn btn-secondary" id="add-cart">Quantity
+                                class="btn btn-secondary" id="add-cart">Add
                         </button>
                     </section>
 
@@ -52,7 +67,6 @@
 
         prices.forEach(price => {
             let priceValue = parseFloat(price.textContent.trim());
-            console.log(priceValue)
             if (!isNaN(priceValue)) {
                 totalPrice += priceValue;
             }
@@ -64,54 +78,3 @@
     </script>
 
 {% endblock %}
-
-
-
-
-
-{#    <div class="container product-page mt-5 cart-summary">#}
-{#        {% if  cart_products %}#}
-{#            <section class="cart-header">#}
-{#                <h4>Product</h4>#}
-{#                <h4>Qunatity</h4>#}
-{#                <h4>Total Sum</h4>#}
-{#            </section>#}
-{#            {% for product in cart_products %}#}
-{#                <div class="mb-3 product-section">#}
-{#                    <div class="row g-0 p-2 ps-5">#}
-{#                        <div class="col-md-4 image-container">#}
-{#                            <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="{{ product.name }}">#}
-{#                        </div>#}
-{#                        <div class="col-md-4">#}
-{#                            <div class="card-body">#}
-{#                                <center>#}
-{#                                    <h3 class="card-title">{{ product.name }}</h3>#}
-{##}
-{#                                    <p class="card-text fs-5"><b>Price: </b>#}
-{#                                        <small class="product-price">#}
-{#                                            {% if not product.is_on_sale %}#}
-{#                                                {{ product.price }}#}
-{#                                            {% else %}#}
-{#                                                {{ product.sale_price }}#}
-{#                                            {% endif %}#}
-{#                                        </small>#}
-{#                                    </p>#}
-{##}
-{#                                    <button type="button" value="{{ product.id }}"#}
-{#                                            class="btn btn-secondary" id="add-cart">Add to Cart#}
-{#                                    </button>#}
-{#                                </center>#}
-{#                            </div>#}
-{##}
-{#                        </div>#}
-{##}
-{#                    </div>#}
-{##}
-{#                </div>#}
-{##}
-{#            {% endfor %}#}
-{#        {% else %}#}
-{#            <h3>The cart is empty</h3>#}
-{#        {% endif %}#}
-{#        <h2 class="total-price"></h2>#}
-{#    </div>#}
