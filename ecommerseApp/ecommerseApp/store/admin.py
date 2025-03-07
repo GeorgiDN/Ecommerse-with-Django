@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ecommerseApp.store.models import Category, Product, Order, OrderItem
+from ecommerseApp.store.models import Category, Product, Order
 
 
 @admin.register(Category)
@@ -15,9 +15,4 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(OrderItem)
-class OrderItemAdmin(admin.ModelAdmin):
     pass

@@ -22,7 +22,7 @@ def cart_add(request):
     if request.POST.get('action') == 'post':
         product_id = request.POST.get('product_id')
         product_qty = request.POST.get('product_qty')
-        product = get_object_or_404(Product, id=product_id, quantity=product_qty)
+        product = get_object_or_404(Product, id=product_id)
 
         cart.add(product=product, quantity=product_qty)
 
