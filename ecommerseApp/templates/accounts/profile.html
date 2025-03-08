@@ -9,8 +9,7 @@
                 <p class="text-secondary">{{ user.email }}</p>
             </div>
         </div>
-
-
+        
         <!-- FORM HERE -->
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
@@ -20,7 +19,8 @@
                 {{ p_form|crispy }}
             </fieldset>
             <div class="form-group mt-4">
-                <button class="btn btn-outline-info " type="submit">Update</button>
+                <button class="btn btn-outline-info" type="submit">Update</button>
+                <a class="btn btn-success" type="submit" href="{% url 'update-password' %}">Change Password</a>
                 <a class="btn btn-danger" href="{% url 'profile-delete' pk=request.user.user_profile.pk %}">Delete</a>
             </div>
 

@@ -5,10 +5,38 @@ from django.views import View
 from django.views.generic import CreateView
 from django.contrib.auth import get_user_model, login
 from django.contrib import messages
-from ecommerseApp.accounts.forms import UserRegisterForm, UserUpdateForm, CustomerUpdateForm
+from ecommerseApp.accounts.forms import UserRegisterForm, UserUpdateForm, CustomerUpdateForm, ChangePasswordForm
 from ecommerseApp.accounts.models import Customer
 
 User = get_user_model()
+
+
+def update_password(request):
+    if request.user.is_authenticated:
+        current_user = request.user
+        if request.method == 'POST':
+            form = ChangePasswordForm(current_user, request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Your password has been changed!')
+
+                return redirect('login')
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+                    return redirect('update-password')
+        else:
+            form = ChangePasswordForm(current_user)
+
+    else:
+        messages.error(request, 'You are not logged in!')
+        return redirect('login')
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'accounts/update_password.html', context)
 
 
 class UserRegisterView(CreateView):
@@ -35,7 +63,6 @@ class ProfileView(LoginRequiredMixin, View):
         context = {
             'u_form': u_form,
             'p_form': p_form,
-
         }
 
         return render(request, 'accounts/profile.html', context)
