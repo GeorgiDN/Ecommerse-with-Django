@@ -30,4 +30,4 @@ class UserUpdateForm(forms.ModelForm):
 class CustomerUpdateForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ('first_name', 'last_name', 'email', 'phone')
+        exclude = ['user']
