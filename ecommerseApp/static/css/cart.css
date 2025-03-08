@@ -21,7 +21,7 @@
 
 .cart-summary .cart-header .product-quantity {
     position: relative;
-    left: 30px;
+    right: 10px;
 }
 
 .cart-summary .image-container {

@@ -53,21 +53,21 @@
                                 class="btn btn-danger delete-product">Remove
                         </button>
                     </section>
-
+                
                     <section class="total-sum-per-product">
                         total
                     </section>
+
                 </div>
             {% endfor %}
             <h2 class="total-price">TOTAL SUM: {{ totals }}</h2>
         {% else %}
             <h3>The cart is empty</h3>
         {% endif %}
-
     </div>
-    
+
     <script>
-    // Update
+        // Update
         $(document).on('click', '.update-cart', function (e) {
             e.preventDefault();
 
@@ -83,7 +83,7 @@
                     action: 'post'
                 },
 
-                success: function(json) {
+                success: function (json) {
                     location.reload();
                 },
 
@@ -96,7 +96,7 @@
 
 
     <script>
-    // Delete
+        // Delete
         $(document).on('click', '.delete-product', function (e) {
             e.preventDefault();
 
@@ -111,7 +111,7 @@
                     action: 'post'
                 },
 
-                success: function(json) {
+                success: function (json) {
                     location.reload();
                 },
 
@@ -121,9 +121,41 @@
             });
         });
     </script>
+    
+    <script>
 
+    function updateTotalPrice(productID) {
+        let priceElement = document.querySelector(`#select${productID}`).closest('.cart-info').querySelector('.product-price');
+        let quantityElement = document.querySelector(`#select${productID}`);
+        let totalElement = document.querySelector(`#select${productID}`).closest('.cart-info').querySelector('.total-sum-per-product');
+
+        let price = parseFloat(priceElement.textContent.trim());
+        let quantity = parseInt(quantityElement.value);
+
+        let total = (price * quantity).toFixed(2);
+
+        totalElement.innerHTML = `<b>Total Price:</b> ${total} €`;
+    }
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.cart-info').forEach(cartItem => {
+            let productID = cartItem.querySelector('.update-cart').getAttribute('data-index');
+            updateTotalPrice(productID);
+        });
+    });
+
+    // Update total price when quantity is changed
+    document.querySelectorAll('.form-select').forEach(select => {
+        select.addEventListener('change', function () {
+            let productID = this.id.replace('select', '');
+            updateTotalPrice(productID);
+        });
+    });
+
+</script>
+    
+    
 {% endblock %}
-
 
 
 
@@ -142,3 +174,4 @@
 {#        let h2PriceEl = document.querySelector(".total-price");#}
 {#        h2PriceEl.textContent = `Grand Total: ${totalPrice.toFixed(2)}`;#}
 {#    </script>#}
+
