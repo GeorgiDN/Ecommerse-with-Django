@@ -30,7 +30,7 @@
 
                     <section class="quantity-section">
                         <p>Quantity</p>
-                        <select class="form-select" id="qty-cart">
+                        <select class="form-select" id="select{{ product.id }}">
 
                             {% for key, value in quantities.items %}
                                 {% if key == product.id|slugify %}
@@ -47,6 +47,10 @@
                         <button type="button" value="{{ product.id }}"
                                 class="btn btn-secondary" id="add-cart">Add
                         </button>
+
+                        <button type="button" data-index="{{ product.id }}"
+                                class="btn btn-secondary update-cart">Update
+                        </button>
                     </section>
 
                     <section class="total-sum-per-product">
@@ -60,21 +64,46 @@
         <h2 class="total-price"></h2>
     </div>
 
-
+{#    <script>#}
+{#        let prices = document.querySelectorAll(".product-price");#}
+{#        let totalPrice = 0;#}
+{##}
+{#        prices.forEach(price => {#}
+{#            let priceValue = parseFloat(price.textContent.trim());#}
+{#            if (!isNaN(priceValue)) {#}
+{#                totalPrice += priceValue;#}
+{#            }#}
+{#        });#}
+{##}
+{#        let h2PriceEl = document.querySelector(".total-price");#}
+{#        h2PriceEl.textContent = `Grand Total: ${totalPrice.toFixed(2)}`;#}
+{#    </script>#}
+        
     <script>
-        let prices = document.querySelectorAll(".product-price");
-        let totalPrice = 0;
+        $(document).on('click', '.update-cart', function (e) {
+            e.preventDefault();
 
-        prices.forEach(price => {
-            let priceValue = parseFloat(price.textContent.trim());
-            if (!isNaN(priceValue)) {
-                totalPrice += priceValue;
-            }
+            let productID = $(this).data('index');
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'cart_update' %}",
+                data: {
+                    product_id: productID,
+                    product_qty: $('#select' + productID + ' option:selected').text(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post'
+                },
+
+                success: function(json) {
+                    location.reload();
+                },
+
+                error: function (xhr, errmsg, err) {
+                    console.log("Error:", xhr.responseText);
+                }
+            });
         });
-
-        let h2PriceEl = document.querySelector(".total-price");
-        h2PriceEl.textContent = `Grand Total: ${totalPrice.toFixed(2)}`;
-
     </script>
 
 {% endblock %}
