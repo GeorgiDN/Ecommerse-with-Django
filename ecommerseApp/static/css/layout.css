@@ -1,0 +1,17 @@
+.searchbar {
+    position: relative;
+    align-items: center;
+    z-index: 2;
+    padding-bottom: 50px !important;
+}
+
+.search-btn {
+    border: none;
+    background-color: transparent;
+    position: relative;
+    right: 35px;
+    cursor: pointer;
+    font-size: 15px;
+    z-index: 1;
+}
+

@@ -1,7 +1,9 @@
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, DetailView
 
+from ecommerseApp.common.forms import SearchForm
 from ecommerseApp.store.models import Product, Category
 
 
@@ -13,6 +15,23 @@ class ProductListView(ListView):
     model = Product
     template_name = 'store/home.html'
     context_object_name = 'products'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_form"] = SearchForm(self.request.GET)
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_term = self.request.GET.get('search_term')
+
+        if search_term:
+            queryset = queryset.filter(
+                Q(name__icontains=search_term) |
+                Q(description__icontains=search_term)
+            )
+
+        return queryset
 
 
 class ProductDetailView(DetailView):
