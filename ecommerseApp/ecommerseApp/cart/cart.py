@@ -41,6 +41,22 @@ class Cart:
         cart = self.cart
         return cart
 
+    def cart_total(self):
+        from ecommerseApp.store.models import Product
+        quantities = self.cart
+        product_ids = self.cart.keys()
+        products = Product.objects.filter(id__in=product_ids)
+        total = 0
+        for key, value in quantities.items():
+            key = int(key)
+            for product in products:
+                if product.id == key:
+                    if not product.is_on_sale:
+                        total += int(product.price * value)
+                    else:
+                        total += int(product.sale_price * value)
+        return total
+
     def delete(self, product):
         product_id = str(product)
         if product_id in self.cart:

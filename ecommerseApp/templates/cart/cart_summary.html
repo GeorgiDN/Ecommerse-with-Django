@@ -59,27 +59,13 @@
                     </section>
                 </div>
             {% endfor %}
+            <h2 class="total-price">TOTAL SUM: {{ totals }}</h2>
         {% else %}
             <h3>The cart is empty</h3>
         {% endif %}
-        <h2 class="total-price"></h2>
+
     </div>
-
-{#    <script>#}
-{#        let prices = document.querySelectorAll(".product-price");#}
-{#        let totalPrice = 0;#}
-{##}
-{#        prices.forEach(price => {#}
-{#            let priceValue = parseFloat(price.textContent.trim());#}
-{#            if (!isNaN(priceValue)) {#}
-{#                totalPrice += priceValue;#}
-{#            }#}
-{#        });#}
-{##}
-{#        let h2PriceEl = document.querySelector(".total-price");#}
-{#        h2PriceEl.textContent = `Grand Total: ${totalPrice.toFixed(2)}`;#}
-{#    </script>#}
-
+    
     <script>
     // Update
         $(document).on('click', '.update-cart', function (e) {
@@ -137,3 +123,22 @@
     </script>
 
 {% endblock %}
+
+
+
+
+
+{#    <script>#}
+{#        let prices = document.querySelectorAll(".product-price");#}
+{#        let totalPrice = 0;#}
+{##}
+{#        prices.forEach(price => {#}
+{#            let priceValue = parseFloat(price.textContent.trim());#}
+{#            if (!isNaN(priceValue)) {#}
+{#                totalPrice += priceValue;#}
+{#            }#}
+{#        });#}
+{##}
+{#        let h2PriceEl = document.querySelector(".total-price");#}
+{#        h2PriceEl.textContent = `Grand Total: ${totalPrice.toFixed(2)}`;#}
+{#    </script>#}
