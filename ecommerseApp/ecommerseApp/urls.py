@@ -8,6 +8,7 @@ urlpatterns = [
     path('', include('ecommerseApp.store.urls')),
     path('accounts/', include('ecommerseApp.accounts.urls')),
     path('cart/', include('ecommerseApp.cart.urls')),
+    path('payment/', include('ecommerseApp.payment.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm, AuthenticationForm
 from django.contrib.auth import get_user_model
-from ecommerseApp.accounts.models import Customer
+from ecommerseApp.accounts.models import Profile
 User = get_user_model()
 
 
@@ -41,5 +41,5 @@ class UserUpdateForm(forms.ModelForm):
 
 class CustomerUpdateForm(forms.ModelForm):
     class Meta:
-        model = Customer
+        model = Profile
         exclude = ['user']

@@ -2,7 +2,7 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from PIL import Image
 
-from ecommerseApp.accounts.models import Customer
+from ecommerseApp.accounts.models import Profile
 from ecommerseApp.common.custom_validators import validate_phone_number
 
 
@@ -97,7 +97,7 @@ class Order(models.Model):
         blank=True,
     )
     customer = models.ForeignKey(
-        to=Customer,
+        to=Profile,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

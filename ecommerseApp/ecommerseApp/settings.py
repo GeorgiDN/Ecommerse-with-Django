@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'ecommerseApp.accounts.apps.AccountsConfig',
     'ecommerseApp.common.apps.CommonConfig',
     'ecommerseApp.cart.apps.CartConfig',
+    'ecommerseApp.payment.apps.PaymentConfig',
     'crispy_forms',
     'crispy_bootstrap4',
 ]

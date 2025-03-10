@@ -11,7 +11,7 @@ class Cart:
         self.cart = cart
 
     def db_add(self, product, quantity):
-        from ecommerseApp.accounts.models import Customer
+        from ecommerseApp.accounts.models import Profile
         product_id = str(product)
         product_qty = int(quantity)
 
@@ -23,13 +23,13 @@ class Cart:
         self.session.modified = True
 
         if self.request.user.is_authenticated:
-            current_user = Customer.objects.filter(user__id=self.request.user.id)
+            current_user = Profile.objects.filter(user__id=self.request.user.id)
             carty = str(self.cart)
             carty = carty.replace("\'", "\"")
             current_user.update(old_cart=str(carty))
 
     def add(self, product, quantity):
-        from ecommerseApp.accounts.models import Customer
+        from ecommerseApp.accounts.models import Profile
         product_id = str(product.id)
         product_qty = int(quantity)
 
@@ -41,7 +41,7 @@ class Cart:
         self.session.modified = True
 
         if self.request.user.is_authenticated:
-            current_user = Customer.objects.filter(user__id=self.request.user.id)
+            current_user = Profile.objects.filter(user__id=self.request.user.id)
             carty = str(self.cart)
             carty = carty.replace("\'", "\"")
             current_user.update(old_cart=str(carty))
@@ -57,7 +57,7 @@ class Cart:
         return quantities
 
     def update(self, product, quantity):
-        from ecommerseApp.accounts.models import Customer
+        from ecommerseApp.accounts.models import Profile
         product_id = str(product)
         product_qty = int(quantity)
 
@@ -69,7 +69,7 @@ class Cart:
         cart = self.cart
 
         if self.request.user.is_authenticated:
-            current_user = Customer.objects.filter(user__id=self.request.user.id)
+            current_user = Profile.objects.filter(user__id=self.request.user.id)
             carty = str(self.cart)
             carty = carty.replace("\'", "\"")
             current_user.update(old_cart=str(carty))
@@ -93,7 +93,7 @@ class Cart:
         return total
 
     def delete(self, product):
-        from ecommerseApp.accounts.models import Customer
+        from ecommerseApp.accounts.models import Profile
         product_id = str(product)
         if product_id in self.cart:
             del self.cart[product_id]
@@ -101,7 +101,7 @@ class Cart:
         self.session.modified = True
 
         if self.request.user.is_authenticated:
-            current_user = Customer.objects.filter(user__id=self.request.user.id)
+            current_user = Profile.objects.filter(user__id=self.request.user.id)
             carty = str(self.cart)
             carty = carty.replace("\'", "\"")
             current_user.update(old_cart=str(carty))

@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
         return self.username
 
 
-class Customer(models.Model):
+class Profile(models.Model):
     user = models.OneToOneField(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

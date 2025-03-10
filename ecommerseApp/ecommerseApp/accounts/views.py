@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model, login, authenticate
 from django.contrib import messages
 from ecommerseApp.accounts.forms import UserRegisterForm, UserUpdateForm, CustomerUpdateForm, ChangePasswordForm, \
     LoginForm
-from ecommerseApp.accounts.models import Customer
+from ecommerseApp.accounts.models import Profile
 import json
 
 from ecommerseApp.cart.cart import Cart
@@ -53,7 +53,7 @@ def login_user(request):
             if user is not None:
                 login(request, user)
 
-                current_user = Customer.objects.get(user__id=request.user.id)
+                current_user = Profile.objects.get(user__id=request.user.id)
                 save_cart = current_user.old_cart
 
                 if save_cart:
@@ -122,15 +122,15 @@ class ProfileDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     success_url = reverse_lazy('login')
 
     def test_func(self):
-        profile = get_object_or_404(Customer, pk=self.kwargs["pk"])
+        profile = get_object_or_404(Profile, pk=self.kwargs["pk"])
         return self.request.user == profile.user
 
     def get(self, request, *args, **kwargs):
-        profile = get_object_or_404(Customer, pk=self.kwargs["pk"])
+        profile = get_object_or_404(Profile, pk=self.kwargs["pk"])
         return render(request, self.template_name, {'profile': profile})
 
     def post(self, request, *args, **kwargs):
-        profile = get_object_or_404(Customer, pk=self.kwargs["pk"])
+        profile = get_object_or_404(Profile, pk=self.kwargs["pk"])
         user = profile.user
 
         user.delete()
