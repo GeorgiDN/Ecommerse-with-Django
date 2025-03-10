@@ -3,10 +3,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, authenticate
 from django.contrib import messages
-from ecommerseApp.accounts.forms import UserRegisterForm, UserUpdateForm, CustomerUpdateForm, ChangePasswordForm
+from ecommerseApp.accounts.forms import UserRegisterForm, UserUpdateForm, CustomerUpdateForm, ChangePasswordForm, \
+    LoginForm
 from ecommerseApp.accounts.models import Customer
+import json
+
+from ecommerseApp.cart.cart import Cart
 
 User = get_user_model()
 
@@ -37,6 +41,34 @@ def update_password(request):
     }
 
     return render(request, 'accounts/update_password.html', context)
+
+
+def login_user(request):
+    form = LoginForm(request, data=request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+
+                current_user = Customer.objects.get(user__id=request.user.id)
+                save_cart = current_user.old_cart
+
+                if save_cart:
+                    converted_cart = json.loads(save_cart)
+                    cart = Cart(request)
+
+                    for key, value in converted_cart.items():
+                        cart.db_add(product=key, quantity=value)
+
+                messages.success(request, 'You are now logged in!')
+                return redirect('home')
+            else:
+                messages.error(request, 'Invalid username or password!')
+
+    return render(request, 'accounts/login.html', {'form': form})
 
 
 class UserRegisterView(CreateView):
