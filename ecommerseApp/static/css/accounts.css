@@ -1,5 +1,5 @@
 .user-form {
-    max-width: 500px;
+    max-width: 900px;
     margin-top: 2rem;
     display: flex;
     flex-direction: column;
@@ -16,4 +16,17 @@
     display: flex;
     justify-content: center;
     max-width: 360px;
+}
+
+.user-form .profile-info-forms {
+    gap: 2rem;
+    display: flex;
+}
+
+@media (max-width: 520px) {
+    .user-form .profile-info-forms {
+        gap: 2rem;
+        display: flex;
+        flex-direction: column;
+    }
 }

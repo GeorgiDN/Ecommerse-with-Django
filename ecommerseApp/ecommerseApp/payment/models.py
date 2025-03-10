@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 
@@ -11,35 +12,46 @@ class ShippingAddress(models.Model):
         null=True,
         blank=True,
     )
-    full_name = models.CharField(
+    shipping_full_name = models.CharField(
         max_length=255,
+        help_text='First and last name',
+        null=True,
+        blank=True,
     )
-    email = models.CharField(
-        max_length=255,
-    )
-    address1 = models.CharField(
-        max_length=255,
-    )
-    address2 = models.CharField(
+    shipping_email = models.CharField(
         max_length=255,
         null=True,
         blank=True,
     )
-    state = models.CharField(
+    shipping_address1 = models.CharField(
         max_length=255,
         null=True,
         blank=True,
     )
-    zip = models.CharField(
+    shipping_address2 = models.CharField(
         max_length=255,
         null=True,
         blank=True,
     )
-    city = models.CharField(
+    shipping_state = models.CharField(
         max_length=255,
+        null=True,
+        blank=True,
     )
-    country = models.CharField(
+    shipping_zip = models.CharField(
         max_length=255,
+        null=True,
+        blank=True,
+    )
+    shipping_city = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    shipping_country = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
     )
 
     class Meta:

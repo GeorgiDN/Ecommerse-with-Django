@@ -11,6 +11,8 @@ from ecommerseApp.accounts.models import Profile
 import json
 
 from ecommerseApp.cart.cart import Cart
+from ecommerseApp.payment.forms import ShippingForm
+from ecommerseApp.payment.models import ShippingAddress
 
 User = get_user_model()
 
@@ -92,9 +94,13 @@ class ProfileView(LoginRequiredMixin, View):
         u_form = UserUpdateForm(instance=request.user)
         p_form = CustomerUpdateForm(instance=request.user.user_profile)
 
+        shipping_address, created = ShippingAddress.objects.get_or_create(user=request.user)
+        shipping_form = ShippingForm(instance=shipping_address)
+
         context = {
             'u_form': u_form,
             'p_form': p_form,
+            'shipping_form': shipping_form,
         }
 
         return render(request, 'accounts/profile.html', context)
@@ -103,15 +109,34 @@ class ProfileView(LoginRequiredMixin, View):
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = CustomerUpdateForm(request.POST, request.FILES, instance=request.user.user_profile)
 
-        if u_form.is_valid() and p_form.is_valid():
+        shipping_address, created = ShippingAddress.objects.get_or_create(user=request.user)
+        shipping_form = ShippingForm(request.POST, request.FILES, instance=shipping_address)
+
+        if u_form.is_valid() and p_form.is_valid() and shipping_form.is_valid():
             u_form.save()
             p_form.save()
+
+            shipping = shipping_form.save(commit=False)
+            profile = request.user.user_profile
+
+            shipping.shipping_full_name = shipping.shipping_full_name or f'{profile.first_name} {profile.last_name}'
+            shipping.shipping_email = shipping.shipping_email or request.user.email
+            shipping.shipping_address1 = shipping.shipping_address1 or profile.address1
+            shipping.shipping_address2 = shipping.shipping_address2 or profile.address2
+            shipping.shipping_state = shipping.shipping_state or profile.state
+            shipping.shipping_zip = shipping.shipping_zip or profile.zip
+            shipping.shipping_city = shipping.shipping_city or profile.city
+            shipping.shipping_country = shipping.shipping_country or profile.country
+
+            shipping.save()
+
             messages.success(self.request, 'Your profile has been updated!')
             return redirect('profile')
 
         context = {
             'u_form': u_form,
-            'p_form': p_form
+            'p_form': p_form,
+            'shipping_form': shipping_form,
         }
 
         return render(request, 'accounts/profile.html', context)

@@ -51,36 +51,29 @@ class Profile(models.Model):
         null=True,
         blank=True,
     )
-    email = models.EmailField(
-        unique=True,
-        null=True,
-        blank=True,
-        help_text='Email for notifications about orders'
-    )
-    address = models.CharField(
-        max_length=100,
-        null=True,
-        blank=True,
+    address1 = models.CharField(
+        max_length=255,
     )
     address2 = models.CharField(
-        max_length=100,
-        null=True,
-        blank=True,
-    )
-    country = models.CharField(
-        max_length=50,
-        null=True,
-        blank=True,
-    )
-    city = models.CharField(
-        max_length=50,
+        max_length=255,
         null=True,
         blank=True,
     )
     state = models.CharField(
-        max_length=50,
+        max_length=255,
         null=True,
         blank=True,
+    )
+    zip = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    city = models.CharField(
+        max_length=255,
+    )
+    country = models.CharField(
+        max_length=255,
     )
     old_cart = models.CharField(
         max_length=1500,
