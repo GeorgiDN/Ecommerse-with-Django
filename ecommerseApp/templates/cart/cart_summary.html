@@ -1,7 +1,7 @@
 {% extends 'store/base.html' %}
 {% block content %}
-
     <div class="container product-page mt-5 cart-summary">
+    <a class="btn btn-success fs-5  cart-checkout" href="{% url 'checkout' %}">Checkout</a>
         <section class="cart-header">
             <h4 class="product-header">Product</h4>
             <h4 class="product-quantity">Quantity</h4>
@@ -61,6 +61,7 @@
                 </div>
             {% endfor %}
             <h2 class="total-price">TOTAL SUM: {{ totals }}</h2>
+            <a class="btn btn-success fs-4 cart-checkout" href="{% url 'checkout' %}">Checkout</a>
         {% else %}
             <h3>The cart is empty</h3>
         {% endif %}

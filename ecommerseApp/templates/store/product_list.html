@@ -14,13 +14,13 @@
                                     <h5 class="fw-bolder">{{ product.name }}</h5>
                                     <!-- Product price-->
                                     {% if not product.is_on_sale %}
-                                        {{ product.price }}
+                                        {{ product.price }} €
                                     {% else %}
                                         <div class="badge bg-dark text-white position-absolute"
                                              style="top: 0.5rem; right: 0.5rem">Sale
                                         </div>
                                         <s>{{ product.price }}</s>
-                                        {{ product.sale_price }}
+                                        {{ product.sale_price }} €
                                     {% endif %}
                                     <br>
                                     ID: {{ product.pk }}

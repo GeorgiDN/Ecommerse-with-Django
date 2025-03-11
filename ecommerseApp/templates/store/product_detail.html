@@ -14,12 +14,12 @@
 
                             <p class="card-text fs-3"><b>Price: </b>
                                 {% if not product.is_on_sale %}
-                                    {{ product.price }}
+                                    {{ product.price }} €
                                 {% else %}
 
                                     <s class="fs-3">{{ product.price }}</s>
                                     <br>
-                                    <small class="fs-3">{{ product.sale_price }}</small>
+                                    <small class="fs-3">{{ product.sale_price }} €</small>
                                 {% endif %}
                             </p>
                             <p class="card-text">

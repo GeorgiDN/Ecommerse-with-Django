@@ -1,0 +1,47 @@
+{% extends 'store/base.html' %}
+{% block content %}
+    {% load crispy_forms_tags %}
+
+    <div class="container order-summary">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h4>Order summary</h4>
+            </div>
+            <div class="card-body">
+                {% for product in cart_products %}
+                    <h5 class="mt-3">
+                        <strong>{{ product.name }}:</strong>
+                        {% if product.is_on_sale %}
+                            {{ product.sale_price }} €
+                        {% else %}
+                            {{ product.price }} €
+                        {% endif %}
+                    </h5>
+                    <small class="d-flex mt-2 fs-5">
+                        {% for key, value in quantities.items %}
+                            {% if key == product.id|slugify %}
+                                Quantity:
+                                <option selected>{{ value }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </small>
+                {% endfor %}
+                <p class="mt-4 fs-3"><u>Total: <b>{{ totals }} €</b></u></p>
+                <a href="{% url 'cart_summary' %}"
+                   class="btn btn-secondary update-cart">Update items
+                </a>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header">
+                Featured
+            </div>
+            <div class="card-body">
+                {{ shipping_form|crispy }}
+            </div>
+        </div>
+    <a class="btn btn-info mt-3" href="#">Continue to Bill</a>
+    </div>
+
+{% endblock %}
+
