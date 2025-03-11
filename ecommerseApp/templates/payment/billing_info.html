@@ -5,7 +5,7 @@
     <div class="container order-summary">
         <div class="card mt-3">
             <div class="card-header">
-                <h4>Order summary</h4>
+                <h4>Billing info</h4>
             </div>
             <div class="card-body">
                 {% for product in cart_products %}
@@ -37,14 +37,10 @@
                 Featured
             </div>
             <div class="card-body">
-                <form method="post" action="{% url 'billing_info' %}">
-                    {% csrf_token %}
-                    {{ shipping_form|crispy }}
+                    {{ shipping_info.shipping_full_name}}
 
-                    <button type="submit" class="btn btn-info mt-3">
-                        Continue to Billing
-                    </button>
-                </form>
+                <br>
+                    <a class="btn btn-info mt-3" href="#">Pay Now</a>
             </div>
         </div>
     </div>
