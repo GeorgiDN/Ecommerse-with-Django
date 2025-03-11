@@ -3,7 +3,9 @@ from django.db import models
 from PIL import Image
 
 from ecommerseApp.accounts.models import Profile
-from ecommerseApp.common.custom_validators import validate_phone_number
+from ecommerseApp.common.custom_validators import validate_phone_number, validate_lettres
+from ecommerseApp.common.models_mixins import FirstNameMixin, LastNameMixin, PhoneMixin, EmailMixin, QuantityMixin, \
+    PriceMixin
 
 
 class Category(models.Model):
@@ -29,14 +31,19 @@ class Category(models.Model):
         verbose_name_plural = 'Categories'
 
 
-class Product(models.Model):
-    name = models.CharField(
+class Customer(FirstNameMixin, LastNameMixin, PhoneMixin, EmailMixin, models.Model):
+
+    password = models.CharField(
         max_length=100,
     )
-    price = models.DecimalField(
-        default=0,
-        decimal_places=2,
-        max_digits=10
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
+
+class Product(PriceMixin, models.Model):
+    name = models.CharField(
+        max_length=100,
     )
     category = models.ForeignKey(
         to=Category,
@@ -67,6 +74,9 @@ class Product(models.Model):
         blank=True
     )
 
+    def __str__(self):
+        return f'{self.name}'
+
     # def save(self, *args, **kwargs):
     #     super().save(*args, **kwargs)
     #
@@ -77,11 +87,8 @@ class Product(models.Model):
     #         img.thumbnail(output_size)
     #         img.save(self.image.path)
 
-    def __str__(self):
-        return f'{self.name}'
 
-
-class Order(models.Model):
+class Order(PhoneMixin, QuantityMixin, models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('shipped', 'Shipped'),
@@ -97,14 +104,11 @@ class Order(models.Model):
         blank=True,
     )
     customer = models.ForeignKey(
-        to=Profile,
-        on_delete=models.SET_NULL,
+        to=Customer,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name='customer_order',
-    )
-    quantity = models.PositiveIntegerField(
-        default=1,
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -117,35 +121,15 @@ class Order(models.Model):
     address = models.CharField(
         max_length=200,
     )
-    phone = models.CharField(
-        max_length=20,
-        validators=[
-            MinLengthValidator(
-                4,
-                message='Phone number must be between 4 and 20 digits.'),
-            validate_phone_number],
-        null=True,
-        blank=True,
-    )
-    email = models.EmailField(
-        null=True,
-        blank=True,
-    )
 
     def __str__(self):
         return f'Order {self.id} - {self.customer}'
 
-    def save(self, *args, **kwargs):
-        if self.customer:
-            self.phone = self.phone or self.customer.phone
-            self.email = self.email or self.customer.email
-        super().save(*args, **kwargs)
-
-
-
-
-
-
+    # def save(self, *args, **kwargs):
+    #     if self.customer:
+    #         self.phone = self.phone or self.customer.phone
+    #         self.email = self.email or self.customer.email
+    #     super().save(*args, **kwargs)
 
 
 

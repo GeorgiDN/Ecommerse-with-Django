@@ -1,9 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinLengthValidator
 from django.db import models
-
 from ecommerseApp import settings
-from ecommerseApp.common.custom_validators import validate_lettres, validate_phone_number
+from ecommerseApp.common.models_mixins import FirstNameMixin, LastNameMixin, PhoneMixin
 
 
 class CustomUser(AbstractUser):
@@ -13,43 +12,11 @@ class CustomUser(AbstractUser):
         return self.username
 
 
-class Profile(models.Model):
+class Profile(FirstNameMixin, LastNameMixin, PhoneMixin,  models.Model):
     user = models.OneToOneField(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='user_profile',
-    )
-    first_name = models.CharField(
-        max_length=50,
-        validators=[
-            MinLengthValidator(
-                1,
-                message='The length of the name must be between 1 and 50 characters.'),
-            validate_lettres
-        ],
-        null=True,
-        blank=True,
-    )
-    last_name = models.CharField(
-        max_length=50,
-        validators=[
-            MinLengthValidator(
-                1,
-                message='The length of the name must be between 1 and 50 characters.'),
-            validate_lettres
-        ],
-        null=True,
-        blank=True,
-    )
-    phone = models.CharField(
-        max_length=20,
-        validators=[
-            MinLengthValidator(
-                4,
-                message='Phone number must be between 4 and 20 digits.'),
-            validate_phone_number],
-        null=True,
-        blank=True,
     )
     address1 = models.CharField(
         max_length=255,
