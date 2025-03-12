@@ -6,7 +6,9 @@ class SearchForm(forms.Form):
         required=False,
         widget=forms.TextInput(
             attrs={'placeholder': 'Search',
-                   'class': 'form-control'}
+                   'class': 'form-control',
+                   'style': 'width: 310px;'
+                   }
         )
     )
 

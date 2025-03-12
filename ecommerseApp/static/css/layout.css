@@ -1,8 +1,6 @@
 .searchbar {
     position: relative;
-    align-items: center;
     z-index: 2;
-    padding-bottom: 50px !important;
 }
 
 .search-btn {
@@ -15,3 +13,12 @@
     z-index: 1;
 }
 
+.cart-button {
+    max-width: 140px;
+}
+
+@media (max-width: 1200px) {
+    .cart-button {
+        margin-top: 10px;
+    }
+}

@@ -79,6 +79,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'ecommerseApp.cart.context_processors.cart',
+                'ecommerseApp.common.context_processors.search_form',
             ],
         },
     },

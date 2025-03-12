@@ -5,6 +5,8 @@ from django.views.generic import ListView, DetailView
 
 from ecommerseApp.common.forms import SearchForm
 from ecommerseApp.store.models import Product, Category
+from django.shortcuts import redirect
+from django.urls import reverse
 
 
 def about(request):
@@ -15,6 +17,13 @@ class ProductListView(ListView):
     model = Product
     template_name = 'store/home.html'
     context_object_name = 'products'
+
+    def get(self, request, *args, **kwargs):
+        """ Ensure search is always performed on home page """
+        if 'search_term' in request.GET and request.path != reverse('home'):
+            return redirect(f"{reverse('home')}?search_term={request.GET['search_term']}")
+
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -32,6 +41,7 @@ class ProductListView(ListView):
             )
 
         return queryset
+
 
 
 class ProductDetailView(DetailView):

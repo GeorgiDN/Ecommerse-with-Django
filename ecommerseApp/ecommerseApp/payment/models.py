@@ -17,18 +17,12 @@ class ShippingAddress(models.Model):
     shipping_full_name = models.CharField(
         max_length=255,
         help_text='First and last name',
-        null=True,
-        blank=True,
     )
-    shipping_email = models.CharField(
+    shipping_email = models.EmailField(
         max_length=255,
-        null=True,
-        blank=True,
     )
     shipping_address1 = models.CharField(
         max_length=255,
-        null=True,
-        blank=True,
     )
     shipping_address2 = models.CharField(
         max_length=255,
@@ -47,13 +41,9 @@ class ShippingAddress(models.Model):
     )
     shipping_city = models.CharField(
         max_length=255,
-        null=True,
-        blank=True,
     )
     shipping_country = models.CharField(
         max_length=255,
-        null=True,
-        blank=True,
     )
 
     class Meta:
