@@ -32,38 +32,19 @@ def checkout(request):
 def billing_info(request):
     if request.POST:
         cart = Cart(request)
-        cart_products = cart.get_products()
-        quantities = cart.get_quantity()
-        totals = cart.cart_total()
-
         context = {
-            'cart_products': cart_products,
-            'quantities': quantities,
-            'totals': totals,
+            'cart_products': cart.get_products(),
+            'quantities': cart.get_quantity(),
+            'totals': cart.cart_total(),
+            'shipping_info': request.POST,
+            'billing_form': PaymentForm(),
         }
 
-        # shipping_form = ShippingForm(request.POST or None)
-
-        if request.user.is_authenticated:
-            billing_form = PaymentForm()
-            context['shipping_info'] = request.POST
-            context['billing_form'] = billing_form
-            return render(request, 'payment/billing_info.html', context)
-        else:
-            billing_form = PaymentForm()
-            context['shipping_info'] = request.POST
-            context['billing_form'] = billing_form
-            return render(request, 'payment/billing_info.html', context)
-
-        # shipping_form = ShippingForm(request.POST or None)
-        # context['shipping_form'] = shipping_form
-        # return render(request, 'payment/billing_info.html', context)
+        return render(request, 'payment/billing_info.html', context)
 
     else:
         messages.success(request, 'Access Denied')
         return redirect('home')
-
-
 
 
 def payment_success(request):
