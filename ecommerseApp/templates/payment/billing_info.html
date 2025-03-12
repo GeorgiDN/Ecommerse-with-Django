@@ -32,17 +32,40 @@
                 </a>
             </div>
         </div>
+
         <div class="card mt-3">
             <div class="card-header">
-                Featured
+                Shipping Info
             </div>
             <div class="card-body">
-                    {{ shipping_info.shipping_full_name}}
+                <p><b>Name</b>: {{ shipping_info.shipping_full_name }}</p>
+                <p><b>Email</b>: {{ shipping_info.shipping_email }}</p>
+                <p><b>Address1</b>: {{ shipping_info.shipping_address1 }}</p>
+                <p><b>Address2</b>: {{ shipping_info.shipping_address2 }}</p>
+                <p><b>State</b>: {{ shipping_info.shipping_state }}</p>
+                <p><b>Zip</b>: {{ shipping_info.shipping_zip }}</p>
+                <p><b>City</b>: {{ shipping_info.shipping_city }}</p>
+                <p><b>Country</b>: {{ shipping_info.shipping_country }}</p>
 
-                <br>
-                    <a class="btn btn-info mt-3" href="#">Pay Now</a>
+                <a class="btn btn-secondary mt-1" href="{% url 'checkout' %}">Update Shipping</a>
             </div>
         </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="card mt-3">
+                <div class="card-header">
+                    Billing Info
+                </div>
+                <div class="card-body">
+                    {{ billing_form.as_p }}
+                </div>
+            </div>
+            
+            <div class="pay-now-button text-center mt-3">
+                <button type="submit" class="btn btn-info">Pay Now</button>
+            </div>
+        </form>
     </div>
 
 {% endblock %}
