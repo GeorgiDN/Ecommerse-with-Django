@@ -3,9 +3,10 @@
     {% load crispy_forms_tags %}
 
     <div class="container order-summary">
+        <h1>Processing order</h1>
         <div class="card mt-3">
             <div class="card-header">
-                <h4>Billing info</h4>
+                <h4>Processing order ...</h4>
             </div>
             <div class="card-body">
                 {% for product in cart_products %}
@@ -51,7 +52,7 @@
             </div>
         </div>
 
-        <form method="post" action="{% url 'process_order' %}">
+        <form method="post">
             {% csrf_token %}
             <div class="card mt-3">
                 <div class="card-header">
@@ -63,8 +64,10 @@
             </div>
 
             <div class="pay-now-button text-center mt-3">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-info">Pay Now</button>
+                <form method="post" action="{% url 'process_order' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-info">Pay Now</button>
+                </form>
             </div>
         </form>
     </div>

@@ -18,7 +18,7 @@ class ShippingAddress(models.Model):
         max_length=255,
         help_text='First and last name',
     )
-    shipping_email = models.EmailField(
+    shipping_email = models.CharField(
         max_length=255,
     )
     shipping_address1 = models.CharField(
@@ -53,7 +53,7 @@ class ShippingAddress(models.Model):
         return f'Shipping address {str(self.id)}'
 
 
-class Order(EmailMixin, models.Model):
+class Order(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -66,6 +66,9 @@ class Order(EmailMixin, models.Model):
         help_text='First and last name',
         null=True,
         blank=True,
+    )
+    email = models.CharField(
+        max_length=255,
     )
     shipping_address = models.TextField(
         max_length=15000,

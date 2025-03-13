@@ -60,7 +60,9 @@
 
                 </div>
             {% endfor %}
-            <h2 class="total-price">TOTAL SUM: {{ totals }}</h2>
+            <p class="total-price fs-3 mt-3 fw-bolder bg-info">
+                TOTAL SUM: <small><u>{{ totals|floatformat:2 }}</u></small> €
+            </p>
             <a class="btn btn-success fs-5 cart-checkout" href="{% url 'checkout' %}">Checkout</a>
         {% else %}
             <h3>The cart is empty</h3>
