@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 
 from ecommerseApp.cart.cart import Cart
 from ecommerseApp.payment.forms import ShippingForm, PaymentForm
-from ecommerseApp.payment.models import ShippingAddress, Order
+from ecommerseApp.payment.models import ShippingAddress, Order, OrderItem
 from django.contrib import messages
 
 
@@ -54,8 +54,8 @@ def billing_info(request):
 def process_order(request):
     if request.POST:
         cart = Cart(request)
-        cart_products = cart.get_products()
-        quantities = cart.get_quantity()
+        cart_products = cart.get_products
+        quantities = cart.get_quantity
         totals = cart.cart_total()
 
         payment_form = PaymentForm(request.POST or None)
@@ -75,21 +75,43 @@ def process_order(request):
 
         if request.user.is_authenticated:
             user = request.user
-            create_order = Order(user=user,
-                                 full_name=full_name,
-                                 email=email,
-                                 shipping_address=shipping_address,
-                                 amount_paid=amount_paid
-                                 )
+            create_order = Order(user=user, full_name=full_name, email=email, shipping_address=shipping_address,
+                                 amount_paid=amount_paid)
             create_order.save()
 
+            order_id = create_order.pk
+
+            for product in cart_products():
+                product_id = product.id
+                if product.is_on_sale:
+                    price = product.price
+                else:
+                    price = product.price
+
+                for key, value in quantities().items():
+                    if int(key) == product.id:
+                        create_order_item = OrderItem(order_id=order_id, product_id=product_id, user=user,
+                                                      quantity=value, price=price)
+                        create_order_item.save()
+
         else:
-            create_order = Order(full_name=full_name,
-                                 email=email,
-                                 shipping_address=shipping_address,
-                                 amount_paid=amount_paid
-                                 )
-            create_order.save()
+            create_order = Order(full_name=full_name, email=email, shipping_address=shipping_address,
+                                 amount_paid=amount_paid)
+
+            order_id = create_order.pk
+
+            for product in cart_products():
+                product_id = product.id
+                if product.is_on_sale:
+                    price = product.price
+                else:
+                    price = product.price
+
+                for key, value in quantities().items():
+                    if int(key) == product.id:
+                        create_order_item = OrderItem(order_id=order_id, product_id=product_id, quantity=value,
+                                                      price=price)
+                        create_order_item.save()
 
         messages.success(request, 'Ordered placed test')
         return redirect('home')
