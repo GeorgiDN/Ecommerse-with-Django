@@ -1,7 +1,6 @@
 {% extends 'store/base.html' %}
 {% block content %}
     <div class="container product-page mt-5 cart-summary">
-    <a class="btn btn-success fs-5  cart-checkout" href="{% url 'checkout' %}">Checkout</a>
         <section class="cart-header">
             <h4 class="product-header">Product</h4>
             <h4 class="product-quantity">Quantity</h4>
@@ -160,21 +159,4 @@
     
 {% endblock %}
 
-
-
-
-{#    <script>#}
-{#        let prices = document.querySelectorAll(".product-price");#}
-{#        let totalPrice = 0;#}
-{##}
-{#        prices.forEach(price => {#}
-{#            let priceValue = parseFloat(price.textContent.trim());#}
-{#            if (!isNaN(priceValue)) {#}
-{#                totalPrice += priceValue;#}
-{#            }#}
-{#        });#}
-{##}
-{#        let h2PriceEl = document.querySelector(".total-price");#}
-{#        h2PriceEl.textContent = `Grand Total: ${totalPrice.toFixed(2)}`;#}
-{#    </script>#}
 
