@@ -1,0 +1,41 @@
+{% extends 'store/base.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h3 class="mt-2 mb-2">Shipped items</h3>
+                <table class="table table-stripped table-hover table-bordered">
+                    <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Order</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Customer email</th>
+                        <th scope="col">Date Shipped</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in orders %}
+                        <tr>
+                            <td>{{ item.id }}</td>
+                            <td>${{ item.amount_paid }}</td>
+                            <td>{{ item.email }}</td>
+                            <td>{{ item.date_shipped }}</td>
+                            <td>
+                                <form>
+                                    {% csrf_token %}
+{#                                    <input type="hidden" name="shipping_status" value="false">#}
+{#                                    <input type="hidden" name="num" value={{ item.id }}>#}
+                                    <button class="btn btn-danger btn-sm">Mark UnShipped</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
