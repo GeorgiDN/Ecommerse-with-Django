@@ -83,6 +83,9 @@ class Order(models.Model):
         null=True,
         blank=True,
     )
+    shipped = models.BooleanField(
+        default=False,
+    )
 
     def __str__(self):
         return f'Order - #{str(self.id)}'
