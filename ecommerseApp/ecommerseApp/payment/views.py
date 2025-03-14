@@ -94,6 +94,11 @@ def process_order(request):
                                                       quantity=value, price=price)
                         create_order_item.save()
 
+            # Delete order
+            for key in list(request.session.keys()):
+                if key == 'session_key':
+                    del request.session[key]
+
         else:
             create_order = Order(full_name=full_name, email=email, shipping_address=shipping_address,
                                  amount_paid=amount_paid)
@@ -112,6 +117,11 @@ def process_order(request):
                         create_order_item = OrderItem(order_id=order_id, product_id=product_id, quantity=value,
                                                       price=price)
                         create_order_item.save()
+
+            # Delete order
+            for key in list(request.session.keys()):
+                if key == 'session_key':
+                    del request.session[key]
 
         messages.success(request, 'Ordered placed test')
         return redirect('home')
