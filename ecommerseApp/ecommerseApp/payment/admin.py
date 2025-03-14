@@ -27,8 +27,11 @@ class OrderItemInline(admin.StackedInline):
 
 class OrderAdmin(admin.ModelAdmin):
     model = Order
+    list_display = ['date_ordered', 'shipped']
+    list_filter = ['date_ordered', 'shipped']
+    search_fields = ['date_ordered', 'shipped']
     readonly_fields = ['date_ordered']
-    fields = ['user', 'full_name', 'email', 'shipping_address', 'amount_paid', 'date_ordered', 'shipped']
+    fields = ['user', 'full_name', 'email', 'shipping_address', 'amount_paid', 'date_ordered', 'shipped', 'date_shipped']
     inlines = [OrderItemInline]
 
 
