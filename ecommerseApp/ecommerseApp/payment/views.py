@@ -2,6 +2,7 @@ import datetime
 
 from django.shortcuts import render, redirect
 
+from ecommerseApp.accounts.models import Profile
 from ecommerseApp.cart.cart import Cart
 from ecommerseApp.payment.forms import ShippingForm, PaymentForm
 from ecommerseApp.payment.models import ShippingAddress, Order, OrderItem
@@ -84,6 +85,9 @@ def process_order(request):
             order_item_created = create_order_item(cart_products, quantities, order_id, user=user)
             order_item_created.save()
             delete_order(request)
+
+            current_user = Profile.objects.filter(user_id=request.user.id)
+            current_user.update(old_cart='')
 
         else:
             order_created = create_order(full_name, email, shipping_address, amount_paid)
