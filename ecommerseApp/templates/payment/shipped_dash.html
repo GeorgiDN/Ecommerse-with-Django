@@ -22,11 +22,11 @@
                             <td>{{ item.email }}</td>
                             <td>{{ item.date_shipped }}</td>
                             <td>
-                                <form>
+                                <form method="post">
                                     {% csrf_token %}
-{#                                    <input type="hidden" name="shipping_status" value="false">#}
-{#                                    <input type="hidden" name="num" value={{ item.id }}>#}
-                                    <button class="btn btn-danger btn-sm">Mark UnShipped</button>
+                                    <input type="hidden" name="shipping_status" value="false">
+                                    <input type="hidden" name="num" value={{ item.id }}>
+                                    <button type="submit" class="btn btn-danger btn-sm">Mark as Unshipped</button>
                                 </form>
                             </td>
                         </tr>

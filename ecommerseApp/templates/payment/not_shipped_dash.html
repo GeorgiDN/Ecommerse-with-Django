@@ -22,11 +22,11 @@
                             <td>{{ item.email }}</td>
                             <td>{{ item.date_ordered }}</td>
                             <td>
-                                <form>
+                                <form method="post">
                                     {% csrf_token %}
-{#                                    <input type="hidden" name="shipping_status" value="false">#}
-{#                                    <input type="hidden" name="num" value={{ item.id }}>#}
-                                    <button type="Submit" class="btn btn-danger btn-sm">Mark as Shipped</button>
+                                    <input type="hidden" name="shipping_status" value="true">
+                                    <input type="hidden" name="num" value={{ item.id }}>
+                                    <button type="submit" class="btn btn-info btn-sm">Mark as Shipped</button>
                                 </form>
                             </td>
                         </tr>

@@ -91,6 +91,9 @@ class Order(models.Model):
         null=True,
     )
 
+    class Meta:
+        ordering = ('date_ordered',)
+
     def __str__(self):
         return f'Order - #{str(self.id)}'
 

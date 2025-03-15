@@ -17,11 +17,27 @@
                             {% endif %}
                         </p>
                         <p>Full Name: {{ order.full_name }}</p>
-                        <p>Shipping Address: <pre>{{ order.shipping_address }}</pre></p>
+                        <p>Shipping Address:
+                        <pre>{{ order.shipping_address }}</pre>
+                        </p>
 
                         {% for item in items %}
                             {{ item.product }} - {{ item.quantity }} pcs. - ${{ item.price }}<br>
                         {% endfor %}
+
+                        {% if not order.shipped %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="shipping_status" value="true">
+                            <button type="submit" class="btn btn-success">Mark As Shipped</button>
+                        </form>
+                        {% else %}
+                          <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="shipping_status" value="false">
+                            <button type="submit" class="btn btn-danger">Mark As Not Shipped</button>
+                        </form>
+                        {% endif %}
 
                     </div>
                 </div>

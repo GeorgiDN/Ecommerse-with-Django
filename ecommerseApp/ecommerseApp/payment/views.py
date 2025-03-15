@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, redirect
 
 from ecommerseApp.cart.cart import Cart
@@ -101,6 +103,15 @@ def process_order(request):
 def shipped_dash(request):
     if request.user.is_authenticated and request.user.is_superuser:
         orders = Order.objects.filter(shipped=True)
+        if request.method == 'POST':
+            status = request.POST['shipping_status']
+            num = request.POST['num']
+            order = Order.objects.filter(pk=num)
+            order.update(shipped=False)
+
+            messages.success(request, 'Shipping status updated')
+            return redirect('shipped_dash')
+
         context = {
             'orders': orders
         }
@@ -113,6 +124,16 @@ def shipped_dash(request):
 def not_shipped_dash(request):
     if request.user.is_authenticated and request.user.is_superuser:
         orders = Order.objects.filter(shipped=False)
+        if request.method == 'POST':
+            status = request.POST['shipping_status']
+            num = request.POST['num']
+            order = Order.objects.filter(pk=num)
+            now = datetime.datetime.now()
+            order.update(shipped=True, date_shipped=now)
+
+            messages.success(request, 'Shipping status updated')
+            return redirect('not_shipped_dash')
+
         context = {
             'orders': orders
         }
@@ -126,6 +147,18 @@ def orders(request, pk):
     if request.user.is_authenticated and request.user.is_superuser:
         order = Order.objects.get(id=pk)
         items = OrderItem.objects.filter(order=pk)
+
+        if request.method == 'POST':
+            status = request.POST['shipping_status']
+            if status == 'true':
+                order = Order.objects.filter(id=pk)
+                now = datetime.datetime.now()
+                order.update(shipped=True, date_shipped=now)
+            else:
+                order = Order.objects.filter(id=pk)
+                order.update(shipped=False)
+            messages.success(request, 'Shipping status updated')
+            return redirect('home')
 
         context = {
             'order': order,
