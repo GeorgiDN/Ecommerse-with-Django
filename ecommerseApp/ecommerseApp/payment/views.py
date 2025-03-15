@@ -122,5 +122,18 @@ def not_shipped_dash(request):
         return redirect('home')
 
 
+def orders(request, pk):
+    if request.user.is_authenticated and request.user.is_superuser:
+        order = Order.objects.get(id=pk)
+        items = OrderItem.objects.filter(order=pk)
+
+        context = {
+            'order': order,
+            'items': items,
+        }
+
+        return render(request, 'payment/orders.html', context)
+
+
 def payment_success(request):
     return render(request, 'payment/payment_success.html')

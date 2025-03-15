@@ -1,0 +1,71 @@
+{% extends 'store/base.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card mt-4 mx-auto">
+                    <div class="card-header">
+                        Order {{ order.id }} - ${{ order.amount_paid }}
+                    </div>
+                    <div class="card-body">
+                        <p>Email: {{ order.email }}</p>
+                        <p>
+                            {% if order.date_shipped %}
+                                Date Shipped: {{ order.date_shipped }}
+                            {% else %}
+                                Date Ordered: {{ order.date_ordered }}
+                            {% endif %}
+                        </p>
+                        <p>Full Name: {{ order.full_name }}</p>
+                        <p>Shipping Address: <pre>{{ order.shipping_address }}</pre></p>
+
+                        {% for item in items %}
+                            {{ item.product }} - {{ item.quantity }} pcs. - ${{ item.price }}<br>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+{#{% extends 'store/base.html' %}#}
+{#{% block content %}#}
+{#    <div class="container">#}
+{#        <div class="row">#}
+{#            <div class="col-8">#}
+{#                <div class="card mt-4 mr-5">#}
+{##}
+{##}
+{#                    <div class="card-header">#}
+{#                        Order {{ order.id }} - ${{ order.amount_paid }}#}
+{#                    </div>#}
+{#                    <div class="card-body">#}
+{#                        <p>Email: {{ order.email }}</p>#}
+{#                        <p>#}
+{#                            {% if order.date_shipped %}#}
+{#                                Date Shipped: {{ order.date_shipped }}#}
+{#                            {% else %}#}
+{#                                Date Ordered: {{ order.date_ordered }}#}
+{#                            {% endif %}#}
+{#                        </p>#}
+{#                        <p>Full Name: {{ order.full_name }}</p>#}
+{#                        <p>Shipping Address: {{ order.shipping_address }}</p>#}
+{#                    </div>#}
+{#                </div>#}
+{##}
+{##}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock %}#}
