@@ -1,4 +1,6 @@
 from ecommerseApp.payment.models import Order, OrderItem
+from django.contrib import messages
+import datetime
 
 
 def create_order(full_name, email, shipping_address, amount_paid, user=None):
@@ -37,3 +39,15 @@ def delete_order(request):
     for key in list(request.session.keys()):
         if key == 'session_key':
             del request.session[key]
+
+
+def update_order_status(request, shipped):
+    if request.method == 'POST':
+        num = request.POST['num']
+        order = Order.objects.filter(pk=num)
+        if shipped:
+            order.update(shipped=False)
+        else:
+            now = datetime.datetime.now()
+            order.update(shipped=True, date_shipped=now)
+        messages.success(request, 'Shipping status updated')

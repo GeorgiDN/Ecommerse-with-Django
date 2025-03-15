@@ -8,17 +8,17 @@
                         Order {{ order.id }} - ${{ order.amount_paid }}
                     </div>
                     <div class="card-body">
-                        <p>Email: {{ order.email }}</p>
+                        <p><b>Email</b>: {{ order.email }}</p>
                         <p>
                             {% if order.date_shipped %}
-                                Date Shipped: {{ order.date_shipped }}
+                                <b>Date Shipped</b>: {{ order.date_shipped }}
                             {% else %}
-                                Date Ordered: {{ order.date_ordered }}
+                                <b>Date Ordered</b>: {{ order.date_ordered }}
                             {% endif %}
                         </p>
-                        <p>Full Name: {{ order.full_name }}</p>
-                        <p>Shipping Address:
-                        <pre>{{ order.shipping_address }}</pre>
+                        <p><b>Full Name</b>: {{ order.full_name }}</p>
+                        <p><b>Shipping Address</b>:
+                        <pre class="fs-5">{{ order.shipping_address }}</pre>
                         </p>
 
                         {% for item in items %}
@@ -29,13 +29,13 @@
                         <form method="post">
                             {% csrf_token %}
                             <input type="hidden" name="shipping_status" value="true">
-                            <button type="submit" class="btn btn-success">Mark As Shipped</button>
+                            <button type="submit" class="btn btn-success mt-3">Mark As Shipped</button>
                         </form>
                         {% else %}
                           <form method="post">
                             {% csrf_token %}
                             <input type="hidden" name="shipping_status" value="false">
-                            <button type="submit" class="btn btn-danger">Mark As Not Shipped</button>
+                            <button type="submit" class="btn btn-danger mt-3">Mark As Not Shipped</button>
                         </form>
                         {% endif %}
 
@@ -46,42 +46,3 @@
     </div>
 {% endblock %}
 
-
-
-
-
-
-
-
-
-
-{#{% extends 'store/base.html' %}#}
-{#{% block content %}#}
-{#    <div class="container">#}
-{#        <div class="row">#}
-{#            <div class="col-8">#}
-{#                <div class="card mt-4 mr-5">#}
-{##}
-{##}
-{#                    <div class="card-header">#}
-{#                        Order {{ order.id }} - ${{ order.amount_paid }}#}
-{#                    </div>#}
-{#                    <div class="card-body">#}
-{#                        <p>Email: {{ order.email }}</p>#}
-{#                        <p>#}
-{#                            {% if order.date_shipped %}#}
-{#                                Date Shipped: {{ order.date_shipped }}#}
-{#                            {% else %}#}
-{#                                Date Ordered: {{ order.date_ordered }}#}
-{#                            {% endif %}#}
-{#                        </p>#}
-{#                        <p>Full Name: {{ order.full_name }}</p>#}
-{#                        <p>Shipping Address: {{ order.shipping_address }}</p>#}
-{#                    </div>#}
-{#                </div>#}
-{##}
-{##}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#{% endblock %}#}

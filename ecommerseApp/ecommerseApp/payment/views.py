@@ -7,7 +7,7 @@ from ecommerseApp.cart.cart import Cart
 from ecommerseApp.payment.forms import ShippingForm, PaymentForm
 from ecommerseApp.payment.models import ShippingAddress, Order, OrderItem
 from django.contrib import messages
-from ecommerseApp.payment.utils import create_order, create_order_item, delete_order
+from ecommerseApp.payment.utils import create_order, create_order_item, delete_order, update_order_status
 
 
 def checkout(request):
@@ -108,16 +108,11 @@ def shipped_dash(request):
     if request.user.is_authenticated and request.user.is_superuser:
         orders = Order.objects.filter(shipped=True)
         if request.method == 'POST':
-            status = request.POST['shipping_status']
-            num = request.POST['num']
-            order = Order.objects.filter(pk=num)
-            order.update(shipped=False)
-
-            messages.success(request, 'Shipping status updated')
+            update_order_status(request, shipped=True)
             return redirect('shipped_dash')
 
         context = {
-            'orders': orders
+            'orders': orders,
         }
         return render(request, 'payment/shipped_dash.html', context)
     else:
@@ -129,17 +124,11 @@ def not_shipped_dash(request):
     if request.user.is_authenticated and request.user.is_superuser:
         orders = Order.objects.filter(shipped=False)
         if request.method == 'POST':
-            status = request.POST['shipping_status']
-            num = request.POST['num']
-            order = Order.objects.filter(pk=num)
-            now = datetime.datetime.now()
-            order.update(shipped=True, date_shipped=now)
-
-            messages.success(request, 'Shipping status updated')
+            update_order_status(request, shipped=False)
             return redirect('not_shipped_dash')
 
         context = {
-            'orders': orders
+            'orders': orders,
         }
         return render(request, 'payment/not_shipped_dash.html', context)
     else:
@@ -154,12 +143,11 @@ def orders(request, pk):
 
         if request.method == 'POST':
             status = request.POST['shipping_status']
+            order = Order.objects.filter(id=pk)
             if status == 'true':
-                order = Order.objects.filter(id=pk)
                 now = datetime.datetime.now()
                 order.update(shipped=True, date_shipped=now)
             else:
-                order = Order.objects.filter(id=pk)
                 order.update(shipped=False)
             messages.success(request, 'Shipping status updated')
             return redirect('home')
@@ -168,7 +156,6 @@ def orders(request, pk):
             'order': order,
             'items': items,
         }
-
         return render(request, 'payment/orders.html', context)
 
 
