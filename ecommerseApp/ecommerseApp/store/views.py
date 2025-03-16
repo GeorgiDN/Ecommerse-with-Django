@@ -17,6 +17,7 @@ class ProductListView(ListView):
     model = Product
     template_name = 'store/home.html'
     context_object_name = 'products'
+    paginate_by = 8
 
     def get(self, request, *args, **kwargs):
         """ Ensure search is always performed on home page """
