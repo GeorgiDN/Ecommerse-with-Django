@@ -33,7 +33,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+CSRF_TRUSTED_ORIGINS = []  ###
 
 # Application definition
 
@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'ecommerseApp.store.apps.StoreConfig',
     'ecommerseApp.accounts.apps.AccountsConfig',
     'ecommerseApp.common.apps.CommonConfig',
@@ -52,10 +51,12 @@ INSTALLED_APPS = [
     'ecommerseApp.payment.apps.PaymentConfig',
     'crispy_forms',
     'crispy_bootstrap4',
+    'whitenoise.runserver_nostatic', ###
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  ###
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'ecommerseApp.urls'
 
@@ -149,9 +151,15 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_URL = 'static/'
+
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"  ###
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' ###
+
 
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
@@ -173,3 +181,4 @@ EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+

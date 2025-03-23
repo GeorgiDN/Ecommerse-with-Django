@@ -1,0 +1,7 @@
+@import './base.css';
+@import './accounts.css';
+@import 'cart.css';
+@import 'product.css';
+@import 'layout.css';
+@import 'orders.css';
+@import 'payment.css';
