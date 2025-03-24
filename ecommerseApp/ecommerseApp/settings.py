@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+
+import dj_database_url
 from dotenv import load_dotenv
 
 from ecommerseApp.cart import cart
@@ -32,8 +34,8 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-CSRF_TRUSTED_ORIGINS = []  ###
+ALLOWED_HOSTS = ['ecommerse-with-django-production-9406.up.railway.app', 'https://ecommerse-with-django-production-9406.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://ecommerse-with-django-production-9406.up.railway.app']  ###
 
 # Application definition
 
@@ -101,17 +103,20 @@ WSGI_APPLICATION = 'ecommerseApp.wsgi.application'
 # }
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ["DB_NAME"],
-        'USER': os.environ["DB_USER_"],
-        'PASSWORD': os.environ["DB_PASSWORD_"],
-        'HOST': os.environ["DB_HOST"],
-        'PORT': os.environ["DB_PORT"],
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ["DB_NAME"],
+#         'USER': os.environ["DB_USER_"],
+#         'PASSWORD': os.environ["DB_PASSWORD_"],
+#         'HOST': os.environ["DB_HOST"],
+#         'PORT': os.environ["DB_PORT"],
+#     }
+# }
 
+DATABASES = {
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
