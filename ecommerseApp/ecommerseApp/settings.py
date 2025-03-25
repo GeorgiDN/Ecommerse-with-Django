@@ -104,24 +104,24 @@ WSGI_APPLICATION = 'ecommerseApp.wsgi.application'
 # }
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv("DB_NAME"),
-#         'USER': os.getenv("DB_USER_"),
-#         'PASSWORD': os.getenv("DB_PASSWORD_"),
-#         'HOST': os.getenv("DB_HOST"),
-#         'PORT': os.getenv("DB_PORT"),
-#     }
-# }
-
-
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-########################
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL, engine='django.db.backends.postgresql')
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USER_"),
+        'PASSWORD': os.getenv("DB_PASSWORD_"),
+        'HOST': os.getenv("DB_HOST"),
+        'PORT': os.getenv("DB_PORT"),
+    }
 }
+
+
+# DATABASE_URL = os.getenv('DATABASE_URL')
+#
+# ########################
+# DATABASES = {
+#     'default': dj_database_url.config(default=DATABASE_URL, engine='django.db.backends.postgresql')
+# }
 #####################
 
 
