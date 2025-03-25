@@ -139,9 +139,12 @@ else:
             'USER': os.getenv('DB_USER'),
             'PASSWORD': os.getenv('DB_PASSWORD'),
             'HOST': os.getenv('DB_HOST'),
-            'PORT': os.getenv('DB_PORT', '5432'),  # Default PostgreSQL port
+            'PORT': os.getenv('DB_PORT', '5432'),
         }
     }
+
+
+# web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn ecommerseApp.wsgi:application --bind 0.0.0.0:$PORT
 
 
 # DATABASE_URL = os.getenv('DATABASE_URL')
