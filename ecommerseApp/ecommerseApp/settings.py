@@ -103,7 +103,6 @@ WSGI_APPLICATION = 'ecommerseApp.wsgi.application'
 #     }
 # }
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
