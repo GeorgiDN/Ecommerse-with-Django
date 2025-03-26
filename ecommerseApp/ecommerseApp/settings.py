@@ -34,7 +34,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ecommerse-with-django-production-9406.up.railway.app', 'https://ecommerse-with-django-production-9406.up.railway.app']
+ALLOWED_HOSTS = ['ecommerse-with-django-production-9406.up.railway.app', 'https://ecommerse-with-django-production-9406.up.railway.app', '127.0.0.1']
 CSRF_TRUSTED_ORIGINS = ['https://ecommerse-with-django-production-9406.up.railway.app']  ###
 
 # Application definition
