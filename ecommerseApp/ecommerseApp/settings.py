@@ -92,7 +92,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecommerseApp.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
