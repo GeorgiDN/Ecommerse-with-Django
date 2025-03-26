@@ -102,19 +102,22 @@ WSGI_APPLICATION = 'ecommerseApp.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER_"),
-        'PASSWORD': os.getenv("DB_PASSWORD_"),
-        'HOST': os.getenv("DB_HOST"),
-        'PORT': os.getenv("DB_PORT"),
-        'OPTIONS': {
-            'sslmode': 'require',  # Enforce SSL if needed
-        }
-    }
-}
+# works
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv("DB_NAME"),
+#         'USER': os.getenv("DB_USER_"),
+#         'PASSWORD': os.getenv("DB_PASSWORD_"),
+#         'HOST': os.getenv("DB_HOST"),
+#         'PORT': os.getenv("DB_PORT"),
+#         'OPTIONS': {
+#             'sslmode': 'require',  # Enforce SSL if needed
+#         }
+#     }
+# }
+
+
 
 
 # DATABASE_URL = os.getenv('DATABASE_URL')
@@ -126,23 +129,23 @@ DATABASES = {
 #####################
 
 
-# DATABASE_URL = os.getenv('DATABASE_URL')
-#
-# if DATABASE_URL:
-#     DATABASES = {
-#         'default': dj_database_url.config(default=DATABASE_URL, engine='django.db.backends.postgresql')
-#     }
-# else:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql',
-#             'NAME': os.getenv('DB_NAME'),
-#             'USER': os.getenv('DB_USER_'),
-#             'PASSWORD': os.getenv('DB_PASSWORD_'),
-#             'HOST': os.getenv('DB_HOST'),
-#             'PORT': os.getenv('DB_PORT', '5432'),
-#         }
-#     }
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, engine='django.db.backends.postgresql')
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER_'),
+            'PASSWORD': os.getenv('DB_PASSWORD_'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT'),
+        }
+    }
 
 
 # web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn ecommerseApp.wsgi:application --bind 0.0.0.0:$PORT
