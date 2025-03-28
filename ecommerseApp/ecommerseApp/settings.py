@@ -119,7 +119,6 @@ WSGI_APPLICATION = 'ecommerseApp.wsgi.application'
 
 
 
-
 # DATABASE_URL = os.getenv('DATABASE_URL')
 #
 # ########################
