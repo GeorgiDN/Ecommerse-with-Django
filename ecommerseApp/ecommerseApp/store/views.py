@@ -17,7 +17,7 @@ class ProductListView(ListView):
     model = Product
     template_name = 'store/home.html'
     context_object_name = 'products'
-    # paginate_by = 8
+    paginate_by = 8
 
     def get(self, request, *args, **kwargs):
         """ Ensure search is always performed on home page """
@@ -58,11 +58,15 @@ class CategoryProductsView(ListView):
     model = Product
     template_name = 'store/category_products_list.html'
     context_object_name = 'products'
+    paginate_by = 8
+
+    def get_queryset(self):
+        category_id = self.kwargs.get('pk')
+        category = get_object_or_404(Category, pk=category_id)
+        return category.category_products.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         category_id = self.kwargs.get('pk')
-        category = get_object_or_404(Category, pk=category_id)
-        context['category'] = category
-        context['products'] = category.category_products.all()
+        context['category'] = get_object_or_404(Category, pk=category_id)
         return context

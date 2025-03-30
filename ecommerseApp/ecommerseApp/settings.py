@@ -34,8 +34,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ecommerse-with-django-production-9406.up.railway.app', 'https://ecommerse-with-django-production-9406.up.railway.app', '127.0.0.1']
-CSRF_TRUSTED_ORIGINS = ['https://ecommerse-with-django-production-9406.up.railway.app']  ###
+ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = []  ###
 
 # Application definition
 
@@ -58,7 +58,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -102,77 +101,17 @@ WSGI_APPLICATION = 'ecommerseApp.wsgi.application'
 #     }
 # }
 
-# works
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv("DB_NAME"),
-#         'USER': os.getenv("DB_USER_"),
-#         'PASSWORD': os.getenv("DB_PASSWORD_"),
-#         'HOST': os.getenv("DB_HOST"),
-#         'PORT': os.getenv("DB_PORT"),
-#         'OPTIONS': {
-#             'sslmode': 'require',  # Enforce SSL if needed
-#         }
-#     }
-# }
-
-
-
-# DATABASE_URL = os.getenv('DATABASE_URL')
-#
-# ########################
-# DATABASES = {
-#     'default': dj_database_url.config(default=DATABASE_URL, engine='django.db.backends.postgresql')
-# }
-#####################
-
-
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-# WORKS
-# if DATABASE_URL:
-#     DATABASES = {
-#         'default': dj_database_url.config(default=DATABASE_URL, engine='django.db.backends.postgresql')
-#     }
-# else:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql',
-#             'NAME': os.getenv('DB_NAME'),
-#             'USER': os.getenv('DB_USER_'),
-#             'PASSWORD': os.getenv('DB_PASSWORD_'),
-#             'HOST': os.getenv('DB_HOST'),
-#             'PORT': os.getenv('DB_PORT'),
-#         }
-#     }
-
-
-# web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn ecommerseApp.wsgi:application --bind 0.0.0.0:$PORT
-
-
-# DATABASE_URL = os.getenv('DATABASE_URL')
-#
-# if DATABASE_URL:
-#     DATABASES = {
-#         'default': dj_database_url.parse(DATABASE_URL)
-#     }
-# else:
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER_'),
-        'PASSWORD': os.getenv('DB_PASSWORD_'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-        "OPTIONS": {
-            "connect_timeout": 10, ###
-        },
+        'NAME': os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USER_"),
+        'PASSWORD': os.getenv("DB_PASSWORD_"),
+        'HOST': os.getenv("DB_HOST"),
+        'PORT': os.getenv("DB_PORT"),
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -191,8 +130,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
 
 
 # Internationalization
@@ -223,7 +160,6 @@ STATIC_ROOT = BASE_DIR / "staticfiles"  ###
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' ###
 
-
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 
@@ -240,7 +176,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
