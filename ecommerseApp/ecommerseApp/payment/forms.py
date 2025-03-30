@@ -1,6 +1,7 @@
 from django import forms
 from ecommerseApp.payment.models import ShippingAddress
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 
@@ -8,7 +9,7 @@ class ShippingForm(forms.ModelForm):
     class Meta:
         model = ShippingAddress
         fields = [
-            'shipping_full_name', 'shipping_email', 'shipping_address1', 'shipping_address2',
+            'shipping_full_name', 'shipping_email', 'shipping_phone', 'shipping_address1', 'shipping_address2',
             'shipping_state', 'shipping_zip', 'shipping_city', 'shipping_country'
         ]
 
@@ -20,7 +21,8 @@ class ShippingForm(forms.ModelForm):
             profile = user.user_profile
 
             self.fields['shipping_full_name'].initial = f"{profile.first_name} {profile.last_name}"
-            self.fields['shipping_email'].initial = user.email
+            self.fields['shipping_email'].initial = profile.email
+            self.fields['shipping_phone'].initial = profile.phone
             self.fields['shipping_address1'].initial = profile.address1
             self.fields['shipping_address2'].initial = profile.address2
             self.fields['shipping_state'].initial = profile.state
@@ -53,4 +55,3 @@ class PaymentForm(forms.Form):
         attrs={'class': 'form-control', 'placeholder': 'Billing Zipcode'}), required=True)
     card_country = forms.CharField(label="", widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Billing Country'}), required=True)
-

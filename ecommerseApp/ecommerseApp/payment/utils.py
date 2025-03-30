@@ -3,13 +3,13 @@ from django.contrib import messages
 import datetime
 
 
-def create_order(full_name, email, shipping_address, amount_paid, user=None):
+def create_order(full_name, email, phone, shipping_address, amount_paid, user=None):
     if user:
-        order_created = Order(user=user, full_name=full_name, email=email, shipping_address=shipping_address,
+        order_created = Order(user=user, full_name=full_name, email=email, phone=phone, shipping_address=shipping_address,
                               amount_paid=amount_paid)
         order_created.save()
     else:
-        order_created = Order(full_name=full_name, email=email, shipping_address=shipping_address,
+        order_created = Order(full_name=full_name, email=email, phone=phone, shipping_address=shipping_address,
                               amount_paid=amount_paid)
     return order_created
 

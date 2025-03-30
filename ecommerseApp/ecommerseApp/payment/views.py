@@ -67,6 +67,7 @@ def process_order(request):
 
         full_name = my_shipping['shipping_full_name']
         email = my_shipping['shipping_email']
+        phone = my_shipping['shipping_phone']
 
         shipping_address = (f"{my_shipping['shipping_address1']}\n"
                             f"{my_shipping['shipping_address2']}\n"
@@ -79,7 +80,7 @@ def process_order(request):
 
         if request.user.is_authenticated:
             user = request.user
-            order_created = create_order(full_name, email, shipping_address, amount_paid, user=user)
+            order_created = create_order(full_name, email, phone, shipping_address, amount_paid, user=user)
             order_created.save()
             order_id = order_created.pk
             order_item_created = create_order_item(cart_products, quantities, order_id, user=user)
@@ -90,7 +91,7 @@ def process_order(request):
             current_user.update(old_cart='')
 
         else:
-            order_created = create_order(full_name, email, shipping_address, amount_paid)
+            order_created = create_order(full_name, email, phone, shipping_address, amount_paid)
             order_created.save()
             order_id = order_created.pk
             order_item_created = create_order_item(cart_products, quantities, order_id)
@@ -106,7 +107,7 @@ def process_order(request):
 
 def shipped_dash(request):
     if request.user.is_authenticated and request.user.is_superuser:
-        orders = Order.objects.filter(shipped=True)
+        orders = Order.objects.filter(shipped=True).order_by('-pk')
         if request.method == 'POST':
             update_order_status(request, shipped=True)
             return redirect('shipped_dash')
@@ -122,7 +123,7 @@ def shipped_dash(request):
 
 def not_shipped_dash(request):
     if request.user.is_authenticated and request.user.is_superuser:
-        orders = Order.objects.filter(shipped=False)
+        orders = Order.objects.filter(shipped=False).order_by('-pk')
         if request.method == 'POST':
             update_order_status(request, shipped=False)
             return redirect('not_shipped_dash')

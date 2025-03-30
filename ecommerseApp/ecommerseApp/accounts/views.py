@@ -121,6 +121,7 @@ class ProfileView(LoginRequiredMixin, View):
 
             shipping.shipping_full_name = shipping.shipping_full_name or f'{profile.first_name} {profile.last_name}'
             shipping.shipping_email = shipping.shipping_email or request.user.email
+            shipping.shipping_phone = shipping.shipping_phone or profile.phone
             shipping.shipping_address1 = shipping.shipping_address1 or profile.address1
             shipping.shipping_address2 = shipping.shipping_address2 or profile.address2
             shipping.shipping_state = shipping.shipping_state or profile.state

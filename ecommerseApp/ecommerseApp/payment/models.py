@@ -1,6 +1,9 @@
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.contrib.auth import get_user_model
-from ecommerseApp.common.models_mixins import EmailMixin, QuantityMixin, PriceMixin
+
+from ecommerseApp.common.custom_validators import validate_phone_number
+from ecommerseApp.common.models_mixins import EmailMixin, QuantityMixin, PriceMixin, PhoneMixin
 from ecommerseApp.store.models import Product
 
 User = get_user_model()
@@ -20,6 +23,14 @@ class ShippingAddress(models.Model):
     )
     shipping_email = models.CharField(
         max_length=255,
+    )
+    shipping_phone = models.CharField(
+        max_length=20,
+        validators=[
+            MinLengthValidator(
+                4,
+                message='Phone number must be between 4 and 20 digits.'),
+            validate_phone_number],
     )
     shipping_address1 = models.CharField(
         max_length=255,
@@ -53,7 +64,7 @@ class ShippingAddress(models.Model):
         return f'Shipping address {str(self.id)}'
 
 
-class Order(models.Model):
+class Order(PhoneMixin, models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
