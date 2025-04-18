@@ -4,7 +4,8 @@
             {% if products %}
                 {% for product in products %}
                     <div class="col mb-5">
-                        <div class="card h-100">
+                    <a href="{% url 'product-detail' product.pk %}">
+                        <div class="card h-100 product-card">
                             <!-- Product image-->
                             <img class="card-img-top" src="{{ product.image.url }}" alt="..."/>
                             <!-- Product details-->
@@ -27,6 +28,7 @@
                                     <br>
                                 </div>
                             </div>
+                            </a>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center">

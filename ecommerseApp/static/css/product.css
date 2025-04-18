@@ -1,4 +1,4 @@
-.card .product-add {
+.product-card .product-add {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -6,6 +6,38 @@
     gap: 0.4rem;
 }
 
-.card .product-add .form-select {
+.product-card .product-add .form-select {
     max-width: 110px;
 }
+
+.product-card a{
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+
+.product-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.4s ease;
+}
+
+.product-card:hover {
+    border-color: lightseagreen;
+    transform: scale(1.05);
+}
+
+.card-img-top {
+    height: 250px;
+    object-fit: cover;
+}
+
+.card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
