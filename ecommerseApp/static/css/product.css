@@ -10,7 +10,7 @@
     max-width: 110px;
 }
 
-.product-card a{
+.product-card a {
     cursor: pointer;
     text-decoration: none;
     color: black;
@@ -40,4 +40,3 @@
     flex-direction: column;
     justify-content: space-between;
 }
-
