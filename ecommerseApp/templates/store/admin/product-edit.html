@@ -1,0 +1,14 @@
+{% extends 'store/base.html' %}
+{% block content %}
+    {% load crispy_forms_tags %}
+	<div class="container mt-2">
+    <fieldset class="form-group">
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-info mt-2">Edit</button>
+        </form>
+    </fieldset>
+    </div>
+
+{% endblock %}

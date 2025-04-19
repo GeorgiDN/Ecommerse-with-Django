@@ -1,0 +1,26 @@
+{% extends 'store/base.html' %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-2">
+                <h2 class="mt-2 mb-2">Shop options</h2>
+                <table class="table table-stripped table-hover table-bordered">
+                    <thead class="table-dark">
+                    <tr>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <a href="{% url 'admin-products' %}" class="btn btn-success">Products</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

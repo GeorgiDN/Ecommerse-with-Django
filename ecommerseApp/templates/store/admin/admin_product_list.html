@@ -1,0 +1,42 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Products</h2>
+    <table class="table table-bordered table-hover mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr class="clickable-row" data-href="{% url 'product-detail' product.pk %}">
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+                <td>${{ product.price }}</td>
+                <td>
+{#                    <a href="{% url 'edit-product' product.pk %}" class="btn btn-primary btn-sm">Edit</a>#}
+{#                    <a href="{% url 'delete-product' product.pk %}" class="btn btn-danger btn-sm">Delete</a>#}
+                    <!-- Optional checkboxes for bulk actions -->
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+    
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const rows = document.querySelectorAll(".clickable-row");
+        rows.forEach(row => {
+            row.addEventListener("click", () => {
+                window.location = row.dataset.href;
+            });
+        });
+    });
+</script>    
+
+{% endblock %}

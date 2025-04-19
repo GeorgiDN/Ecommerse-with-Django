@@ -10,6 +10,9 @@
                 <div class="col-md-4">
                     <div class="card-body">
                         <center>
+                            {% if user.is_staff %}
+                                <a href="{% url 'product-edit' object.pk %}" class="btn btn-info btn-sm">Edit</a>
+                            {% endif %}
                             <h1 class="card-title">{{ object.name }}</h1>
 
                             <p class="card-text fs-3"><b>Price: </b>
