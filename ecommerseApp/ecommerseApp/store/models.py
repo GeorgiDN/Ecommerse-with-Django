@@ -45,12 +45,10 @@ class Product(PriceMixin, models.Model):
     name = models.CharField(
         max_length=100,
     )
-    category = models.ForeignKey(
-        to=Category,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+    categories = models.ManyToManyField(
+        Category,
         related_name='category_products',
+        blank=True,
     )
     description = models.CharField(
         max_length=1500,
