@@ -5,13 +5,13 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from django.views.generic import ListView, DetailView, TemplateView, UpdateView
+from django.views.generic import ListView, DetailView, TemplateView, UpdateView, DeleteView
 
 from ecommerseApp.common.forms import SearchForm
 from ecommerseApp.store.forms import ProductEditForm
 from ecommerseApp.store.models import Product, Category
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 
 def about(request):
@@ -60,6 +60,16 @@ class ProductEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('product-detail', kwargs={'pk': self.get_object().pk})
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+
+class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Product
+    success_url = reverse_lazy('admin-products')
+    template_name = 'store/admin/product_confirm_delete.html'
+    success_message = 'Product was deleted.'
 
     def test_func(self):
         return self.request.user.is_staff
