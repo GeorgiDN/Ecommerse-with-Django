@@ -1,7 +1,8 @@
 {% extends 'store/base.html' %}
 {% block content %}
 <div class="container mt-4">
-    <h3>Manage Products - {{ products|length }} products in stock</h3>
+    <h3>All Products - ({{ products|length }})</h3>
+    <a href="{% url 'product-create' %}" class="btn btn-success">Add product</a>
     <table class="table table-bordered table-hover mt-3">
         <thead class="table-dark">
             <tr>
@@ -18,8 +19,6 @@
                 <td>{{ product.name }}</td>
                 <td>${{ product.price }}</td>
                 <td>
-{#                    <a href="{% url 'edit-product' product.pk %}" class="btn btn-primary btn-sm">Edit</a>#}
-{#                    <a href="{% url 'delete-product' product.pk %}" class="btn btn-danger btn-sm">Delete</a>#}
                     <!-- Optional checkboxes for bulk actions -->
                 </td>
             </tr>

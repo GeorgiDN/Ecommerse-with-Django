@@ -3,7 +3,7 @@ from django import forms
 from ecommerseApp.store.models import Product
 
 
-class ProductEditForm(ModelForm):
+class ProductBaseForm(ModelForm):
     class Meta:
         model = Product
         fields = '__all__'
@@ -15,3 +15,11 @@ class ProductEditForm(ModelForm):
                 'placeholder': 'Enter product description here...'
             }),
         }
+
+
+class ProductCreateForm(ProductBaseForm):
+    pass
+
+
+class ProductEditForm(ProductBaseForm):
+    pass
