@@ -2,12 +2,12 @@
 {% load static %}
 {% block content %}
     <div class="container product-page mt-5">
-        <div class="card mb-3" style="max-width: 1000px;">
+        <div class="card mb-3" style="max-width: 1400px;">
             <div class="row g-0">
-                <div class="col-md-8">
+                <div class="col-md-4">
                     <img src="{{ object.image.url }}" class="img-fluid rounded-start" alt="{{ object.name }}">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-8">
                     <div class="card-body">
                         <center>
                             {% if user.is_staff %}
@@ -26,10 +26,6 @@
                                     <small class="fs-3">{{ product.sale_price }} €</small>
                                 {% endif %}
                             </p>
-                            <p class="card-text">
-                                {{ object.description }}
-                            </p>
-
                             <div class="product-add">
                                 <p>Quantity</p>
                                 <select class="form-select" id="qty-cart">
@@ -38,12 +34,18 @@
                                     <option value="3">3</option>
                                     <option value="4">4</option>
                                     <option value="5">5</option>
+                                    <option value="8">8</option>
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
                                 </select>
 
                                 <button type="button" value="{{ product.id }}"
-                                        class="btn btn-secondary" id="add-cart">Add to Cart
+                                        class="btn btn-secondary mb-3" id="add-cart">Add to Cart
                                 </button>
-                                </div>
+                            </div>
+                            <p class="card-text">
+                                {{ object.description }}
+                            </p>
                         </center>
                     </div>
                 </div>
