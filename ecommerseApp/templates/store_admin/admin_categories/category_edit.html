@@ -1,0 +1,15 @@
+{% extends 'store/base.html' %}
+{% block content %}
+    {% load crispy_forms_tags %}
+	<div class="container mt-2">
+    <fieldset class="form-group">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-info mt-2">Edit</button>
+            <a class="btn btn-outline-secondary mt-2" href="{% url 'category-detail' object.pk %}">Cancel</a>
+        </form>
+    </fieldset>
+    </div>
+
+{% endblock %}

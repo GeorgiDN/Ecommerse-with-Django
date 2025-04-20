@@ -14,7 +14,9 @@ urlpatterns = [
     path('products-export-csv/', admin_views.products_export_csv, name='products-export-csv'),
 
     path('admin-categories/', admin_views.AdminCategoryListView.as_view(), name='admin-categories'),
-
+    path('category-create/', admin_views.CategoryCreateView.as_view(), name='category-create'),
+    path('category-edit/<int:pk>/', admin_views.CategoryEditView.as_view(), name='category-edit'),
+    path('category-delete/<int:pk>/', admin_views.CategoryDeleteView.as_view(), name='category-delete'),
 ]
 
 if settings.DEBUG:
