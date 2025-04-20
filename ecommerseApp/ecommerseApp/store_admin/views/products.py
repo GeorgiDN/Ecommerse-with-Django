@@ -31,16 +31,8 @@ class ProductDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
     success_message = 'Product was deleted.'
 
 
-class ShopOptionsView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
-    template_name = 'store_admin/shop-options.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['products'] = Product.objects.all()
-        return context
-
-
 class AdminProductListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
     model = Product
     template_name = 'store_admin/admin_products/admin_product_list.html'
     context_object_name = 'products'
+    ordering = ('name',)

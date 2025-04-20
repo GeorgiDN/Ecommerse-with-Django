@@ -1,0 +1,41 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3>All Categories - ({{ categories|length }})</h3>
+{#    <a href="{% url 'product-create' %}" class="btn btn-success">Add product</a>#}
+{#    <a href="{% url 'products-export-csv' %}" class="btn btn-info">Export products</a>#}
+    <table class="table table-bordered table-hover mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for category in categories %}
+            <tr class="clickable-row" data-href="{% url 'category-detail' category.pk %}">
+{#            <tr class="clickable-row" data-href="#">#}
+                <td>{{ category.id }}</td>
+                <td>{{ category.name }}</td>
+                <td>
+                    <!-- Optional checkboxes for bulk actions -->
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const rows = document.querySelectorAll(".clickable-row");
+        rows.forEach(row => {
+            row.addEventListener("click", () => {
+                window.location = row.dataset.href;
+            });
+        });
+    });
+</script>
+
+{% endblock %}

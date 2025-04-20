@@ -1,0 +1,29 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container product-page mt-5">
+        <div class="card mb-3" style="max-width: 1400px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{ object.image.url }}" class="img-fluid rounded-start" alt="{{ object.name }}">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <center>
+{#                            {% if user.is_staff %}#}
+{#                                <a href="{% url 'category-edit' object.pk %}" class="btn btn-info btn-sm">Edit</a>#}
+{#                                <a href="{% url 'category-delete' object.pk %}" class="btn btn-danger btn-sm">Delete</a>#}
+{#                            {% endif %}#}
+                            <h1 class="card-title">{{ object.name }}</h1>
+
+                            <p class="card-text">
+                                {{ object.description }}
+                            </p>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

@@ -53,6 +53,10 @@ class CategoryListView(ListView):
     context_object_name = 'categories'
 
 
+class CategoryDetailView(DetailView):
+    model = Category
+
+
 class CategoryProductsView(ListView):
     model = Product
     template_name = 'store/category_products_list.html'

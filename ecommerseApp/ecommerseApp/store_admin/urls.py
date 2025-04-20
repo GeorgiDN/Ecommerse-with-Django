@@ -12,6 +12,9 @@ urlpatterns = [
     path('shop-options', admin_views.ShopOptionsView.as_view(), name='shop-options'),
 
     path('products-export-csv/', admin_views.products_export_csv, name='products-export-csv'),
+
+    path('admin-categories/', admin_views.AdminCategoryListView.as_view(), name='admin-categories'),
+
 ]
 
 if settings.DEBUG:
