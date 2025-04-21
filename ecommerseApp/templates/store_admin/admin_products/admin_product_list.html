@@ -49,12 +49,26 @@
                     <option value="">-- Select Action --</option>
                     <option value="activate">Activate</option>
                     <option value="deactivate">Deactivate</option>
+                    <option value="is_available">Available</option>
+                    <option value="not_available">Not available</option>
+                    <option value="add_to_category">Add to Category</option>
+                    <option value="remove_from_category">Remove from Category</option>
                     <option value="delete">Delete</option>
                 </select>
                 <button type="submit" class="btn btn-primary">Apply</button>
             </div>
-        </form>
 
+            <!--Bulk edit set to category -->
+            <div id="category-select-container" style="display: none;" class="mt-2">
+                <select name="category_id" class="form-select">
+                    <option value="">-- Select Category --</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    
         <!--Bulk delete confirm form -->
         <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel"
              aria-hidden="true">
@@ -107,10 +121,10 @@
 
             if (action === 'delete') {
                 e.preventDefault();
-                
+
                 const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
                 deleteModal.show();
-                
+
                 document.getElementById('confirmDeleteBtn').onclick = function () {
                     deleteModal.hide();
                     e.target.submit();
@@ -118,5 +132,22 @@
             }
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const actionSelect = document.querySelector('select[name="action"]');
+            const categorySelectContainer = document.getElementById('category-select-container');
+
+            actionSelect.addEventListener('change', function () {
+                const selected = this.value;
+                if (selected === 'add_to_category' || selected === 'remove_from_category') {
+                    categorySelectContainer.style.display = 'block';
+                } else {
+                    categorySelectContainer.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
 
 {% endblock %}
