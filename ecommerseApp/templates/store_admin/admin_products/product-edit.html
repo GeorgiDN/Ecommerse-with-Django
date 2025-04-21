@@ -1,15 +1,49 @@
 {% extends 'store/base.html' %}
 {% block content %}
     {% load crispy_forms_tags %}
-	<div class="container mt-2">
-    <fieldset class="form-group">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button type="submit" class="btn btn-info mt-2">Edit</button>
-            <a class="btn btn-outline-secondary mt-2" href="{% url 'product-detail' object.pk %}">Cancel</a>
-        </form>
-    </fieldset>
+    <div class="container mt-2">
+        <fieldset class="form-group">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.name|as_crispy_field }}
+                {{ form.description|as_crispy_field }}
+                {{ form.image|as_crispy_field }}
+                {{ form.price|as_crispy_field }}
+                {{ form.is_on_sale|as_crispy_field }}
+                {{ form.sale_price|as_crispy_field }}
+                {{ form.categories|as_crispy_field }}
+                
+                <button type="submit" class="btn btn-info mt-2">Edit</button>
+                <a class="btn btn-outline-secondary mt-2" href="{% url 'category-detail' object.pk %}">Cancel</a>
+            </form>
+        </fieldset>
     </div>
 
+    <script>
+        $(document).ready(function () {
+            $('#id_categories').select2({
+                placeholder: 'Select categories',
+                width: '100%',
+            });
+        });
+    </script>
+
 {% endblock %}
+
+
+
+{#{% extends 'store/base.html' %}#}
+{#{% block content %}#}
+{#    {% load crispy_forms_tags %}#}
+{#	<div class="container mt-2">#}
+{#    <fieldset class="form-group">#}
+{#        <form method="post" enctype="multipart/form-data">#}
+{#            {% csrf_token %}#}
+{#            {{ form|crispy }}#}
+{#            <button type="submit" class="btn btn-info mt-2">Edit</button>#}
+{#            <a class="btn btn-outline-secondary mt-2" href="{% url 'product-detail' object.pk %}">Cancel</a>#}
+{#        </form>#}
+{#    </fieldset>#}
+{#    </div>#}
+{##}
+{#{% endblock %}#}

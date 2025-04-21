@@ -21,8 +21,40 @@ class ProductCreateForm(ProductBaseForm):
     pass
 
 
-class ProductEditForm(ProductBaseForm):
-    pass
+class ProductEditForm(forms.ModelForm):
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-control',
+            'size': 10
+        })
+    )
+
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'image', 'price', 'is_on_sale', 'sale_price', 'categories']
+        widgets = {
+            'description': forms.Textarea(attrs={
+                'rows': 5,
+                'cols': 60,
+                'class': 'form-control',
+                'placeholder': 'Enter product description here...'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['categories'].initial = self.instance.categories.all()
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if commit:
+            instance.save()
+            self.save_m2m()
+            instance.categories.set(self.cleaned_data['categories'])
+        return instance
 
 
 class CategoryBaseForm(ModelForm):
