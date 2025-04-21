@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.urls import reverse, reverse_lazy
 from ecommerseApp.store.models import Product
 from ecommerseApp.store_admin.forms import ProductEditForm, ProductCreateForm
@@ -36,3 +37,15 @@ class AdminProductListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
     template_name = 'store_admin/admin_products/admin_product_list.html'
     context_object_name = 'products'
     ordering = ('name',)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(Q(name__icontains=query))
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('q', '')
+        return context

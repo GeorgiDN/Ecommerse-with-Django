@@ -1,42 +1,49 @@
 {% extends 'store/base.html' %}
 {% block content %}
-<div class="container mt-4">
-    <h3>All Products - ({{ products|length }})</h3>
-    <a href="{% url 'product-create' %}" class="btn btn-success">Add product</a>
-    <a href="{% url 'products-export-csv' %}" class="btn btn-info">Export products</a>
-    <table class="table table-bordered table-hover mt-3">
-        <thead class="table-dark">
+    <div class="container mt-4">
+        <h3>All Products - ({{ products|length }})</h3>
+        <form method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search products..."
+                       value="{{ search_query }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+        <a href="{% url 'product-create' %}" class="btn btn-success">Add product</a>
+        <a href="{% url 'products-export-csv' %}" class="btn btn-info">Export products</a>
+        <table class="table table-bordered table-hover mt-3">
+            <thead class="table-dark">
             <tr>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Price</th>
                 <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for product in products %}
-            <tr class="clickable-row" data-href="{% url 'product-detail' product.pk %}">
-                <td>{{ product.id }}</td>
-                <td>{{ product.name }}</td>
-                <td>${{ product.price }}</td>
-                <td>
-                    <!-- Optional checkboxes for bulk actions -->
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr class="clickable-row" data-href="{% url 'product-detail' product.pk %}">
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>${{ product.price }}</td>
+                    <td>
+                        <!-- Optional checkboxes for bulk actions -->
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const rows = document.querySelectorAll(".clickable-row");
-        rows.forEach(row => {
-            row.addEventListener("click", () => {
-                window.location = row.dataset.href;
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const rows = document.querySelectorAll(".clickable-row");
+            rows.forEach(row => {
+                row.addEventListener("click", () => {
+                    window.location = row.dataset.href;
+                });
             });
         });
-    });
-</script>
+    </script>
 
 {% endblock %}

@@ -1,41 +1,47 @@
 {% extends 'store/base.html' %}
 {% block content %}
-<div class="container mt-4">
-    <h3>All Categories - ({{ categories|length }})</h3>
-    <a href="{% url 'category-create' %}" class="btn btn-success">Create category</a>
-{#    <a href="{% url 'products-export-csv' %}" class="btn btn-info">Export products</a>#}
-    <table class="table table-bordered table-hover mt-3">
-        <thead class="table-dark">
+    <div class="container mt-4">
+        <h3>All Categories - ({{ categories|length }})</h3>
+        <form method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search for category..."
+                       value="{{ search_query }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+        <a href="{% url 'category-create' %}" class="btn btn-success">Create category</a>
+        <table class="table table-bordered table-hover mt-3">
+            <thead class="table-dark">
             <tr>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for category in categories %}
-            <tr class="clickable-row" data-href="{% url 'category-detail' category.pk %}">
-{#            <tr class="clickable-row" data-href="#">#}
-                <td>{{ category.id }}</td>
-                <td>{{ category.name }}</td>
-                <td>
-                    <!-- Optional checkboxes for bulk actions -->
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+            {% for category in categories %}
+                <tr class="clickable-row" data-href="{% url 'category-detail' category.pk %}">
+                    {#            <tr class="clickable-row" data-href="#">#}
+                    <td>{{ category.id }}</td>
+                    <td>{{ category.name }}</td>
+                    <td>
+                        <!-- Optional checkboxes for bulk actions -->
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const rows = document.querySelectorAll(".clickable-row");
-        rows.forEach(row => {
-            row.addEventListener("click", () => {
-                window.location = row.dataset.href;
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const rows = document.querySelectorAll(".clickable-row");
+            rows.forEach(row => {
+                row.addEventListener("click", () => {
+                    window.location = row.dataset.href;
+                });
             });
         });
-    });
-</script>
+    </script>
 
 {% endblock %}
