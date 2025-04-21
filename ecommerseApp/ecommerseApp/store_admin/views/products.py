@@ -1,3 +1,4 @@
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
@@ -5,6 +6,8 @@ from ecommerseApp.store.models import Product
 from ecommerseApp.store_admin.forms import ProductEditForm, ProductCreateForm
 from ecommerseApp.store_admin.models_mixins import StaffRequiredMixin
 from django.views.generic import ListView, TemplateView, UpdateView, DeleteView, CreateView
+from django.contrib import messages
+from django.shortcuts import redirect
 
 
 class ProductCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
@@ -54,3 +57,31 @@ class AdminProductListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['search_query'] = self.request.GET.get('q', '')
         return context
+
+
+@staff_member_required
+def bulk_edit_products(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        selected_ids = request.POST.getlist('selected_products')
+
+        if not selected_ids:
+            messages.warning(request, "No products selected.")
+            return redirect('admin-products')
+
+        products = Product.objects.filter(id__in=selected_ids)
+
+        if action == 'activate':
+            products.update(is_active=True)
+            messages.success(request, f"{products.count()} product(s) activated.")
+        elif action == 'deactivate':
+            products.update(is_active=False)
+            messages.success(request, f"{products.count()} product(s) deactivated.")
+        elif action == 'delete':
+            count = products.count()
+            products.delete()
+            messages.success(request, f"{count} product(s) deleted.")
+        else:
+            messages.warning(request, "No valid action selected.")
+
+    return redirect('admin-products')
