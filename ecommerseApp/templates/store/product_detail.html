@@ -16,15 +16,20 @@
                             {% endif %}
                             <h1 class="card-title">{{ object.name }}</h1>
 
-                            <p class="card-text fs-3"><b>Price: </b>
+                            <p class="card-text fs-4"><b>Price: </b>
                                 {% if not product.is_on_sale %}
                                     {{ product.price }} €
                                 {% else %}
 
-                                    <s class="fs-3">{{ product.price }}</s>
+                                    <s class="fs-4">{{ product.price }}</s>
                                     <br>
-                                    <small class="fs-3">{{ product.sale_price }} €</small>
+                                    <small class="fs-4 text-danger">{{ product.sale_price }} €</small>
                                 {% endif %}
+                            </p>
+                            <p>
+                                <span class="card-text fs-5"><b>Model: </b></span>{{ product.model }}<br>
+                               <span class="card-text fs-5"><b>Code: </b></span>{{ product.sku }}<br>
+                               <span class="card-text fs-5"><b>In stock: </b></span>{{ product.is_available }}<br>
                             </p>
                             <div class="product-add">
                                 <p>Quantity</p>

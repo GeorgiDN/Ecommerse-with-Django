@@ -17,7 +17,9 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Price</th>
-                <th>Actions</th>
+                <th>Model</th>
+                <th>Code</th>
+                <th>Status</th>
             </tr>
             </thead>
             <tbody>
@@ -26,9 +28,9 @@
                     <td>{{ product.id }}</td>
                     <td>{{ product.name }}</td>
                     <td>${{ product.price }}</td>
-                    <td>
-                        <!-- Optional checkboxes for bulk actions -->
-                    </td>
+                    <td>{{ product.model }}</td>
+                    <td>{{ product.sku }}</td>
+                    <td>{{ product.is_active }}</td>
                 </tr>
             {% endfor %}
             </tbody>

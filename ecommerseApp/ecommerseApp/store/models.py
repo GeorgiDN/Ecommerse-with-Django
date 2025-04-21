@@ -71,6 +71,40 @@ class Product(PriceMixin, models.Model):
         null=True,
         blank=True
     )
+    sku = models.CharField(
+        max_length=50,
+        unique=True,
+        blank=True,
+        null=True,
+        help_text="Stock Keeping Unit (unique)"
+    )
+    model = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Model number or reference"
+    )
+    is_active = models.BooleanField(
+        default=True,
+    )
+    is_available = models.BooleanField(
+        default=True,
+    )
+    quantity = models.PositiveIntegerField(
+        default=0,
+        null=True,
+        blank=True
+    )
+    track_quantity = models.BooleanField(
+        default=True,
+    )
+    weight = models.DecimalField(
+        default=0,
+        decimal_places=3,
+        max_digits=12,
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return f'{self.name}'

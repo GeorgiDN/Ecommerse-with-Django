@@ -33,7 +33,10 @@ class ProductEditForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ['name', 'description', 'image', 'price', 'is_on_sale', 'sale_price', 'categories']
+        fields = ['name', 'description', 'image', 'price', 'is_on_sale', 'sale_price', 'sku', 'model',
+                  'is_active', 'is_available', 'quantity', 'track_quantity', 'weight', 'categories'
+                  ]
+
         widgets = {
             'description': forms.Textarea(attrs={
                 'rows': 5,

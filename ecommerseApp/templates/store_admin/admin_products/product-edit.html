@@ -11,8 +11,14 @@
                 {{ form.price|as_crispy_field }}
                 {{ form.is_on_sale|as_crispy_field }}
                 {{ form.sale_price|as_crispy_field }}
+                {{ form.sku|as_crispy_field }}
+                {{ form.model|as_crispy_field }}
+                {{ form.is_active|as_crispy_field }}
+                {{ form.is_available|as_crispy_field }}
+                {{ form.quantity|as_crispy_field }}
+                {{ form.track_quantity|as_crispy_field }}
+                {{ form.weight|as_crispy_field }}
                 {{ form.categories|as_crispy_field }}
-                
                 <button type="submit" class="btn btn-info mt-2">Edit</button>
                 <a class="btn btn-outline-secondary mt-2" href="{% url 'category-detail' object.pk %}">Cancel</a>
             </form>
