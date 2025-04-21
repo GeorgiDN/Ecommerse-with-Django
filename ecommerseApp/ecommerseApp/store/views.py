@@ -37,7 +37,9 @@ class ProductListView(ListView):
         if search_term:
             queryset = queryset.filter(
                 Q(name__icontains=search_term) |
-                Q(description__icontains=search_term)
+                Q(description__icontains=search_term) |
+                Q(model__icontains=search_term) |
+                Q(sku__icontains=search_term)
             )
 
         return queryset

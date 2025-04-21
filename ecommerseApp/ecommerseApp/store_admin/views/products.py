@@ -42,7 +42,12 @@ class AdminProductListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
         queryset = super().get_queryset()
         query = self.request.GET.get('q')
         if query:
-            queryset = queryset.filter(Q(name__icontains=query))
+            queryset = queryset.filter(
+                Q(name__icontains=query) |
+                Q(description=query) |
+                Q(sku__icontains=query) |
+                Q(model__icontains=query)
+            )
         return queryset
 
     def get_context_data(self, **kwargs):
