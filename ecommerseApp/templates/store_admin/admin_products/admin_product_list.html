@@ -1,6 +1,6 @@
 {% extends 'store/base.html' %}
 {% block content %}
-    <div class="container mt-4">
+    <div class="container mt-4 admin-view ml-1">
         <h3>All Products - ({{ products|length }})</h3>
         <form method="get" class="mb-3">
             <div class="input-group">
@@ -14,6 +14,9 @@
         <table class="table table-bordered table-hover mt-3">
             <thead class="table-dark">
             <tr>
+                <th>
+                    <input type="checkbox" id="select-all">
+                </th>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Price</th>
@@ -25,6 +28,10 @@
             <tbody>
             {% for product in products %}
                 <tr class="clickable-row" data-href="{% url 'product-detail' product.pk %}">
+                    <td>
+                        <input type="checkbox" name="selected_products" value="{{ product.id }}"
+                               class="product-checkbox">
+                    </td>
                     <td>{{ product.id }}</td>
                     <td>{{ product.name }}</td>
                     <td>${{ product.price }}</td>
@@ -36,16 +43,29 @@
             </tbody>
         </table>
     </div>
-
+    
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // Handle clickable rows
             const rows = document.querySelectorAll(".clickable-row");
             rows.forEach(row => {
-                row.addEventListener("click", () => {
-                    window.location = row.dataset.href;
+                row.addEventListener("click", (e) => {
+                    if (e.target.tagName.toLowerCase() !== 'input') {
+                        window.location = row.dataset.href;
+                    }
+                });
+            });
+
+            const selectAll = document.getElementById("select-all");
+            const checkboxes = document.querySelectorAll(".product-checkbox");
+
+            selectAll.addEventListener("change", function () {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
                 });
             });
         });
     </script>
+
 
 {% endblock %}
