@@ -1,6 +1,7 @@
 from django.core.validators import MinLengthValidator
 from django.db import models
 from PIL import Image
+from django.utils.text import slugify
 
 from ecommerseApp.accounts.models import Profile
 from ecommerseApp.common.custom_validators import validate_phone_number, validate_lettres
@@ -42,15 +43,25 @@ class Customer(FirstNameMixin, LastNameMixin, PhoneMixin, EmailMixin, models.Mod
 
 
 class Product(PriceMixin, models.Model):
-    name = models.CharField(
-        max_length=100,
-    )
-    categories = models.ManyToManyField(
-        Category,
-        related_name='category_products',
+    url_slug = models.SlugField(
+        unique=True,
         blank=True,
+        null=True,
+    )
+    name = models.CharField(
+        max_length=200,
     )
     description = models.CharField(
+        max_length=1500,
+        blank=True,
+        null=True,
+    )
+    meta_title = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+    )
+    meta_description = models.CharField(
         max_length=1500,
         blank=True,
         null=True,
@@ -60,6 +71,11 @@ class Product(PriceMixin, models.Model):
         blank=True,
         null=True,
         default='default.png',
+    )
+    categories = models.ManyToManyField(
+        Category,
+        related_name='category_products',
+        blank=True,
     )
     is_on_sale = models.BooleanField(
         default=False,
@@ -118,6 +134,15 @@ class Product(PriceMixin, models.Model):
     #         output_size = (300, 300)
     #         img.thumbnail(output_size)
     #         img.save(self.image.path)
+
+    def save(self, *args, **kwargs):
+        if not self.url_slug:
+            self.url_slug = slugify(self.name)
+        if not self.meta_title:
+            self.meta_title = self.name
+        if not self.meta_description:
+            self.meta_description = self.description
+        super().save(*args, **kwargs)
 
 
 class Order(PhoneMixin, QuantityMixin, models.Model):
