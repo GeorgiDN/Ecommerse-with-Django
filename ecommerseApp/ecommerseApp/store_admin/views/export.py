@@ -16,7 +16,27 @@ def products_export_csv(request):
 
     writer = csv.writer(response)
     writer.writerow(
-        ['id', 'name', 'price', 'description', 'image', 'category_names', 'category_ids', 'is_on_sale', 'sale_price'])
+        ['id',
+         'url_slug',
+         'name',
+         'description',
+         'meta_title',
+         'meta_description',
+         'model',
+         'sku',
+         'price',
+         'is_on_sale',
+         'sale_price',
+         'image',
+         'is_available',
+         'is_active',
+         'track_quantity',
+         'quantity',
+         'weight',
+         'category_names',
+         'category_ids',
+         ]
+    )
 
     products = Product.objects.all()
     for product in products:
@@ -24,14 +44,24 @@ def products_export_csv(request):
         category_ids = ', '.join([str(cat.id) for cat in product.categories.all()])
         writer.writerow([
             product.id,
+            product.url_slug,
             product.name,
-            product.price,
             product.description,
-            product.image.url if product.image else '',
-            category_names,
-            category_ids,
+            product.meta_title,
+            product.meta_description,
+            product.model,
+            product.sku,
+            product.price,
             product.is_on_sale,
             product.sale_price if product.sale_price else 0,
+            product.image.url if product.image else '',
+            product.is_available,
+            product.is_active,
+            product.track_quantity,
+            product.quantity,
+            product.weight,
+            category_names,
+            category_ids,
         ])
 
     return response
