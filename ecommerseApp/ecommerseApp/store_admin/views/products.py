@@ -8,6 +8,7 @@ from ecommerseApp.store_admin.models_mixins import StaffRequiredMixin
 from django.views.generic import ListView, TemplateView, UpdateView, DeleteView, CreateView
 from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
+from ecommerseApp.store_admin.bulk_options import ACTION_HANDLERS
 
 
 class ProductCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
@@ -72,40 +73,9 @@ def bulk_edit_products(request):
 
         products = Product.objects.filter(id__in=selected_ids)
 
-        if action == 'activate':
-            products.update(is_active=True)
-            messages.success(request, f"{products.count()} product(s) activated.")
-        elif action == 'deactivate':
-            products.update(is_active=False)
-            messages.success(request, f"{products.count()} product(s) deactivated.")
-        elif action == 'delete':
-            count = products.count()
-            products.delete()
-            messages.success(request, f"{count} product(s) deleted.")
-        elif action == 'is_available':
-            products.update(is_available=True)
-            messages.success(request, f"{products.count()} product(s) are available.")
-        elif action == 'not_available':
-            products.update(is_available=False)
-            messages.success(request, f"{products.count()} product(s) are not available.")
-        elif action == 'add_to_category':
-            category_id = request.POST.get('category_id')
-            if category_id:
-                category = get_object_or_404(Category, id=category_id)
-                updated_count = 0
-                for product in Product.objects.filter(id__in=selected_ids):
-                    product.categories.add(category)
-                    updated_count += 1
-                messages.success(request, f"{updated_count} products added to category '{category.name}'.")
-        elif action == 'remove_from_category':
-            category_id = request.POST.get('category_id')
-            if category_id:
-                category = get_object_or_404(Category, id=category_id)
-                updated_count = 0
-                for product in Product.objects.filter(id__in=selected_ids):
-                    product.categories.remove(category)
-                    updated_count += 1
-                messages.success(request, f"{updated_count} products removed from category '{category.name}'.")
+        handler = ACTION_HANDLERS.get(action)
+        if handler:
+            handler(request, products)
         else:
             messages.warning(request, "No valid action selected.")
 
