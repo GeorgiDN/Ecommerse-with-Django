@@ -5,7 +5,7 @@ from django.urls import reverse, reverse_lazy
 from ecommerseApp.store.models import Product, Category
 from ecommerseApp.store_admin.forms import ProductEditForm, ProductCreateForm
 from ecommerseApp.store_admin.models_mixins import StaffRequiredMixin
-from django.views.generic import ListView, TemplateView, UpdateView, DeleteView, CreateView
+from django.views.generic import ListView, TemplateView, UpdateView, DeleteView, CreateView, DetailView
 from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
 from ecommerseApp.store_admin.bulk_options import ACTION_HANDLERS
@@ -18,6 +18,11 @@ class ProductCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('admin-products')
+
+
+class AdminProductDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
+    model = Product
+    template_name = 'store_admin/admin_products/admin_product_detail.html'
 
 
 class ProductEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):

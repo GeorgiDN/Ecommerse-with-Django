@@ -1,0 +1,88 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container product-page mt-5">
+        <div class="card mb-3" style="max-width: 1400px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{ object.image.url }}" class="img-fluid rounded-start" alt="{{ object.name }}">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <center>
+                            {% if user.is_staff %}
+                                <a href="{% url 'product-edit' object.pk %}" class="btn btn-info btn-sm">Edit</a>
+                                <a href="{% url 'product-delete' object.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                            {% endif %}
+                            <h1 class="card-title">{{ object.name }}</h1>
+                            <p class="card-text fs-4"><b>Price: </b>
+                                {% if not product.is_on_sale %}
+                                    {{ product.price }} €
+                                {% else %}
+
+                                    <s class="fs-4">{{ product.price }}</s>
+                                    <br>
+                                    <small class="fs-4 text-danger">{{ product.sale_price }} €</small>
+                                {% endif %}
+                            </p>
+                            <p>
+                                <span class="card-text fs-5"><b>Model: </b></span>{{ product.model }}<br>
+                               <span class="card-text fs-5"><b>Code: </b></span>{{ product.sku }}<br>
+                               <span class="card-text fs-5"><b>In stock: </b></span>{{ product.is_available }}<br>
+                            </p>
+                            <div class="product-add">
+                                <p>Quantity</p>
+                                <select class="form-select" id="qty-cart">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="8">8</option>
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                </select>
+
+                                <button type="button" value="{{ product.id }}"
+                                        class="btn btn-secondary mb-3" id="add-cart">Add to Cart
+                                </button>
+                            </div>
+                            <p class="card-text">
+                                {{ object.description }}
+                            </p>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).on('click', '#add-cart', function (e) {
+            e.preventDefault();
+
+            let productID = $(this).val();
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'cart_add' %}",
+                data: {
+                    product_id: productID,
+                    product_qty: $('#qty-cart option:selected').text(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post'
+                },
+
+                success: function (json) {
+                    document.getElementById("cart_quantity").textContent = json.qty
+                    location.reload();
+                },
+
+                error: function (xhr, errmsg, err) {
+                    console.log("Error:", xhr.responseText);
+                }
+            });
+        });
+
+    </script>
+{% endblock %}

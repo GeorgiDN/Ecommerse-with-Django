@@ -29,7 +29,7 @@
                 </thead>
                 <tbody>
                 {% for product in products %}
-                    <tr class="clickable-row" data-href="{% url 'product-detail' product.pk %}">
+                    <tr class="clickable-row" data-href="{% url 'admin-product-detail' product.pk %}">
                         <td>
                             <input type="checkbox" name="selected_products" value="{{ product.id }}"
                                    class="product-checkbox">
