@@ -79,7 +79,6 @@ class CategoryCreateForm(CategoryBaseForm):
     pass
 
 
-
 class CategoryEditForm(forms.ModelForm):
     products = forms.ModelMultipleChoiceField(
         queryset=Product.objects.all(),
@@ -92,7 +91,7 @@ class CategoryEditForm(forms.ModelForm):
 
     class Meta:
         model = Category
-        fields = ['name', 'description', 'image', 'products']
+        fields = ['name', 'description', 'image', 'url_slug', 'meta_title', 'meta_description', 'products']
         widgets = {
             'description': forms.Textarea(attrs={
                 'rows': 5,

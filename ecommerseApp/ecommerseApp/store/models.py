@@ -7,17 +7,12 @@ from ecommerseApp.accounts.models import Profile
 from ecommerseApp.common.custom_validators import validate_phone_number, validate_lettres
 from ecommerseApp.common.models_mixins import FirstNameMixin, LastNameMixin, PhoneMixin, EmailMixin, QuantityMixin, \
     PriceMixin
+from ecommerseApp.store.models_mixins import UrlMixin, NameMixin, DescriptionMixin, MetaTitleMixin, \
+    MetaDescriptionMixin, IsActiveMixin
 
 
-class Category(models.Model):
-    name = models.CharField(
-        max_length=50,
-    )
-    description = models.CharField(
-        max_length=1500,
-        blank=True,
-        null=True,
-    )
+class Category(UrlMixin, NameMixin, DescriptionMixin, MetaTitleMixin, MetaDescriptionMixin, IsActiveMixin,
+               models.Model):
     image = models.ImageField(
         upload_to='category_images',
         blank=True,
@@ -28,12 +23,20 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.url_slug:
+            self.url_slug = slugify(self.name)
+        if not self.meta_title:
+            self.meta_title = self.name
+        if not self.meta_description:
+            self.meta_description = self.description
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name_plural = 'Categories'
 
 
 class Customer(FirstNameMixin, LastNameMixin, PhoneMixin, EmailMixin, models.Model):
-
     password = models.CharField(
         max_length=100,
     )
@@ -42,30 +45,8 @@ class Customer(FirstNameMixin, LastNameMixin, PhoneMixin, EmailMixin, models.Mod
         return f'{self.first_name} {self.last_name}'
 
 
-class Product(PriceMixin, models.Model):
-    url_slug = models.SlugField(
-        unique=True,
-        blank=True,
-        null=True,
-    )
-    name = models.CharField(
-        max_length=200,
-    )
-    description = models.CharField(
-        max_length=1500,
-        blank=True,
-        null=True,
-    )
-    meta_title = models.CharField(
-        max_length=200,
-        null=True,
-        blank=True,
-    )
-    meta_description = models.CharField(
-        max_length=1500,
-        blank=True,
-        null=True,
-    )
+class Product(UrlMixin, NameMixin, DescriptionMixin, PriceMixin, MetaTitleMixin, MetaDescriptionMixin, IsActiveMixin,
+              models.Model):
     image = models.ImageField(
         upload_to='product_images',
         blank=True,
@@ -99,9 +80,6 @@ class Product(PriceMixin, models.Model):
         blank=True,
         null=True,
         help_text="Model number or reference"
-    )
-    is_active = models.BooleanField(
-        default=True,
     )
     is_available = models.BooleanField(
         default=True,
@@ -187,8 +165,6 @@ class Order(PhoneMixin, QuantityMixin, models.Model):
     #         self.phone = self.phone or self.customer.phone
     #         self.email = self.email or self.customer.email
     #     super().save(*args, **kwargs)
-
-
 
 ###############################################################################################
 ###############################################################################################
