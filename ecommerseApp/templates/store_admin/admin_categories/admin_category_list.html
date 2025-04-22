@@ -20,7 +20,7 @@
             </thead>
             <tbody>
             {% for category in categories %}
-                <tr class="clickable-row" data-href="{% url 'category-detail' category.pk %}">
+                <tr class="clickable-row" data-href="{% url 'admin-category-detail' category.pk %}">
                     {#            <tr class="clickable-row" data-href="#">#}
                     <td>{{ category.id }}</td>
                     <td>{{ category.name }}</td>

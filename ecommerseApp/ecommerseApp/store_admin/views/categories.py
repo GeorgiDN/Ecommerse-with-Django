@@ -4,7 +4,7 @@ from django.urls import reverse, reverse_lazy
 from ecommerseApp.store.models import Category
 from ecommerseApp.store_admin.forms import CategoryCreateForm, CategoryEditForm
 from ecommerseApp.store_admin.models_mixins import StaffRequiredMixin
-from django.views.generic import ListView, TemplateView, UpdateView, DeleteView, CreateView
+from django.views.generic import ListView, TemplateView, UpdateView, DeleteView, CreateView, DetailView
 
 
 class AdminCategoryListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
@@ -26,6 +26,11 @@ class AdminCategoryListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
         return context
 
 
+class AdminCategoryDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
+    model = Category
+    template_name = 'store_admin/admin_categories/admin_category_detail.html'
+
+
 class CategoryCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     model = Category
     form_class = CategoryCreateForm
@@ -41,7 +46,7 @@ class CategoryEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
     template_name = 'store_admin/admin_categories/category_edit.html'
 
     def get_success_url(self):
-        return reverse('category-detail', kwargs={'pk': self.get_object().pk})
+        return reverse('admin-category-detail', kwargs={'pk': self.get_object().pk})
 
 
 class CategoryDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):

@@ -59,9 +59,18 @@ class CategoryListView(ListView):
     template_name = 'store/categories.html'
     context_object_name = 'categories'
 
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(is_active=True)
+        return queryset
+
 
 class CategoryDetailView(DetailView):
     model = Category
+    template_name = 'store/category_detail.html'
+
+    def get_object(self, queryset=None):
+        slug = self.kwargs.get('slug')
+        return get_object_or_404(Category, url_slug=slug, is_active=True)
 
 
 class CategoryProductsView(ListView):
@@ -71,12 +80,12 @@ class CategoryProductsView(ListView):
     paginate_by = 8
 
     def get_queryset(self):
-        category_id = self.kwargs.get('pk')
-        category = get_object_or_404(Category, pk=category_id)
+        slug = self.kwargs.get('slug')
+        category = get_object_or_404(Category, url_slug=slug, is_active=True)
         return category.category_products.filter(is_active=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        category_id = self.kwargs.get('pk')
-        context['category'] = get_object_or_404(Category, pk=category_id)
+        slug = self.kwargs.get('slug')
+        context['category'] = get_object_or_404(Category, url_slug=slug, is_active=True)
         return context
