@@ -31,7 +31,7 @@ class ProductListView(ListView):
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().filter(is_active=True)
         search_term = self.request.GET.get('search_term')
 
         if search_term:
@@ -47,6 +47,11 @@ class ProductListView(ListView):
 
 class ProductDetailView(DetailView):
     model = Product
+    template_name = 'store/product_detail.html'
+
+    def get_object(self, queryset=None):
+        slug = self.kwargs.get('slug')
+        return get_object_or_404(Product, url_slug=slug, is_active=True)
 
 
 class CategoryListView(ListView):
@@ -68,7 +73,7 @@ class CategoryProductsView(ListView):
     def get_queryset(self):
         category_id = self.kwargs.get('pk')
         category = get_object_or_404(Category, pk=category_id)
-        return category.category_products.all()
+        return category.category_products.filter(is_active=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

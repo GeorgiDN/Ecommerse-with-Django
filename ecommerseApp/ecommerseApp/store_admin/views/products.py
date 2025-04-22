@@ -31,7 +31,7 @@ class ProductEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
     form_class = ProductEditForm
 
     def get_success_url(self):
-        return reverse('product-detail', kwargs={'pk': self.get_object().pk})
+        return reverse('admin-product-detail', kwargs={'pk': self.get_object().pk})
 
 
 class ProductDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):

@@ -19,6 +19,9 @@
                 {{ form.track_quantity|as_crispy_field }}
                 {{ form.weight|as_crispy_field }}
                 {{ form.categories|as_crispy_field }}
+                {{ form.url_slug|as_crispy_field }}
+                {{ form.meta_title|as_crispy_field }}
+                {{ form.meta_description|as_crispy_field }}
                 <button type="submit" class="btn btn-info mt-2">Edit</button>
                 <a class="btn btn-outline-secondary mt-2" href="{% url 'product-detail' object.pk %}">Cancel</a>
             </form>

@@ -34,7 +34,8 @@ class ProductEditForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'description', 'image', 'price', 'is_on_sale', 'sale_price', 'sku', 'model',
-                  'is_active', 'is_available', 'quantity', 'track_quantity', 'weight', 'categories'
+                  'is_active', 'is_available', 'quantity', 'track_quantity', 'weight', 'categories',
+                  'url_slug', 'meta_title', 'meta_description',
                   ]
 
         widgets = {

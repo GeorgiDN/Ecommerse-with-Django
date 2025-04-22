@@ -4,7 +4,7 @@
             {% if products %}
                 {% for product in products %}
                     <div class="col mb-5">
-                    <a href="{% url 'product-detail' product.pk %}">
+                    <a href="{% url 'product-detail' slug=product.url_slug %}">
                         <div class="card h-100 product-card">
                             <!-- Product image-->
                             <img class="card-img-top" src="{{ product.image.url }}" alt="..."/>
