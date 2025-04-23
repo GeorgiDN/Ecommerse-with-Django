@@ -55,7 +55,8 @@ class AdminProductListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
                 Q(name__icontains=query) |
                 Q(description=query) |
                 Q(sku__icontains=query) |
-                Q(model__icontains=query)
+                Q(model__icontains=query) |
+                Q(tags__icontains=query)
             )
         return queryset
 

@@ -33,7 +33,7 @@ class ProductEditForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ['name', 'description', 'image', 'price', 'is_on_sale', 'sale_price', 'sku', 'model',
+        fields = ['name', 'description', 'image', 'price', 'is_on_sale', 'sale_price', 'sku', 'model', 'tags',
                   'is_active', 'is_available', 'quantity', 'track_quantity', 'weight', 'categories',
                   'url_slug', 'meta_title', 'meta_description',
                   ]

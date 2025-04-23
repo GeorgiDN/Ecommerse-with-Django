@@ -39,7 +39,8 @@ class ProductListView(ListView):
                 Q(name__icontains=search_term) |
                 Q(description__icontains=search_term) |
                 Q(model__icontains=search_term) |
-                Q(sku__icontains=search_term)
+                Q(sku__icontains=search_term) |
+                Q(tags__icontains=search_term)
             )
 
         return queryset

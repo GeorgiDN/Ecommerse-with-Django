@@ -81,6 +81,11 @@ class Product(UrlMixin, NameMixin, DescriptionMixin, PriceMixin, MetaTitleMixin,
         null=True,
         help_text="Model number or reference"
     )
+    tags = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+    )
     is_available = models.BooleanField(
         default=True,
     )
