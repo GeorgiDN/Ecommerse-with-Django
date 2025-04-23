@@ -128,6 +128,49 @@ class Product(UrlMixin, NameMixin, DescriptionMixin, PriceMixin, MetaTitleMixin,
         super().save(*args, **kwargs)
 
 
+class ProductOption(models.Model):
+    product = models.ForeignKey(
+        Product,
+        related_name='product_options',
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(
+        max_length=100
+    )
+
+    def __str__(self):
+        return f"{self.product.name} - {self.name}"
+
+
+class ProductOptionValue(models.Model):
+    option = models.ForeignKey(
+        ProductOption,
+        related_name='option_values',
+        on_delete=models.CASCADE
+    )
+    value = models.CharField(
+        max_length=200
+    )
+
+    def __str__(self):
+        return f"{self.option.name}: {self.value}"
+
+
+class ProductVariant(models.Model):
+    product = models.ForeignKey(Product, related_name='product_variants', on_delete=models.CASCADE)
+    sku = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=0)
+    is_available = models.BooleanField(default=True)
+    weight = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    option_values = models.ManyToManyField(ProductOptionValue, related_name='variants')
+
+    def __str__(self):
+        values = ", ".join([v.value for v in self.option_values.all()])
+        return f"{self.product.name} Variant - {values or self.sku}"
+
+
 class Order(PhoneMixin, QuantityMixin, models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),

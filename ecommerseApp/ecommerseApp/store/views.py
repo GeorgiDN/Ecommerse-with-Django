@@ -54,6 +54,12 @@ class ProductDetailView(DetailView):
         slug = self.kwargs.get('slug')
         return get_object_or_404(Product, url_slug=slug, is_active=True)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+        context['options'] = product.product_options.prefetch_related('option_values')
+        return context
+
 
 class CategoryListView(ListView):
     model = Category

@@ -24,8 +24,8 @@
                             </p>
                             <p>
                                 <span class="card-text fs-5"><b>Model: </b></span>{{ product.model }}<br>
-                               <span class="card-text fs-5"><b>Code: </b></span>{{ product.sku }}<br>
-                               <span class="card-text fs-5"><b>In stock: </b></span>{{ product.is_available }}<br>
+                                <span class="card-text fs-5"><b>Code: </b></span>{{ product.sku }}<br>
+                                <span class="card-text fs-5"><b>In stock: </b></span>{{ product.is_available }}<br>
                             </p>
                             <div class="product-add">
                                 <p>Quantity</p>
@@ -44,6 +44,24 @@
                                         class="btn btn-secondary mb-3" id="add-cart">Add to Cart
                                 </button>
                             </div>
+                            {% for option in options %}
+                                <div class="mb-3">
+                                    <label for="option-{{ option.id }}" class="form-label">
+                                        <strong>{{ option.name }}:</strong>
+                                    </label>
+                                    <select
+                                            id="option-{{ option.id }}"
+                                            name="option_{{ option.id }}"
+                                            class="form-select product-option"
+                                            data-option-id="{{ option.id }}"
+                                    >
+                                        {% for value in option.option_values.all %}
+                                            <option value="{{ value.id }}">{{ value.value }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endfor %}
+
                             <p class="card-text">
                                 {{ object.description }}
                             </p>
@@ -54,32 +72,73 @@
         </div>
     </div>
 
-    <script>
-        $(document).on('click', '#add-cart', function (e) {
-            e.preventDefault();
+<script>
+    $(document).on('click', '#add-cart', function (e) {
+        e.preventDefault();
 
-            let productID = $(this).val();
+        let productID = $(this).val();
+        let productQty = $('#qty-cart option:selected').val();
 
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'cart_add' %}",
-                data: {
-                    product_id: productID,
-                    product_qty: $('#qty-cart option:selected').text(),
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                    action: 'post'
-                },
+        // Prepare the POST data
+        let postData = {
+            product_id: productID,
+            product_qty: productQty,
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            action: 'post'
+        };
 
-                success: function (json) {
-                    document.getElementById("cart_quantity").textContent = json.qty
-                    location.reload();
-                },
-
-                error: function (xhr, errmsg, err) {
-                    console.log("Error:", xhr.responseText);
-                }
-            });
+        // Loop through selected product options and add them to postData
+        $('.product-option').each(function () {
+            const optionId = $(this).data('option-id');
+            const valueId = $(this).val();
+            postData[`option_${optionId}`] = valueId;
         });
 
-    </script>
+        // Send the AJAX POST request
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'cart_add' %}",
+            data: postData,
+            success: function (json) {
+                document.getElementById("cart_quantity").textContent = json.qty;
+                location.reload();
+            },
+            error: function (xhr, errmsg, err) {
+                console.log("Error:", xhr.responseText);
+            }
+        });
+    });
+</script>
+
+
+
+
+    {#    <script>#}
+    {#        $(document).on('click', '#add-cart', function (e) {#}
+    {#            e.preventDefault();#}
+    {##}
+    {#            let productID = $(this).val();#}
+    {##}
+    {#            $.ajax({#}
+    {#                type: 'POST',#}
+    {#                url: "{% url 'cart_add' %}",#}
+    {#                data: {#}
+    {#                    product_id: productID,#}
+    {#                    product_qty: $('#qty-cart option:selected').text(),#}
+    {#                    csrfmiddlewaretoken: '{{ csrf_token }}',#}
+    {#                    action: 'post'#}
+    {#                },#}
+    {##}
+    {#                success: function (json) {#}
+    {#                    document.getElementById("cart_quantity").textContent = json.qty#}
+    {#                    location.reload();#}
+    {#                },#}
+    {##}
+    {#                error: function (xhr, errmsg, err) {#}
+    {#                    console.log("Error:", xhr.responseText);#}
+    {#                }#}
+    {#            });#}
+    {#        });#}
+    {##}
+    {#    </script>#}
 {% endblock %}

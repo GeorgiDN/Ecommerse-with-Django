@@ -28,7 +28,16 @@ def cart_add(request):
         product_qty = request.POST.get('product_qty')
         product = get_object_or_404(Product, id=product_id)
 
-        cart.add(product=product, quantity=product_qty)
+        # Parse options if passed from the form
+        options = {}
+        for key in request.POST:
+            if key.startswith("option_"):
+                option_name = key[7:]  # remove 'option_' prefix
+                option_value_id = request.POST.get(key)
+                if option_value_id:
+                    options[option_name] = int(option_value_id)
+
+        cart.db_add(product=product, quantity=product_qty, options=options)
 
         cart_quantity = cart.__len__()
 
@@ -36,6 +45,7 @@ def cart_add(request):
         return JsonResponse({'qty': cart_quantity})
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
 
 
 def cart_update(request):
@@ -69,4 +79,19 @@ def cart_delete(request):
     return redirect('cart_summary')
 
 
-
+# def cart_add(request):
+#     cart = Cart(request)
+#
+#     if request.POST.get('action') == 'post':
+#         product_id = request.POST.get('product_id')
+#         product_qty = request.POST.get('product_qty')
+#         product = get_object_or_404(Product, id=product_id)
+#
+#         cart.add(product=product, quantity=product_qty)
+#
+#         cart_quantity = cart.__len__()
+#
+#         messages.success(request, 'The product has been added to the cart.')
+#         return JsonResponse({'qty': cart_quantity})
+#
+#     return JsonResponse({'error': 'Invalid request'}, status=400)
