@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db.models import Count
 
 
@@ -43,8 +45,8 @@ class Cart:
             current_user.update(old_cart=str(carty))
 
     def get_products(self):
-        from ecommerseApp.store.models import Product, ProductOptionValue
-
+        from django.db.models import Count
+        from ecommerseApp.store.models import Product, ProductOptionValue, ProductVariant
         product_ids = self.cart.keys()
         products = Product.objects.filter(id__in=product_ids)
         product_data = []
@@ -55,7 +57,7 @@ class Cart:
             if not isinstance(item, dict):
                 item = {"quantity": item, "options": {}}
 
-            option_value_ids = item.get("options", {}).values()
+            option_value_ids = list(item.get("options", {}).values())
 
             option_values = ProductOptionValue.objects.filter(
                 id__in=option_value_ids
@@ -68,10 +70,21 @@ class Cart:
                 } for ov in option_values
             ]
 
+            variant = None
+            if option_value_ids:
+                variant = (
+                    ProductVariant.objects
+                    .filter(product=product, option_values__in=option_value_ids)
+                    .annotate(num_options=Count("option_values"))
+                    .filter(num_options=len(option_value_ids))
+                    .first()
+                )
+
             product_data.append({
                 "product": product,
                 "quantity": item.get("quantity", 1),
-                "option_details": option_details
+                "option_details": option_details,
+                "variant": variant,
             })
 
         return product_data
@@ -104,19 +117,18 @@ class Cart:
 
     def cart_total(self):
         from ecommerseApp.store.models import Product, ProductOptionValue, ProductVariant
+        total = Decimal("0.00")
 
-        total = 0
         for product_id, item in self.cart.items():
             product_id = int(product_id)
             product = Product.objects.filter(id=product_id).first()
             if not product:
                 continue
 
-            # Get quantity
             qty = item if isinstance(item, int) else item.get("quantity", 1)
-
-            # Check if options exist
             options = item.get("options", {})
+
+            price = None
 
             if options:
                 option_value_ids = list(map(int, options.values()))
@@ -131,14 +143,13 @@ class Cart:
 
                 if variant:
                     price = variant.sale_price if variant.is_on_sale and variant.sale_price else variant.price
-                    total += int(price * qty)
                 else:
                     price = product.sale_price if product.is_on_sale else product.price
-                    total += int(price * qty)
             else:
-                # No variant, use product base price
                 price = product.sale_price if product.is_on_sale else product.price
-                total += int(price * qty)
+
+            if price is not None:
+                total += Decimal(price) * int(qty)
 
         return total
 
@@ -159,6 +170,81 @@ class Cart:
     def __len__(self):
         return len(self.cart)
 
+
+    # def cart_total(self):
+    #     from ecommerseApp.store.models import Product, ProductOptionValue, ProductVariant
+    #
+    #     total = 0
+    #     for product_id, item in self.cart.items():
+    #         product_id = int(product_id)
+    #         product = Product.objects.filter(id=product_id).first()
+    #         if not product:
+    #             continue
+    #
+    #         # Get quantity
+    #         qty = item if isinstance(item, int) else item.get("quantity", 1)
+    #
+    #         # Check if options exist
+    #         options = item.get("options", {})
+    #
+    #         if options:
+    #             option_value_ids = list(map(int, options.values()))
+    #
+    #             variant = (
+    #                 ProductVariant.objects
+    #                 .filter(product=product, option_values__in=option_value_ids)
+    #                 .annotate(num_options=Count("option_values"))
+    #                 .filter(num_options=len(option_value_ids))
+    #                 .first()
+    #             )
+    #
+    #             if variant:
+    #                 price = variant.sale_price if variant.is_on_sale and variant.sale_price else variant.price
+    #                 total += int(price * qty)
+    #             else:
+    #                 price = product.sale_price if product.is_on_sale else product.price
+    #                 total += int(price * qty)
+    #         else:
+    #             # No variant, use product base price
+    #             price = product.sale_price if product.is_on_sale else product.price
+    #             total += int(price * qty)
+    #
+    #     return total
+
+    # def get_products(self):
+    #     from ecommerseApp.store.models import Product, ProductOptionValue
+    #
+    #     product_ids = self.cart.keys()
+    #     products = Product.objects.filter(id__in=product_ids)
+    #     product_data = []
+    #
+    #     for product in products:
+    #         item = self.cart[str(product.id)]
+    #
+    #         if not isinstance(item, dict):
+    #             item = {"quantity": item, "options": {}}
+    #
+    #         option_value_ids = item.get("options", {}).values()
+    #
+    #         option_values = ProductOptionValue.objects.filter(
+    #             id__in=option_value_ids
+    #         ).select_related("option")
+    #
+    #         option_details = [
+    #             {
+    #                 "name": ov.option.name,
+    #                 "value": ov.value
+    #             } for ov in option_values
+    #         ]
+    #
+    #         product_data.append({
+    #             "product": product,
+    #             "quantity": item.get("quantity", 1),
+    #             "option_details": option_details
+    #         })
+    #
+    #     return product_data
+    #
 
     # def cart_total(self):
     #     from ecommerseApp.store.models import Product, ProductOption, ProductOptionValue, ProductVariant

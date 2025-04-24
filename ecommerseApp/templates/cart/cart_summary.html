@@ -1,5 +1,6 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load mul %}
 {% block content %}
     <div class="container product-page mt-5 cart-summary">
         <section class="cart-header">
@@ -20,15 +21,32 @@
                                 <h3 class="card-title">{{ product.name }}</h3>
                                 <p class="card-text fs-5"><b>Price: </b>
                                     <small class="product-price">
-                                        {% if not product.is_on_sale %}
-                                            {{ product.price }}
+
+                                        {% if item.variant %}
+                                            {% if item.variant.is_on_sale %}
+                                                <s>{{ item.variant.price }}</s>
+                                                <span class="text-danger fw-bold">{{ item.variant.sale_price }} €</span>
+                                            {% else %}
+                                                {{ item.variant.price }} €
+                                            {% endif %}
                                         {% else %}
-                                            {{ product.sale_price }}
+                                            {% if product.is_on_sale %}
+                                                <s>{{ product.price }}</s>
+                                                <span class="text-danger fw-bold">{{ product.sale_price }} €</span>
+                                            {% else %}
+                                                {{ product.price }} €
+                                            {% endif %}
                                         {% endif %}
+
+                                        {# {% if not product.is_on_sale %}#}
+                                        {#     {{ product.price }}#}
+                                        {# {% else %}#}
+                                        {#     {{ product.sale_price }}#}
+                                        {# {% endif %}#}
                                     </small>
                                 </p>
 
-                                <!-- ✅ Product options -->
+                                <!-- Product options -->
                                 {% if item.option_details %}
                                     {% for opt in item.option_details %}
                                         <p class="card-text fs-6"><b>{{ opt.name }}:</b> {{ opt.value }}</p>
@@ -60,9 +78,29 @@
                             </button>
                         </section>
 
+                        {#                        <section class="total-sum-per-product">#}
+                        {#                            total#}
+                        {#                        </section>#}
                         <section class="total-sum-per-product">
-                            total
+                            {% with item.variant as variant %}
+                                {% if variant %}
+                                    {% if variant.is_on_sale %}
+                                        {{ variant.sale_price|floatformat:2|floatformat:2|add:""|floatformat:2|stringformat:"s"|floatformat:2|add:""|floatformat:2|stringformat:"s"|add:""|floatformat:2|stringformat:"s"|multiply:item.quantity|floatformat:2 }}
+                                        €
+                                    {% else %}
+                                        {{ variant.price|floatformat:2|multiply:item.quantity|floatformat:2 }} €
+                                    {% endif %}
+                                {% else %}
+                                    {% if product.is_on_sale %}
+                                        {{ product.sale_price|multiply:item.quantity|floatformat:2 }} €
+                                    {% else %}
+                                        {{ product.price|multiply:item.quantity|floatformat:2 }} €
+                                    {% endif %}
+                                {% endif %}
+                            {% endwith %}
                         </section>
+
+
                     </div>
                 {% endwith %}
             {% endfor %}
@@ -83,7 +121,7 @@
 
     <script src="{% static 'js/cart/updateCart.js' %}"></script>
     <script src="{% static 'js/cart/deleteCart.js' %}"></script>
-    <script src="{% static 'js/cart/updateTotalPrice.js' %}"></script>
+{#    <script src="{% static 'js/cart/updateTotalPrice.js' %}"></script>#}
 
 {% endblock %}
 

@@ -47,7 +47,6 @@ def cart_add(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
-
 def cart_update(request):
     cart = Cart(request)
 
