@@ -1,9 +1,10 @@
-from django.db.models import Q
+from django.db.models import Q, Count
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, TemplateView, UpdateView, DeleteView, CreateView
 from ecommerseApp.common.forms import SearchForm
 
-from ecommerseApp.store.models import Product, Category
+from ecommerseApp.store.models import Product, Category, ProductVariant
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 
@@ -59,6 +60,31 @@ class ProductDetailView(DetailView):
         product = self.get_object()
         context['options'] = product.product_options.prefetch_related('option_values')
         return context
+
+
+def get_variant_price(request, product_id):
+    option_ids = request.GET.getlist('options[]')
+
+    try:
+        variant = (
+            ProductVariant.objects
+            .filter(product_id=product_id, option_values__id__in=option_ids)
+            .annotate(num_options=Count("option_values"))
+            .filter(num_options=len(option_ids))
+            .first()
+        )
+
+        if variant:
+            return JsonResponse({
+                'price': str(variant.price),
+                'is_on_sale': variant.is_on_sale,
+                'sale_price': str(variant.sale_price) if variant.is_on_sale else None,
+            })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Variant not found'}, status=404)
 
 
 class CategoryListView(ListView):

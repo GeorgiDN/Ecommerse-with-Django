@@ -11,6 +11,7 @@ urlpatterns = [
     path('categories/', store_views.CategoryListView.as_view(), name='categories'),
     path('category/<slug:slug>/', store_views.CategoryProductsView.as_view(), name='category-products'),
     path('category-detail/<slug:slug>/', store_views.CategoryDetailView.as_view(), name='category-detail'),
+    path('product/<int:product_id>/variant-price/', store_views.get_variant_price, name='get_variant_price'),
 ]
 
 if settings.DEBUG:

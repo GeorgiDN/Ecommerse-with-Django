@@ -1,3 +1,5 @@
+from django.db.models import Count
+
 
 class Cart:
     def __init__(self, request):
@@ -101,21 +103,43 @@ class Cart:
         return self.cart
 
     def cart_total(self):
-        from ecommerseApp.store.models import Product
-        quantities = self.cart
-        product_ids = self.cart.keys()
-        products = Product.objects.filter(id__in=product_ids)
+        from ecommerseApp.store.models import Product, ProductOptionValue, ProductVariant
 
         total = 0
-        for key, value in quantities.items():
-            key = int(key)
-            for product in products:
-                if product.id == key:
-                    qty = value if isinstance(value, int) else value.get("quantity", 1)
-                    if not product.is_on_sale:
-                        total += int(product.price * qty)
-                    else:
-                        total += int(product.sale_price * qty)
+        for product_id, item in self.cart.items():
+            product_id = int(product_id)
+            product = Product.objects.filter(id=product_id).first()
+            if not product:
+                continue
+
+            # Get quantity
+            qty = item if isinstance(item, int) else item.get("quantity", 1)
+
+            # Check if options exist
+            options = item.get("options", {})
+
+            if options:
+                option_value_ids = list(map(int, options.values()))
+
+                variant = (
+                    ProductVariant.objects
+                    .filter(product=product, option_values__in=option_value_ids)
+                    .annotate(num_options=Count("option_values"))
+                    .filter(num_options=len(option_value_ids))
+                    .first()
+                )
+
+                if variant:
+                    price = variant.sale_price if variant.is_on_sale and variant.sale_price else variant.price
+                    total += int(price * qty)
+                else:
+                    price = product.sale_price if product.is_on_sale else product.price
+                    total += int(price * qty)
+            else:
+                # No variant, use product base price
+                price = product.sale_price if product.is_on_sale else product.price
+                total += int(price * qty)
+
         return total
 
     def delete(self, product):
@@ -134,6 +158,25 @@ class Cart:
 
     def __len__(self):
         return len(self.cart)
+
+
+    # def cart_total(self):
+    #     from ecommerseApp.store.models import Product, ProductOption, ProductOptionValue, ProductVariant
+    #     quantities = self.cart
+    #     product_ids = self.cart.keys()
+    #     products = Product.objects.filter(id__in=product_ids)
+    #
+    #     total = 0
+    #     for key, value in quantities.items():
+    #         key = int(key)
+    #         for product in products:
+    #             if product.id == key:
+    #                 qty = value if isinstance(value, int) else value.get("quantity", 1)
+    #                 if not product.is_on_sale:
+    #                     total += int(product.price * qty)
+    #                 else:
+    #                     total += int(product.sale_price * qty)
+    #     return total
 
 
     # def get_quantity(self):

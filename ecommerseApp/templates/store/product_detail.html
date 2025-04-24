@@ -12,16 +12,18 @@
                         <center>
                             <h1 class="card-title">{{ object.name }}</h1>
 
-                            <p class="card-text fs-4"><b>Price: </b>
-                                {% if not product.is_on_sale %}
-                                    {{ product.price }} €
-                                {% else %}
-
-                                    <s class="fs-4">{{ product.price }}</s>
-                                    <br>
-                                    <small class="fs-4 text-danger">{{ product.sale_price }} €</small>
-                                {% endif %}
+                            <p class="card-text fs-4">
+                                <b>Price: </b>
+                                <span id="product-price">
+                                    {% if not product.is_on_sale %}
+                                        {{ product.price }} €
+                                    {% else %}
+                                        <s class="fs-4">{{ product.price }} €</s><br>
+                                        <small class="fs-4 text-danger">{{ product.sale_price }} €</small>
+                                    {% endif %}
+                                </span>
                             </p>
+
                             <p>
                                 <span class="card-text fs-5"><b>Model: </b></span>{{ product.model }}<br>
                                 <span class="card-text fs-5"><b>Code: </b></span>{{ product.sku }}<br>
@@ -72,73 +74,119 @@
         </div>
     </div>
 
-<script>
-    $(document).on('click', '#add-cart', function (e) {
-        e.preventDefault();
+    <script>
+        $(document).on('click', '#add-cart', function (e) {
+            e.preventDefault();
 
-        let productID = $(this).val();
-        let productQty = $('#qty-cart option:selected').val();
+            let productID = $(this).val();
+            let productQty = $('#qty-cart option:selected').val();
 
-        // Prepare the POST data
-        let postData = {
-            product_id: productID,
-            product_qty: productQty,
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            action: 'post'
-        };
+            // Prepare the POST data
+            let postData = {
+                product_id: productID,
+                product_qty: productQty,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            };
 
-        // Loop through selected product options and add them to postData
-        $('.product-option').each(function () {
-            const optionId = $(this).data('option-id');
-            const valueId = $(this).val();
-            postData[`option_${optionId}`] = valueId;
+            // Loop through selected product options and add them to postData
+            $('.product-option').each(function () {
+                const optionId = $(this).data('option-id');
+                const valueId = $(this).val();
+                postData[`option_${optionId}`] = valueId;
+            });
+
+            // Send the AJAX POST request
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'cart_add' %}",
+                data: postData,
+                success: function (json) {
+                    document.getElementById("cart_quantity").textContent = json.qty;
+                    location.reload();
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log("Error:", xhr.responseText);
+                }
+            });
         });
+    </script>
 
-        // Send the AJAX POST request
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'cart_add' %}",
-            data: postData,
-            success: function (json) {
-                document.getElementById("cart_quantity").textContent = json.qty;
-                location.reload();
-            },
-            error: function (xhr, errmsg, err) {
-                console.log("Error:", xhr.responseText);
-            }
+    <script>
+        function updateVariantPrice() {
+            let productID = '{{ object.id }}';
+            let optionValues = [];
+
+            $('.product-option').each(function () {
+                optionValues.push($(this).val());
+            });
+
+            $.ajax({
+                url: `/product/${productID}/variant-price/`,
+                data: {
+                    options: optionValues
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.is_on_sale && data.sale_price) {
+                        $('#product-price').html(`<s class="fs-4">${data.price} €</s><br><small class="fs-4 text-danger">${data.sale_price} €</small>`);
+                    } else {
+                        $('#product-price').text(`${data.price} €`);
+                    }
+                },
+                error: function (xhr) {
+                    console.log('Error fetching variant price:', xhr.responseText);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $('.product-option').on('change', updateVariantPrice);
+            updateVariantPrice();  // Initial price load if defaults are selected
         });
-    });
-</script>
-
-
-
-
-    {#    <script>#}
-    {#        $(document).on('click', '#add-cart', function (e) {#}
-    {#            e.preventDefault();#}
-    {##}
-    {#            let productID = $(this).val();#}
-    {##}
-    {#            $.ajax({#}
-    {#                type: 'POST',#}
-    {#                url: "{% url 'cart_add' %}",#}
-    {#                data: {#}
-    {#                    product_id: productID,#}
-    {#                    product_qty: $('#qty-cart option:selected').text(),#}
-    {#                    csrfmiddlewaretoken: '{{ csrf_token }}',#}
-    {#                    action: 'post'#}
-    {#                },#}
-    {##}
-    {#                success: function (json) {#}
-    {#                    document.getElementById("cart_quantity").textContent = json.qty#}
-    {#                    location.reload();#}
-    {#                },#}
-    {##}
-    {#                error: function (xhr, errmsg, err) {#}
-    {#                    console.log("Error:", xhr.responseText);#}
-    {#                }#}
-    {#            });#}
-    {#        });#}
-    {##}
-    {#    </script>#}
+    </script>
+    
 {% endblock %}
+
+
+{#        <p class="card-text fs-4"><b>Price: </b>#}
+{#        {% if not product.is_on_sale %}#}
+{#            {{ product.price }} €#}
+{#        {% else %}#}
+{##}
+{#            <s class="fs-4">{{ product.price }}</s>#}
+{#            <br>#}
+{#            <small class="fs-4 text-danger">{{ product.sale_price }} €</small>#}
+{#        {% endif %}#}
+{#    </p>#}
+
+
+{#    <script>#}
+{#        $(document).on('click', '#add-cart', function (e) {#}
+{#            e.preventDefault();#}
+{##}
+{#            let productID = $(this).val();#}
+{##}
+{#            $.ajax({#}
+{#                type: 'POST',#}
+{#                url: "{% url 'cart_add' %}",#}
+{#                data: {#}
+{#                    product_id: productID,#}
+{#                    product_qty: $('#qty-cart option:selected').text(),#}
+{#                    csrfmiddlewaretoken: '{{ csrf_token }}',#}
+{#                    action: 'post'#}
+{#                },#}
+{##}
+{#                success: function (json) {#}
+{#                    document.getElementById("cart_quantity").textContent = json.qty#}
+{#                    location.reload();#}
+{#                },#}
+{##}
+{#                error: function (xhr, errmsg, err) {#}
+{#                    console.log("Error:", xhr.responseText);#}
+{#                }#}
+{#            });#}
+{#        });#}
+{##}
+{#    </script>#}
+
