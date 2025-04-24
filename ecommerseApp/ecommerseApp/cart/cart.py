@@ -102,9 +102,9 @@ class Cart:
 
         ourcart = self.cart
         if isinstance(ourcart.get(product_id), dict):
-            ourcart[product_id]["quantity"] = product_qty
+            ourcart[product_id]['quantity'] = product_qty
         else:
-            ourcart[product_id] = {"quantity": product_qty, "options": {}}
+            ourcart[product_id] = {'quantity': product_qty, 'options': {}}
 
         self.session.modified = True
 
@@ -117,7 +117,7 @@ class Cart:
 
     def cart_total(self):
         from ecommerseApp.store.models import Product, ProductOptionValue, ProductVariant
-        total = Decimal("0.00")
+        total = Decimal('0.00')
 
         for product_id, item in self.cart.items():
             product_id = int(product_id)
@@ -125,7 +125,7 @@ class Cart:
             if not product:
                 continue
 
-            qty = item if isinstance(item, int) else item.get("quantity", 1)
+            qty = item if isinstance(item, int) else item.get('quantity', 1)
             options = item.get("options", {})
 
             price = None
@@ -136,7 +136,7 @@ class Cart:
                 variant = (
                     ProductVariant.objects
                     .filter(product=product, option_values__in=option_value_ids)
-                    .annotate(num_options=Count("option_values"))
+                    .annotate(num_options=Count('option_values'))
                     .filter(num_options=len(option_value_ids))
                     .first()
                 )
@@ -169,6 +169,7 @@ class Cart:
 
     def __len__(self):
         return len(self.cart)
+
 
 
     # def cart_total(self):

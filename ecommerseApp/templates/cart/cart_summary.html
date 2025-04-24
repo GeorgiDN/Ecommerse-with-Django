@@ -77,18 +77,14 @@
                                     class="btn btn-danger delete-product">Remove
                             </button>
                         </section>
-
-                        {#                        <section class="total-sum-per-product">#}
-                        {#                            total#}
-                        {#                        </section>#}
+                    
                         <section class="total-sum-per-product">
                             {% with item.variant as variant %}
                                 {% if variant %}
                                     {% if variant.is_on_sale %}
-                                        {{ variant.sale_price|floatformat:2|floatformat:2|add:""|floatformat:2|stringformat:"s"|floatformat:2|add:""|floatformat:2|stringformat:"s"|add:""|floatformat:2|stringformat:"s"|multiply:item.quantity|floatformat:2 }}
-                                        €
+                                        {{ variant.sale_price|multiply:item.quantity|floatformat:2 }} €
                                     {% else %}
-                                        {{ variant.price|floatformat:2|multiply:item.quantity|floatformat:2 }} €
+                                        {{ variant.price|multiply:item.quantity|floatformat:2 }} €
                                     {% endif %}
                                 {% else %}
                                     {% if product.is_on_sale %}
@@ -99,8 +95,7 @@
                                 {% endif %}
                             {% endwith %}
                         </section>
-
-
+                    
                     </div>
                 {% endwith %}
             {% endfor %}
@@ -121,7 +116,7 @@
 
     <script src="{% static 'js/cart/updateCart.js' %}"></script>
     <script src="{% static 'js/cart/deleteCart.js' %}"></script>
-{#    <script src="{% static 'js/cart/updateTotalPrice.js' %}"></script>#}
+    {#    <script src="{% static 'js/cart/updateTotalPrice.js' %}"></script>#}
 
 {% endblock %}
 

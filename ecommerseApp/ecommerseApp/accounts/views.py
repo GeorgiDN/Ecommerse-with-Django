@@ -13,6 +13,7 @@ import json
 from ecommerseApp.cart.cart import Cart
 from ecommerseApp.payment.forms import ShippingForm
 from ecommerseApp.payment.models import ShippingAddress
+from ecommerseApp.store.models import Product
 
 User = get_user_model()
 
@@ -55,15 +56,26 @@ def login_user(request):
             if user is not None:
                 login(request, user)
 
-                current_user = Profile.objects.get(user__id=request.user.id)
-                save_cart = current_user.old_cart
+                current_user = Profile.objects.get(user=request.user)
+                saved_cart = current_user.old_cart
 
-                if save_cart:
-                    converted_cart = json.loads(save_cart)
-                    cart = Cart(request)
+                if saved_cart:
+                    try:
+                        converted_cart = json.loads(saved_cart)
+                        cart = Cart(request)
 
-                    for key, value in converted_cart.items():
-                        cart.db_add(product=key, quantity=value)
+                        for product_id, item in converted_cart.items():
+                            quantity = item.get("quantity", 1)
+                            options = item.get("options", {})
+
+                            try:
+                                product = Product.objects.get(id=int(product_id))
+                                cart.db_add(product=product, quantity=quantity, options=options)
+                            except Product.DoesNotExist:
+                                print(f"Product with ID {product_id} not found, skipping...")
+
+                    except Exception as e:
+                        print(f"Error restoring cart: {e}")
 
                 messages.success(request, 'You are now logged in!')
                 return redirect('home')
@@ -71,6 +83,35 @@ def login_user(request):
                 messages.error(request, 'Invalid username or password!')
 
     return render(request, 'accounts/login.html', {'form': form})
+
+
+
+# def login_user(request):
+#     form = LoginForm(request, data=request.POST or None)
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             username = form.cleaned_data['username']
+#             password = form.cleaned_data['password']
+#             user = authenticate(request, username=username, password=password)
+#             if user is not None:
+#                 login(request, user)
+#
+#                 current_user = Profile.objects.get(user__id=request.user.id)
+#                 save_cart = current_user.old_cart
+#
+#                 if save_cart:
+#                     converted_cart = json.loads(save_cart)
+#                     cart = Cart(request)
+#
+#                     for key, value in converted_cart.items():
+#                         cart.db_add(product=key, quantity=value)
+#
+#                 messages.success(request, 'You are now logged in!')
+#                 return redirect('home')
+#             else:
+#                 messages.error(request, 'Invalid username or password!')
+#
+#     return render(request, 'accounts/login.html', {'form': form})
 
 
 class UserRegisterView(CreateView):
