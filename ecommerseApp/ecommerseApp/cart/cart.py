@@ -156,17 +156,31 @@ class Cart:
 
     def delete(self, product):
         from ecommerseApp.accounts.models import Profile
-        keys_to_delete = [k for k in self.cart if k.startswith(f"{product}:")]
-        for key in keys_to_delete:
-            del self.cart[key]
+
+        # Only delete exact match if you're sending 'productID:optionValues'
+        if product in self.cart:
+            del self.cart[product]
 
         self.session.modified = True
 
         if self.request.user.is_authenticated:
             current_user = Profile.objects.filter(user__id=self.request.user.id)
-            carty = str(self.cart)
-            carty = carty.replace("\'", "\"")
-            current_user.update(old_cart=str(carty))
+            carty = str(self.cart).replace("'", '"')
+            current_user.update(old_cart=carty)
+
+    # def delete(self, product):
+    #     from ecommerseApp.accounts.models import Profile
+    #     keys_to_delete = [k for k in self.cart if k.startswith(f"{product}:")]
+    #     for key in keys_to_delete:
+    #         del self.cart[key]
+    #
+    #     self.session.modified = True
+    #
+    #     if self.request.user.is_authenticated:
+    #         current_user = Profile.objects.filter(user__id=self.request.user.id)
+    #         carty = str(self.cart)
+    #         carty = carty.replace("\'", "\"")
+    #         current_user.update(old_cart=str(carty))
 
     def __len__(self):
         return len(self.cart)

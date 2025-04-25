@@ -86,15 +86,29 @@ def cart_delete(request):
     cart = Cart(request)
 
     if request.POST.get('action') == 'post':
-        product_id = request.POST.get('product_id')
+        product_key = request.POST.get('product_id')
+        cart.delete(product=str(product_key))
 
-        cart.delete(product=product_id)
-
-        response = JsonResponse({'product': product_id})
         messages.success(request, 'Item has been deleted from shopping cart.')
-        return response
+        return JsonResponse({'product': product_key})
 
     return redirect('cart_summary')
+
+
+
+# def cart_delete(request):
+#     cart = Cart(request)
+#
+#     if request.POST.get('action') == 'post':
+#         product_id = request.POST.get('product_id')
+#
+#         cart.delete(product=str(product_id))
+#
+#         response = JsonResponse({'product': product_id})
+#         messages.success(request, 'Item has been deleted from shopping cart.')
+#         return response
+#
+#     return redirect('cart_summary')
 
 
 # def cart_update(request):
