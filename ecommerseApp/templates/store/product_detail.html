@@ -26,8 +26,8 @@
 
                             <p>
                                 <span class="card-text fs-5"><b>Model: </b></span>{{ product.model }}<br>
-                                <span class="card-text fs-5"><b>Code: </b></span>{{ product.sku }}<br>
-                                <span class="card-text fs-5"><b>In stock: </b></span>{{ product.is_available }}<br>
+                                <span class="card-text fs-5 product-sku"><b>Code: </b>{{ product.sku }}</span><br>
+                                <span class="card-text fs-5 product-availability"><b>In stock: </b>{{ product.is_available|yesno:"Yes,No" }}</span><br>
                             </p>
                             <div class="product-add">
                                 <p>Quantity</p>
@@ -113,25 +113,34 @@
     </script>
 
     <script>
-        function updateVariantPrice() {
+        function updateVariantDetails() {
             let productID = '{{ object.id }}';
             let optionValues = [];
-
             $('.product-option').each(function () {
                 optionValues.push($(this).val());
             });
 
             $.ajax({
-                url: `/product/${productID}/variant-price/`,
+                url: `/product/${productID}/variant-details/`,
                 data: {
                     options: optionValues
                 },
                 dataType: 'json',
                 success: function (data) {
+                    debugger
                     if (data.is_on_sale && data.sale_price) {
                         $('#product-price').html(`<s class="fs-4">${data.price} €</s><br><small class="fs-4 text-danger">${data.sale_price} €</small>`);
                     } else {
                         $('#product-price').text(`${data.price} €`);
+                    }
+
+                    if (data.sku) {
+                        $('.product-sku').html(`<b>Code: </b>${data.sku}`);
+                    }
+
+                    if (typeof data.is_available !== 'undefined') {
+                        let availabilityText = data.is_available ? 'Yes' : 'No';
+                        $('.product-availability').html(`<b>In stock: </b>${availabilityText}`);
                     }
                 },
                 error: function (xhr) {
@@ -141,11 +150,11 @@
         }
 
         $(document).ready(function () {
-            $('.product-option').on('change', updateVariantPrice);
-            updateVariantPrice();  // Initial price load if defaults are selected
+            $('.product-option').on('change', updateVariantDetails);
+            updateVariantDetails();  // Initial price load if defaults are selected
         });
     </script>
-    
+
 {% endblock %}
 
 

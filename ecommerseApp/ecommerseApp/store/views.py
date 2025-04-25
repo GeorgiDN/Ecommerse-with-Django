@@ -62,7 +62,7 @@ class ProductDetailView(DetailView):
         return context
 
 
-def get_variant_price(request, product_id):
+def get_variant_details(request, product_id):
     option_ids = request.GET.getlist('options[]')
 
     try:
@@ -79,6 +79,8 @@ def get_variant_price(request, product_id):
                 'price': str(variant.price),
                 'is_on_sale': variant.is_on_sale,
                 'sale_price': str(variant.sale_price) if variant.is_on_sale else None,
+                'sku': variant.sku,
+                'is_available': variant.is_available,
             })
 
     except Exception as e:
