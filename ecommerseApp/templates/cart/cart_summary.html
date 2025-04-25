@@ -38,11 +38,7 @@
                                             {% endif %}
                                         {% endif %}
 
-                                        {# {% if not product.is_on_sale %}#}
-                                        {#     {{ product.price }}#}
-                                        {# {% else %}#}
-                                        {#     {{ product.sale_price }}#}
-                                        {# {% endif %}#}
+
                                     </small>
                                 </p>
 
@@ -57,27 +53,27 @@
 
                         <section class="quantity-section">
                             <p>Quantity</p>
-                            <select class="form-select" id="select{{ product.id }}">
-                                <option value="{{ item.quantity }}" selected>{{ item.quantity }}</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="8">8</option>
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                            </select>
+                        <select class="form-select" id="select{{ item.key }}">
+                            <option value="{{ item.quantity }}" selected>{{ item.quantity }}</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="8">8</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                        </select>
 
-                            <button type="button" data-index="{{ product.id }}"
-                                    class="btn btn-secondary update-cart">Update
-                            </button>
+                        <button type="button" data-index="{{ item.key }}" class="btn btn-secondary update-cart">
+                            Update
+                        </button>
 
-                            <button type="button" data-index="{{ product.id }}"
-                                    class="btn btn-danger delete-product">Remove
-                            </button>
+                        <button type="button" data-index="{{ item.key }}" class="btn btn-danger delete-product">
+                            Remove
+                        </button>
                         </section>
-                    
+
                         <section class="total-sum-per-product">
                             {% with item.variant as variant %}
                                 {% if variant %}
@@ -95,7 +91,7 @@
                                 {% endif %}
                             {% endwith %}
                         </section>
-                    
+
                     </div>
                 {% endwith %}
             {% endfor %}
@@ -121,6 +117,136 @@
 {% endblock %}
 
 
+
+
+
+
+
+
+{#{% extends 'store/base.html' %}#}
+{#{% load static %}#}
+{#{% load mul %}#}
+{#{% block content %}#}
+{#    <div class="container product-page mt-5 cart-summary">#}
+{#        <section class="cart-header">#}
+{#            <h4 class="product-header">Product</h4>#}
+{#            <h4 class="product-quantity">Quantity</h4>#}
+{#            <h4>Total</h4>#}
+{#        </section>#}
+{#        {% if cart_products %}#}
+{#            {% for item in cart_products %}#}
+{#                {% with product=item.product %}#}
+{#                    <div class="cart-info">#}
+{#                        <section class="product-info">#}
+{#                            <div class="image-container">#}
+{#                                <img src="{{ product.image.url }}" class="img-fluid rounded-start"#}
+{#                                     alt="{{ product.name }}">#}
+{#                            </div>#}
+{#                            <div class="product-desc">#}
+{#                                <h3 class="card-title">{{ product.name }}</h3>#}
+{#                                <p class="card-text fs-5"><b>Price: </b>#}
+{#                                    <small class="product-price">#}
+{##}
+{#                                        {% if item.variant %}#}
+{#                                            {% if item.variant.is_on_sale %}#}
+{#                                                <s>{{ item.variant.price }}</s>#}
+{#                                                <span class="text-danger fw-bold">{{ item.variant.sale_price }} €</span>#}
+{#                                            {% else %}#}
+{#                                                {{ item.variant.price }} €#}
+{#                                            {% endif %}#}
+{#                                        {% else %}#}
+{#                                            {% if product.is_on_sale %}#}
+{#                                                <s>{{ product.price }}</s>#}
+{#                                                <span class="text-danger fw-bold">{{ product.sale_price }} €</span>#}
+{#                                            {% else %}#}
+{#                                                {{ product.price }} €#}
+{#                                            {% endif %}#}
+{#                                        {% endif %}#}
+{##}
+{# #}
+{#                                    </small>#}
+{#                                </p>#}
+{##}
+{#                                <!-- Product options -->#}
+{#                                {% if item.option_details %}#}
+{#                                    {% for opt in item.option_details %}#}
+{#                                        <p class="card-text fs-6"><b>{{ opt.name }}:</b> {{ opt.value }}</p>#}
+{#                                    {% endfor %}#}
+{#                                {% endif %}#}
+{#                            </div>#}
+{#                        </section>#}
+{##}
+{#                        <section class="quantity-section">#}
+{#                            <p>Quantity</p>#}
+{#                            <select class="form-select" id="select{{ product.id }}">#}
+{#                                <option value="{{ item.quantity }}" selected>{{ item.quantity }}</option>#}
+{#                                <option value="1">1</option>#}
+{#                                <option value="2">2</option>#}
+{#                                <option value="3">3</option>#}
+{#                                <option value="4">4</option>#}
+{#                                <option value="5">5</option>#}
+{#                                <option value="8">8</option>#}
+{#                                <option value="10">10</option>#}
+{#                                <option value="20">20</option>#}
+{#                            </select>#}
+{##}
+{#                            <button type="button" data-index="{{ product.id }}"#}
+{#                                    class="btn btn-secondary update-cart">Update#}
+{#                            </button>#}
+{##}
+{#                            <button type="button" data-index="{{ product.id }}"#}
+{#                                    class="btn btn-danger delete-product">Remove#}
+{#                            </button>#}
+{#                        </section>#}
+{#                    #}
+{#                        <section class="total-sum-per-product">#}
+{#                            {% with item.variant as variant %}#}
+{#                                {% if variant %}#}
+{#                                    {% if variant.is_on_sale %}#}
+{#                                        {{ variant.sale_price|multiply:item.quantity|floatformat:2 }} €#}
+{#                                    {% else %}#}
+{#                                        {{ variant.price|multiply:item.quantity|floatformat:2 }} €#}
+{#                                    {% endif %}#}
+{#                                {% else %}#}
+{#                                    {% if product.is_on_sale %}#}
+{#                                        {{ product.sale_price|multiply:item.quantity|floatformat:2 }} €#}
+{#                                    {% else %}#}
+{#                                        {{ product.price|multiply:item.quantity|floatformat:2 }} €#}
+{#                                    {% endif %}#}
+{#                                {% endif %}#}
+{#                            {% endwith %}#}
+{#                        </section>#}
+{#                    #}
+{#                    </div>#}
+{#                {% endwith %}#}
+{#            {% endfor %}#}
+{#            <p class="total-price fs-3 mt-3 fw-bolder bg-info">#}
+{#                TOTAL SUM: <small><u>{{ totals|floatformat:2 }}</u></small> €#}
+{#            </p>#}
+{#            <a class="btn btn-success fs-5 cart-checkout" href="{% url 'checkout' %}">Checkout</a>#}
+{#        {% else %}#}
+{#            <h3>The cart is empty</h3>#}
+{#        {% endif %}#}
+{#    </div>#}
+{##}
+{#    <script>#}
+{#        var cartUpdateUrl = "{% url 'cart_update' %}";#}
+{#        var cartDeleteUrl = "{% url 'cart_delete' %}";#}
+{#        var csrfToken = "{{ csrf_token }}";#}
+{#    </script>#}
+{##}
+{#    <script src="{% static 'js/cart/updateCart.js' %}"></script>#}
+{#    <script src="{% static 'js/cart/deleteCart.js' %}"></script>#}
+{#    <script src="{% static 'js/cart/updateTotalPrice.js' %}"></script>#}
+{##}
+{#{% endblock %}#}
+
+
+{# {% if not product.is_on_sale %}#}
+{#     {{ product.price }}#}
+{# {% else %}#}
+{#     {{ product.sale_price }}#}
+{# {% endif %}#}
 
 
 {##}
