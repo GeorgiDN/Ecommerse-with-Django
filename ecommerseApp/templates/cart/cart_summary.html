@@ -41,13 +41,17 @@
 
                                     </small>
                                 </p>
-
-                                <!-- Product options -->
-                                {% if item.option_details %}
-                                    {% for opt in item.option_details %}
-                                        <p class="card-text fs-6"><b>{{ opt.name }}:</b> {{ opt.value }}</p>
-                                    {% endfor %}
-                                {% endif %}
+                            
+                            {% if item.option_details %}
+                                {% for opt in item.option_details %}
+                                    <p class="card-text fs-6">
+                                        <b>{{ opt.name }}:</b> {{ opt.value }}
+                                    </p>
+                                    <select class="form-select option-select" data-product-id="{{ item.key }}">
+                                        <option value="{{ opt.value_id }}" selected>{{ opt.value }}</option>
+                                    </select>
+                                {% endfor %}
+                            {% endif %}
                             </div>
                         </section>
 

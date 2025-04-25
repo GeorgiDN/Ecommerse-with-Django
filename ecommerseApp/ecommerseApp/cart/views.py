@@ -53,11 +53,30 @@ def cart_update(request):
     if request.POST.get('action') == 'post':
         product_id = request.POST.get('product_id')
         product_qty = request.POST.get('product_qty')
+        option_value_ids = request.POST.getlist('option_value_ids')  # This will be a list of selected option IDs
 
-        cart.update(product=product_id, quantity=product_qty)
+        # If product has options, we need to handle it differently
+        if option_value_ids:
+            # You need to identify the variant that matches the product and selected options
+            try:
+                variant = ProductVariant.objects.get(
+                    product_id=product_id,
+                    option_values__in=option_value_ids,
+                    option_values__count=len(option_value_ids)
+                )
+                # Update cart item by variant
+                cart.update(product=variant, quantity=product_qty)
+            except ProductVariant.DoesNotExist:
+                # Handle case where variant does not exist or is mismatched
+                response = JsonResponse({'error': 'Variant not found or invalid options selected.'})
+                response.status_code = 400
+                return response
+        else:
+            # Standard product without options
+            cart.update(product=product_id, quantity=product_qty)
 
         response = JsonResponse({'qty': product_qty})
-        messages.success(request, 'You cart has been updated.')
+        messages.success(request, 'Your cart has been updated.')
         return response
 
     return redirect('cart_summary')
@@ -76,6 +95,22 @@ def cart_delete(request):
         return response
 
     return redirect('cart_summary')
+
+
+# def cart_update(request):
+#     cart = Cart(request)
+#
+#     if request.POST.get('action') == 'post':
+#         product_id = request.POST.get('product_id')
+#         product_qty = request.POST.get('product_qty')
+#
+#         cart.update(product=product_id, quantity=product_qty)
+#
+#         response = JsonResponse({'qty': product_qty})
+#         messages.success(request, 'You cart has been updated.')
+#         return response
+#
+#     return redirect('cart_summary')
 
 
 # def cart_summary(request):
