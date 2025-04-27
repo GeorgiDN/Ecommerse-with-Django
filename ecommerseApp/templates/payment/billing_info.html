@@ -3,53 +3,8 @@
     {% load crispy_forms_tags %}
     {% load mul %}
     <div class="container order-summary">
-        <div class="card mt-3">
-            <div class="card-header">
-                <h4>Order summary</h4>
-            </div>
-            <div class="card-body">
-                {% for item in cart_products %}
-                    {% with product=item.product %}
-                        <div class="mt-3 d-flex">
-                            <strong>{{ product.name }}:&nbsp</strong>
-
-                            {% if item.option_details %}
-                                {% for opt in item.option_details %}
-                                    <p class="card-text fs-6">
-                                        <b>[{{ opt.name }}:</b> {{ opt.value }}]:&nbsp
-                                    </p>
-                                    <select class="form-select option-select" data-product-id="{{ item.key }}" style="display: none">
-                                        <option value="{{ opt.value_id }}" selected>{{ opt.value }}</option>
-                                    </select>
-                                {% endfor %}
-                            {% endif %}
-
-                            {% with item.variant as variant %}
-                                {% if variant %}
-                                    {% if variant.is_on_sale %}
-                                        {{ variant.sale_price|multiply:item.quantity|floatformat:2 }} €
-                                    {% else %}
-                                        {{ variant.price|multiply:item.quantity|floatformat:2 }} €
-                                    {% endif %}
-                                {% else %}
-                                    {% if product.is_on_sale %}
-                                        {{ product.sale_price|multiply:item.quantity|floatformat:2 }} €
-                                    {% else %}
-                                        {{ product.price|multiply:item.quantity|floatformat:2 }} €
-                                    {% endif %}
-                                {% endif %}
-                            {% endwith %}
-                        </div>
-                    {% endwith %}
-                {% endfor %}
-                <p class="mt-4 fs-3"><u>Total: <b>{{ totals }} €</b></u></p>
-                <a href="{% url 'cart_summary' %}"
-                   class="btn btn-secondary update-cart">Update items
-                </a>
-            </div>
-        </div>
-
-    
+    <h1>Billing info</h1>
+        {% include 'payment/order_summary.html' %}
         <div class="card mt-3">
             <div class="card-header">
                 Shipping Info
