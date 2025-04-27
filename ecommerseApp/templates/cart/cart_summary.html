@@ -37,8 +37,7 @@
                                                 {{ product.price }} €
                                             {% endif %}
                                         {% endif %}
-
-
+                                    
                                     </small>
                                 </p>
                             
@@ -47,7 +46,7 @@
                                     <p class="card-text fs-6">
                                         <b>{{ opt.name }}:</b> {{ opt.value }}
                                     </p>
-                                    <select class="form-select option-select" data-product-id="{{ item.key }}">
+                                    <select class="form-select option-select" data-product-id="{{ item.key }}" style="display: none">
                                         <option value="{{ opt.value_id }}" selected>{{ opt.value }}</option>
                                     </select>
                                 {% endfor %}

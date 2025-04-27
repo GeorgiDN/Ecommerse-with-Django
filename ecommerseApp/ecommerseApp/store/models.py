@@ -162,6 +162,7 @@ class ProductVariant(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     is_on_sale = models.BooleanField(default=False)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    track_quantity = models.BooleanField(default=True)
     quantity = models.PositiveIntegerField(default=0)
     is_available = models.BooleanField(default=True)
     weight = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
