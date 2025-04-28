@@ -1,3 +1,40 @@
 .order-summary {
     max-width: 700px;
 }
+
+.product-sku {
+    position: relative;
+}
+
+.product-sku-number {
+    position: absolute;
+    right: 135px;
+    font-size: 0.92rem;
+    top: 4px;
+    white-space: nowrap;
+    word-break: keep-all;
+}
+
+.products-summary {
+    font-size: 1.3rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 380px) {
+    .products-summary {
+        font-size: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .product-sku-number {
+        position: absolute;
+        right: 100px;
+    }
+}
+
+@media (max-width: 300px) {
+    .products-summary {
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+    }
+}

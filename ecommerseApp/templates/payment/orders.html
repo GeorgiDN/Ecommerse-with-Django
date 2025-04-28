@@ -24,18 +24,18 @@
 
                         {% for item in products %}
                             {% with product=item.product %}
-                                <div class="mt-3 d-flex align-items-center">
+                                <div class="mt-3 d-flex align-items-center products-summary">
                                     <div class="image-container">
                                         <img src="{{ product.image.url }}" class="img-fluid rounded-start"
                                              style="max-width: 70px;"
                                              alt="{{ product.name }}">
                                     </div>
-                                    <strong>{{ product.name }}&nbsp</strong>
+                                    <p><strong>{{ product.name }}&nbsp</strong></p>
 
                                     {% if item.option_details %}
                                         {% for opt in item.option_details %}
 
-                                            ({{ opt.name }}: {{ opt.value }})&nbsp
+                                            <p>({{ opt.name }}: {{ opt.value }})&nbsp</p>
 
                                         {% endfor %}
                                     {% endif %}
@@ -47,18 +47,24 @@
                                             {% else %}
                                                 {{ variant.price|multiply:item.quantity|floatformat:2 }} €
                                             {% endif %}
+                                            <div class="product-sku">
+                                                <p class="product-sku-number">{{ variant.sku }}</p>
+                                            </div>
                                         {% else %}
                                             {% if product.is_on_sale %}
                                                 {{ product.sale_price|multiply:item.quantity|floatformat:2 }} €
                                             {% else %}
                                                 {{ product.price|multiply:item.quantity|floatformat:2 }} €
                                             {% endif %}
+                                            <div class="product-sku">
+                                                <p class="product-sku-number">{{ product.sku }}</p>
+                                            </div>
                                         {% endif %}
                                     {% endwith %}
                                 </div>
                             {% endwith %}
                         {% endfor %}
-                        <h3 class="mt-3">Total: {{ order.amount_paid }}€</h3>
+                        <h3 class="mt-5">Total: {{ order.amount_paid }}€</h3>
                         {% if not order.shipped %}
                             <form method="post">
                                 {% csrf_token %}
