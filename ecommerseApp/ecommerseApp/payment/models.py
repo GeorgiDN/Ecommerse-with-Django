@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 
 from ecommerseApp.common.custom_validators import validate_phone_number
 from ecommerseApp.common.models_mixins import EmailMixin, QuantityMixin, PriceMixin, PhoneMixin
-from ecommerseApp.store.models import Product
+from ecommerseApp.store.models import Product, ProductVariant
 
 User = get_user_model()
 
@@ -137,6 +137,18 @@ class OrderItem(QuantityMixin, PriceMixin, models.Model):
     price = models.DecimalField(
         max_digits=12,
         decimal_places=2,
+    )
+    variant = models.ForeignKey(
+        to=ProductVariant,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='variant_items'
+    )
+
+    option_details = models.JSONField(
+        null=True,
+        blank=True
     )
 
     def __str__(self):

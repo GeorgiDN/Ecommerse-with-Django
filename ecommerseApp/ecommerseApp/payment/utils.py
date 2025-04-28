@@ -22,21 +22,53 @@ def create_order_item(cart_products, quantities, order_id, user=None):
     for item in cart_products():
         product_id = item['key'].split(":")[0]
         product = Product.objects.filter(id=product_id).first()
-        if product.is_on_sale:
-            price = product.price
-        else:
-            price = product.price
+        price = product.price
 
         quantity = item['quantity']
-        if user:
-            order_item_created = OrderItem(order_id=order_id, product_id=product_id, user=user,
-                                           quantity=quantity, price=price)
-            order_item_created.save()
-        else:
-            order_item_created = OrderItem(order_id=order_id, product_id=product_id,
-                                           quantity=quantity, price=price)
-            order_item_created.save()
+        variant = item.get('variant')  # This is a ProductVariant instance or None
+        option_details = item.get('option_details', [])
+
+        order_item_created = OrderItem(
+            order_id=order_id,
+            product=product,
+            quantity=quantity,
+            price=price,
+            user=user if user else None
+        )
+
+        # Add variant if available
+        if variant:
+            order_item_created.variant = variant
+
+        # If you have a field to store option details as JSON/text
+        if option_details:
+            order_item_created.option_details = option_details
+
+        order_item_created.save()
+
     return order_item_created
+
+# def create_order_item(cart_products, quantities, order_id, user=None):
+#     order_item_created = None
+#
+#     for item in cart_products():
+#         product_id = item['key'].split(":")[0]
+#         product = Product.objects.filter(id=product_id).first()
+#         if product.is_on_sale:
+#             price = product.price
+#         else:
+#             price = product.price
+#
+#         quantity = item['quantity']
+#         if user:
+#             order_item_created = OrderItem(order_id=order_id, product_id=product_id, user=user,
+#                                            quantity=quantity, price=price)
+#             order_item_created.save()
+#         else:
+#             order_item_created = OrderItem(order_id=order_id, product_id=product_id,
+#                                            quantity=quantity, price=price)
+#             order_item_created.save()
+#     return order_item_created
 
 
 # def create_order_item(cart_products, quantities, order_id, user=None):

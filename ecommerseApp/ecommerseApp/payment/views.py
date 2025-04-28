@@ -140,7 +140,8 @@ def not_shipped_dash(request):
 def orders(request, pk):
     if request.user.is_authenticated and request.user.is_superuser:
         order = Order.objects.get(id=pk)
-        items = OrderItem.objects.filter(order=pk)
+        # items = OrderItem.objects.filter(order=pk)
+        products = OrderItem.objects.filter(order=pk)
 
         if request.method == 'POST':
             status = request.POST['shipping_status']
@@ -155,7 +156,7 @@ def orders(request, pk):
 
         context = {
             'order': order,
-            'items': items,
+            'products': products,
         }
         return render(request, 'payment/orders.html', context)
 
