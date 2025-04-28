@@ -6,7 +6,7 @@
             <div class="col-md-8 col-lg-6">
                 <div class="card mt-4 mx-auto">
                     <div class="card-header">
-                        Order {{ order.id }} - ${{ order.amount_paid }}
+                        Order {{ order.id }} - €{{ order.amount_paid }}
                     </div>
                     <div class="card-body">
                         <p><b>Email</b>: {{ order.email }}</p>
@@ -25,6 +25,11 @@
                         {% for item in products %}
                             {% with product=item.product %}
                                 <div class="mt-3 d-flex align-items-center">
+                                    <div class="image-container">
+                                        <img src="{{ product.image.url }}" class="img-fluid rounded-start"
+                                             style="max-width: 70px;"
+                                             alt="{{ product.name }}">
+                                    </div>
                                     <strong>{{ product.name }}&nbsp</strong>
 
                                     {% if item.option_details %}
@@ -53,7 +58,7 @@
                                 </div>
                             {% endwith %}
                         {% endfor %}
-                    
+                        <h3 class="mt-3">Total: {{ order.amount_paid }}€</h3>
                         {% if not order.shipped %}
                             <form method="post">
                                 {% csrf_token %}
