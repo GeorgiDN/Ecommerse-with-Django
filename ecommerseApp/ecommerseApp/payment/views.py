@@ -83,8 +83,8 @@ def process_order(request):
             order_created = create_order(full_name, email, phone, shipping_address, amount_paid, user=user)
             order_created.save()
             order_id = order_created.pk
-            order_item_created = create_order_item(cart_products, quantities, order_id, user=user)
-            order_item_created.save()
+            create_order_item(cart_products, quantities, order_id, user=user)
+            # order_item_created.save()
             delete_order(request)
 
             current_user = Profile.objects.filter(user_id=request.user.id)
@@ -94,8 +94,8 @@ def process_order(request):
             order_created = create_order(full_name, email, phone, shipping_address, amount_paid)
             order_created.save()
             order_id = order_created.pk
-            order_item_created = create_order_item(cart_products, quantities, order_id)
-            order_item_created.save()
+            create_order_item(cart_products, quantities, order_id)
+            # order_item_created.save()
             delete_order(request)
 
         messages.success(request, 'Ordered placed test')

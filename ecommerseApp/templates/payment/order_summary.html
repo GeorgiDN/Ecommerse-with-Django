@@ -6,21 +6,17 @@
     <div class="card-body">
         {% for item in cart_products %}
             {% with product=item.product %}
-                <div class="mt-3 d-flex">
-                    <strong>{{ product.name }}:&nbsp</strong>
+                <div class="mt-3 d-flex align-items-center">
+                    <strong>{{ product.name }}&nbsp</strong>
 
                     {% if item.option_details %}
                         {% for opt in item.option_details %}
-                            <p class="card-text fs-6">
-                                <b>[{{ opt.name }}:</b> {{ opt.value }}]:&nbsp
-                            </p>
-                            <select class="form-select option-select" data-product-id="{{ item.key }}"
-                                    style="display: none">
-                                <option value="{{ opt.value_id }}" selected>{{ opt.value }}</option>
-                            </select>
+
+                            ({{ opt.name }}: {{ opt.value }})&nbsp
+
                         {% endfor %}
                     {% endif %}
-
+                    <span class="badge rounded-circle bg-primary text-white">x {{ item.quantity }}</span>&nbsp;:
                     {% with item.variant as variant %}
                         {% if variant %}
                             {% if variant.is_on_sale %}

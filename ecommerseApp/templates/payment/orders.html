@@ -20,7 +20,7 @@
                         <p><b>Full Name</b>: {{ order.full_name }}</p>
                         <p><b>Shipping Address</b>:
                         <pre class="fs-5">{{ order.shipping_address }}</pre>
-                        </p>
+                        
 
                         {% for item in items %}
                             {{ item.product }} - {{ item.quantity }} pcs. - ${{ item.price }}<br>

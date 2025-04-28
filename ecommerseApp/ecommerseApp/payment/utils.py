@@ -2,6 +2,8 @@ from ecommerseApp.payment.models import Order, OrderItem
 from django.contrib import messages
 import datetime
 
+from ecommerseApp.store.models import Product
+
 
 def create_order(full_name, email, phone, shipping_address, amount_paid, user=None):
     if user:
@@ -17,22 +19,46 @@ def create_order(full_name, email, phone, shipping_address, amount_paid, user=No
 def create_order_item(cart_products, quantities, order_id, user=None):
     order_item_created = None
 
-    for product in cart_products():
-        product_id = product.id
+    for item in cart_products():
+        product_id = item['key'].split(":")[0]
+        product = Product.objects.filter(id=product_id).first()
         if product.is_on_sale:
             price = product.price
         else:
             price = product.price
 
-        for key, value in quantities().items():
-            if int(key) == product.id:
-                if user:
-                    order_item_created = OrderItem(order_id=order_id, product_id=product_id, user=user,
-                                                   quantity=value, price=price)
-                else:
-                    order_item_created = OrderItem(order_id=order_id, product_id=product_id,
-                                                   quantity=value, price=price)
+        quantity = item['quantity']
+        if user:
+            order_item_created = OrderItem(order_id=order_id, product_id=product_id, user=user,
+                                           quantity=quantity, price=price)
+            order_item_created.save()
+        else:
+            order_item_created = OrderItem(order_id=order_id, product_id=product_id,
+                                           quantity=quantity, price=price)
+            order_item_created.save()
     return order_item_created
+
+
+# def create_order_item(cart_products, quantities, order_id, user=None):
+#     order_item_created = None
+#
+#     for item in cart_products():
+#         product_id = item['key'].split(":")[0]
+#         product = Product.objects.filter(id=product_id).first()
+#         if product.is_on_sale:
+#             price = product.price
+#         else:
+#             price = product.price
+#
+#         for key, value in quantities().items():
+#             if int(key) == product.id:
+#                 if user:
+#                     order_item_created = OrderItem(order_id=order_id, product_id=product_id, user=user,
+#                                                    quantity=value, price=price)
+#                 else:
+#                     order_item_created = OrderItem(order_id=order_id, product_id=product_id,
+#                                                    quantity=value, price=price)
+#     return order_item_created
 
 
 def delete_order(request):
