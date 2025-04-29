@@ -1,6 +1,6 @@
 import json
 from decimal import Decimal
-
+from django.contrib import messages
 from django.db.models import Count
 
 
@@ -28,12 +28,21 @@ class Cart:
         item_key = f"{product_id}:{sorted_option_ids}" if sorted_option_ids else product_id
 
         if item_key in self.cart:
-            self.cart[item_key]["quantity"] += product_qty
+            if product.track_quantity and self.cart[item_key]["quantity"] + product_qty > product.quantity:
+                # messages.error(self.request, "Not enough quantity.")
+                return False
+            else:
+                self.cart[item_key]["quantity"] += product_qty
+
         else:
-            self.cart[item_key] = {
-                "quantity": product_qty,
-                "options": options
-            }
+            if product.track_quantity and product_qty > product.quantity:
+                # messages.error(self.request, "Not enough quantity.")
+                return False
+            else:
+                self.cart[item_key] = {
+                    "quantity": product_qty,
+                    "options": options
+                }
 
         self.session.modified = True
 
@@ -41,6 +50,8 @@ class Cart:
             current_user = Profile.objects.filter(user__id=self.request.user.id)
             carty = str(self.cart).replace("'", '"')
             current_user.update(old_cart=str(carty))
+
+        return True
 
     def get_products(self):
         from django.db.models import Count

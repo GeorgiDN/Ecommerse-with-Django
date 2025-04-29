@@ -37,7 +37,9 @@ def cart_add(request):
                 if option_value_id:
                     options[option_name] = int(option_value_id)
 
-        cart.db_add(product=product, quantity=product_qty, options=options)
+        if not cart.db_add(product=product, quantity=product_qty, options=options):
+            messages.error(request, "Not enough quantity.")
+            return JsonResponse({'error': 'Not enough quantity'}, status=400)
 
         cart_quantity = cart.__len__()
 
