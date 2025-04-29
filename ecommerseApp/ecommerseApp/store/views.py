@@ -81,6 +81,7 @@ def get_variant_details(request, product_id):
                 'sale_price': str(variant.sale_price) if variant.is_on_sale else None,
                 'sku': variant.sku,
                 'is_available': variant.is_available,
+                'weight': variant.weight,
             })
 
     except Exception as e:

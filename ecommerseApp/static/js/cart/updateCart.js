@@ -2,6 +2,7 @@ $(document).on('click', '.update-cart', function (e) {
     e.preventDefault();
 
     let productKey = $(this).data('index');
+    let inputElement = $('#input' + productKey);
     let optionValueIds = [];
 
     $('.option-select[data-product-id="' + productKey + '"]').each(function () {
@@ -10,6 +11,12 @@ $(document).on('click', '.update-cart', function (e) {
 
     let productQty = $(this).siblings('input[type="number"]').val();
     // let productQty = $(this).prev('input[type="number"]').val();
+
+    if (productQty % 1 !== 0) {
+        alert('Please enter a whole number for quantity');
+        inputElement.focus();
+        return false;
+    }
 
     $.ajax({
         type: 'POST',

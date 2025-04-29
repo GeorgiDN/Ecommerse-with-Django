@@ -25,15 +25,24 @@
                             </p>
 
                             <p>
-                                <span class="card-text fs-5"><b>Model: </b></span>{{ product.model }}<br>
-                                <span class="card-text fs-5 product-sku"><b>Code: </b>{{ product.sku }}</span><br>
                                 <span class="card-text fs-5 product-availability"><b>In stock: </b>{{ product.is_available|yesno:"Yes,No" }}</span><br>
+                                {% if product.model %}
+                                    <span class="card-text fs-5"><b>Model: </b></span>{{ product.model }}<br>
+                                {% endif %}
+                                {% if product.sku %}
+                                    <span class="card-text fs-5 product-sku"><b>Code: </b>{{ product.sku }}</span><br>
+                                {% endif %}
+                                {% if product.weight > 0 %}
+                                    <span class="card-text fs-5 product-weight"><b>Weight: </b>{{ product.weight }}</span><br>
+                                {% else %}
+                                    <span class="card-text fs-5 product-weight"><b>Weight: </b>-</span><br>
+                                {% endif %}
                             </p>
                             <div class="product-add">
                                 <p>Quantity</p>
-                                
+
                                 <input type="number" class="form-control" id="qty-cart" value="1" min="1">
-                                
+
                                 <button type="button" value="{{ product.id }}"
                                         class="btn btn-secondary mb-3" id="add-cart">Add to Cart
                                 </button>
@@ -71,10 +80,8 @@
             e.preventDefault();
 
             let productID = $(this).val();
-            {#let productQty = $('#qty-cart option:selected').val();#}
             let productQty = $('#qty-cart').val();
 
-            // Prepare the POST data
             let postData = {
                 product_id: productID,
                 product_qty: productQty,
@@ -88,6 +95,11 @@
                 const valueId = $(this).val();
                 postData[`option_${optionId}`] = valueId;
             });
+
+            if (productQty % 1 !== 0) {
+                alert('Please enter a whole number for quantity');
+                return false;
+            }
 
             // Send the AJAX POST request
             $.ajax({
@@ -120,7 +132,6 @@
                 },
                 dataType: 'json',
                 success: function (data) {
-                    debugger
                     if (data.is_on_sale && data.sale_price) {
                         $('#product-price').html(`<s class="fs-4">${data.price} €</s><br><small class="fs-4 text-danger">${data.sale_price} €</small>`);
                     } else {
@@ -129,6 +140,10 @@
 
                     if (data.sku) {
                         $('.product-sku').html(`<b>Code: </b>${data.sku}`);
+                    }
+
+                    if (data.weight) {
+                        $('.product-weight').html(`<b>Weight: </b>${data.weight}`);
                     }
 
                     if (typeof data.is_available !== 'undefined') {
