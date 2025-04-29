@@ -31,17 +31,9 @@
                             </p>
                             <div class="product-add">
                                 <p>Quantity</p>
-                                <select class="form-select" id="qty-cart">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="8">8</option>
-                                    <option value="10">10</option>
-                                    <option value="20">20</option>
-                                </select>
-
+                                
+                                <input type="number" class="form-control" id="qty-cart" value="1" min="1">
+                                
                                 <button type="button" value="{{ product.id }}"
                                         class="btn btn-secondary mb-3" id="add-cart">Add to Cart
                                 </button>
@@ -79,7 +71,8 @@
             e.preventDefault();
 
             let productID = $(this).val();
-            let productQty = $('#qty-cart option:selected').val();
+            {#let productQty = $('#qty-cart option:selected').val();#}
+            let productQty = $('#qty-cart').val();
 
             // Prepare the POST data
             let postData = {
@@ -156,48 +149,3 @@
     </script>
 
 {% endblock %}
-
-
-
-
-{#        <p class="card-text fs-4"><b>Price: </b>#}
-{#        {% if not product.is_on_sale %}#}
-{#            {{ product.price }} €#}
-{#        {% else %}#}
-{##}
-{#            <s class="fs-4">{{ product.price }}</s>#}
-{#            <br>#}
-{#            <small class="fs-4 text-danger">{{ product.sale_price }} €</small>#}
-{#        {% endif %}#}
-{#    </p>#}
-
-
-{#    <script>#}
-{#        $(document).on('click', '#add-cart', function (e) {#}
-{#            e.preventDefault();#}
-{##}
-{#            let productID = $(this).val();#}
-{##}
-{#            $.ajax({#}
-{#                type: 'POST',#}
-{#                url: "{% url 'cart_add' %}",#}
-{#                data: {#}
-{#                    product_id: productID,#}
-{#                    product_qty: $('#qty-cart option:selected').text(),#}
-{#                    csrfmiddlewaretoken: '{{ csrf_token }}',#}
-{#                    action: 'post'#}
-{#                },#}
-{##}
-{#                success: function (json) {#}
-{#                    document.getElementById("cart_quantity").textContent = json.qty#}
-{#                    location.reload();#}
-{#                },#}
-{##}
-{#                error: function (xhr, errmsg, err) {#}
-{#                    console.log("Error:", xhr.responseText);#}
-{#                }#}
-{#            });#}
-{#        });#}
-{##}
-{#    </script>#}
-
