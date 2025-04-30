@@ -126,46 +126,38 @@ class Cart:
 
         product_id = str(product)
         product_qty = int(quantity)
-
-        item_key = product_id
         ourcart = self.cart
 
+        if product_id not in ourcart:
+            return False
+
+        # Handle variant case
         if ':' in product_id:
             base_product_id, option_ids = product_id.split(':', 1)
 
-            # Find the variant that matches these options
             variant = ProductVariant.objects.filter(
                 product_id=base_product_id,
                 option_values__id__in=option_ids.split('-')
             ).distinct().first()
 
-            if variant:
-                if variant.track_quantity and product_qty > variant.quantity:
-                    return False
-            else:
+            if not variant or (variant.track_quantity and product_qty > variant.quantity):
                 return False
 
-            if product_id in ourcart:
-                ourcart[product_id]['quantity'] = product_qty
-            else:
-                return False
+        # Handle regular product case
         else:
-            # Regular product without variants
             product = Product.objects.filter(id=product_id).first()
-            if product.track_quantity and product_qty > product.quantity:
+            if not product or (product.track_quantity and product_qty > product.quantity):
                 return False
 
-            if product_id in ourcart:
-                ourcart[product_id]['quantity'] = product_qty
-            else:
-                return False
-
+        # Update quantity if all validations passed
+        ourcart[product_id]['quantity'] = product_qty
         self.session.modified = True
 
+        # Update user's cart if authenticated
         if self.request.user.is_authenticated:
-            current_user = Profile.objects.filter(user__id=self.request.user.id)
-            carty = str(self.cart).replace("'", '"')
-            current_user.update(old_cart=str(carty))
+            Profile.objects.filter(
+                user__id=self.request.user.id
+            ).update(old_cart=str(self.cart).replace("'", '"'))
 
         return True
 
@@ -220,6 +212,56 @@ class Cart:
             current_user = Profile.objects.filter(user__id=self.request.user.id)
             carty = str(self.cart).replace("'", '"')
             current_user.update(old_cart=carty)
+
+
+    # def update(self, product, quantity):
+    #     from ecommerseApp.accounts.models import Profile
+    #     from ecommerseApp.store.models import Product, ProductVariant
+    #
+    #     product_id = str(product)
+    #     product_qty = int(quantity)
+    #
+    #     item_key = product_id
+    #     ourcart = self.cart
+    #
+    #     if ':' in product_id:
+    #         base_product_id, option_ids = product_id.split(':', 1)
+    #
+    #         # Find the variant that matches these options
+    #         variant = ProductVariant.objects.filter(
+    #             product_id=base_product_id,
+    #             option_values__id__in=option_ids.split('-')
+    #         ).distinct().first()
+    #
+    #         if variant:
+    #             if variant.track_quantity and product_qty > variant.quantity:
+    #                 return False
+    #         else:
+    #             return False
+    #
+    #         if product_id in ourcart:
+    #             ourcart[product_id]['quantity'] = product_qty
+    #         else:
+    #             return False
+    #     else:
+    #         # Regular product without variants
+    #         product = Product.objects.filter(id=product_id).first()
+    #         if product.track_quantity and product_qty > product.quantity:
+    #             return False
+    #
+    #         if product_id in ourcart:
+    #             ourcart[product_id]['quantity'] = product_qty
+    #         else:
+    #             return False
+    #
+    #     self.session.modified = True
+    #
+    #     if self.request.user.is_authenticated:
+    #         current_user = Profile.objects.filter(user__id=self.request.user.id)
+    #         carty = str(self.cart).replace("'", '"')
+    #         current_user.update(old_cart=str(carty))
+    #
+    #     return True
 
     # def update(self, product, quantity):
     #     from ecommerseApp.accounts.models import Profile
