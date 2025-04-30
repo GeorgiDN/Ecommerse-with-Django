@@ -15,7 +15,7 @@ class Cart:
 
         self.cart = cart
 
-    def db_add(self, product, quantity, options=None):
+    def db_add(self, product, quantity, options=None, variant=None):
         from ecommerseApp.accounts.models import Profile
 
         product_id = str(product.id)
@@ -28,21 +28,34 @@ class Cart:
         item_key = f"{product_id}:{sorted_option_ids}" if sorted_option_ids else product_id
 
         if item_key in self.cart:
-            if product.track_quantity and self.cart[item_key]["quantity"] + product_qty > product.quantity:
-                # messages.error(self.request, "Not enough quantity.")
-                return False
+            if not options:
+                if product.track_quantity and self.cart[item_key]["quantity"] + product_qty > product.quantity:
+                    return False
+                else:
+                    self.cart[item_key]["quantity"] += product_qty
             else:
-                self.cart[item_key]["quantity"] += product_qty
+                if variant.track_quantity and self.cart[item_key]["quantity"] + product_qty > variant.quantity:
+                    return False
+                else:
+                    self.cart[item_key]["quantity"] += product_qty
 
         else:
-            if product.track_quantity and product_qty > product.quantity:
-                # messages.error(self.request, "Not enough quantity.")
-                return False
+            if not options:
+                if product.track_quantity and product_qty > product.quantity:
+                    return False
+                else:
+                    self.cart[item_key] = {
+                        "quantity": product_qty,
+                        "options": options
+                    }
             else:
-                self.cart[item_key] = {
-                    "quantity": product_qty,
-                    "options": options
-                }
+                if variant.track_quantity and product_qty > variant.quantity:
+                    return False
+                else:
+                    self.cart[item_key] = {
+                        "quantity": product_qty,
+                        "options": options
+                    }
 
         self.session.modified = True
 
@@ -109,14 +122,43 @@ class Cart:
 
     def update(self, product, quantity):
         from ecommerseApp.accounts.models import Profile
+        from ecommerseApp.store.models import Product, ProductVariant
+
         product_id = str(product)
         product_qty = int(quantity)
 
+        item_key = product_id
         ourcart = self.cart
-        if isinstance(ourcart.get(product_id), dict):
-            ourcart[product_id]['quantity'] = product_qty
+
+        if ':' in product_id:
+            base_product_id, option_ids = product_id.split(':', 1)
+
+            # Find the variant that matches these options
+            variant = ProductVariant.objects.filter(
+                product_id=base_product_id,
+                option_values__id__in=option_ids.split('-')
+            ).distinct().first()
+
+            if variant:
+                if variant.track_quantity and product_qty > variant.quantity:
+                    return False
+            else:
+                return False
+
+            if product_id in ourcart:
+                ourcart[product_id]['quantity'] = product_qty
+            else:
+                return False
         else:
-            ourcart[product_id] = {'quantity': product_qty, 'options': {}}
+            # Regular product without variants
+            product = Product.objects.filter(id=product_id).first()
+            if product.track_quantity and product_qty > product.quantity:
+                return False
+
+            if product_id in ourcart:
+                ourcart[product_id]['quantity'] = product_qty
+            else:
+                return False
 
         self.session.modified = True
 
@@ -125,7 +167,7 @@ class Cart:
             carty = str(self.cart).replace("'", '"')
             current_user.update(old_cart=str(carty))
 
-        return self.cart
+        return True
 
     def cart_total(self):
         from ecommerseApp.store.models import Product, ProductOptionValue, ProductVariant
@@ -178,6 +220,38 @@ class Cart:
             current_user = Profile.objects.filter(user__id=self.request.user.id)
             carty = str(self.cart).replace("'", '"')
             current_user.update(old_cart=carty)
+
+    # def update(self, product, quantity):
+    #     from ecommerseApp.accounts.models import Profile
+    #     from ecommerseApp.store.models import Product
+    #     product_id = str(product)
+    #     product_qty = int(quantity)
+    #
+    #
+    #     #  Handle case if there is an options to take variant and check for variant quantity
+    #     #  my cart = {'1:1': {'quantity': 2, 'options': {'1': 1}}, '2': {'quantity': 1, 'options': {}}}
+    #     #  else the code bellow works
+    #
+    #     product = Product.objects.filter(id=product_id).first()
+    #
+    #     ourcart = self.cart
+    #     if isinstance(ourcart.get(product_id), dict):
+    #         if product.track_quantity and product_qty > product.quantity:
+    #             return False
+    #         ourcart[product_id]['quantity'] = product_qty
+    #     else:
+    #         ourcart[product_id] = {'quantity': product_qty, 'options': {}}
+    #
+    #     self.session.modified = True
+    #
+    #     if self.request.user.is_authenticated:
+    #         current_user = Profile.objects.filter(user__id=self.request.user.id)
+    #         carty = str(self.cart).replace("'", '"')
+    #         current_user.update(old_cart=str(carty))
+    #
+    #     return self.cart
+
+
 
     # def delete(self, product):
     #     from ecommerseApp.accounts.models import Profile

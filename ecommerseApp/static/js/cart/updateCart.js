@@ -5,7 +5,11 @@ $(document).on('click', '.update-cart', function (e) {
     let inputElement = $('#input' + productKey);
     let optionValueIds = [];
 
-    $('.option-select[data-product-id="' + productKey + '"]').each(function () {
+    // $('.option-select[data-product-id="' + productKey + '"]').each(function () {
+    //     optionValueIds.push($(this).val());
+    // });
+
+    $(`select.option-select[data-product-id="${productKey}"]`).each(function() {
         optionValueIds.push($(this).val());
     });
 
@@ -29,7 +33,12 @@ $(document).on('click', '.update-cart', function (e) {
             action: 'post'
         },
         success: function (json) {
-            location.reload();
+            if (json.error) {
+                location.reload();
+                alert(json.error);
+            } else {
+                location.reload();
+            }
         },
         error: function (xhr, errmsg, err) {
             console.log("Error:", xhr.responseText);

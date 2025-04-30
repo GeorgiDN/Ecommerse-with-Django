@@ -37,14 +37,31 @@ def cart_add(request):
                 if option_value_id:
                     options[option_name] = int(option_value_id)
 
-        if not cart.db_add(product=product, quantity=product_qty, options=options):
-            messages.error(request, "Not enough quantity.")
-            return JsonResponse({'error': 'Not enough quantity'}, status=400)
+        if options:
+            try:
+                variant = ProductVariant.objects.get(
+                    product_id=product_id,
+                    option_values__in=options.values(),
+                )
+                if not cart.db_add(product=product, quantity=product_qty, options=options, variant=variant):
+                    messages.error(request, "Not enough quantity available.")
+                    return JsonResponse({'error': 'Not enough quantity available.'}, status=400)
 
-        cart_quantity = cart.__len__()
+            except ProductVariant.DoesNotExist:
+                # Handle case where variant does not exist or is mismatched
+                response = JsonResponse({'error': 'Variant not found or invalid options selected.'})
+                response.status_code = 400
+                return response
 
-        messages.success(request, 'The product has been added to the cart.')
-        return JsonResponse({'qty': cart_quantity})
+        else:
+            if not cart.db_add(product=product, quantity=product_qty, options=options):
+                messages.error(request, "Not enough quantity available.")
+                return JsonResponse({'error': 'Not enough quantity available.'}, status=400)
+
+            cart_quantity = cart.__len__()
+
+            messages.success(request, 'The product has been added to the cart.')
+            return JsonResponse({'qty': cart_quantity})
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
@@ -55,27 +72,10 @@ def cart_update(request):
     if request.POST.get('action') == 'post':
         product_id = request.POST.get('product_id')
         product_qty = request.POST.get('product_qty')
-        option_value_ids = request.POST.getlist('option_value_ids')  # This will be a list of selected option IDs
 
-        # If product has options, we need to handle it differently
-        if option_value_ids:
-            # You need to identify the variant that matches the product and selected options
-            try:
-                variant = ProductVariant.objects.get(
-                    product_id=product_id,
-                    option_values__in=option_value_ids,
-                    option_values__count=len(option_value_ids)
-                )
-                # Update cart item by variant
-                cart.update(product=variant, quantity=product_qty)
-            except ProductVariant.DoesNotExist:
-                # Handle case where variant does not exist or is mismatched
-                response = JsonResponse({'error': 'Variant not found or invalid options selected.'})
-                response.status_code = 400
-                return response
-        else:
-            # Standard product without options
-            cart.update(product=product_id, quantity=product_qty)
+        if not cart.update(product=product_id, quantity=product_qty):
+            messages.error(request, "Not enough quantity available.")
+            return JsonResponse({'error': 'Not enough quantity available.'}, status=400)
 
         response = JsonResponse({'qty': product_qty})
         messages.success(request, 'Your cart has been updated.')
@@ -95,6 +95,44 @@ def cart_delete(request):
         return JsonResponse({'product': product_key})
 
     return redirect('cart_summary')
+
+
+
+# def cart_update(request):
+#     cart = Cart(request)
+#
+#     if request.POST.get('action') == 'post':
+#         product_id = request.POST.get('product_id')
+#         product_qty = request.POST.get('product_qty')
+#         option_value_ids = request.POST.getlist('option_value_ids')  # This will be a list of selected option IDs
+#
+#         # If product has options, we need to handle it differently
+#         if option_value_ids:
+#             # You need to identify the variant that matches the product and selected options
+#             try:
+#                 variant = ProductVariant.objects.get(
+#                     product_id=product_id,
+#                     option_values__in=option_value_ids,
+#                     option_values__count=len(option_value_ids)
+#                 )
+#                 # Update cart item by variant
+#                 cart.update(product=variant, quantity=product_qty)
+#             except ProductVariant.DoesNotExist:
+#                 # Handle case where variant does not exist or is mismatched
+#                 response = JsonResponse({'error': 'Variant not found or invalid options selected.'})
+#                 response.status_code = 400
+#                 return response
+#         else:
+#             # Standard product without options
+#             if not cart.update(product=product_id, quantity=product_qty):
+#                 messages.error(request, "Not enough quantity available.")
+#                 return JsonResponse({'error': 'Not enough quantity available.'}, status=400)
+#
+#         response = JsonResponse({'qty': product_qty})
+#         messages.success(request, 'Your cart has been updated.')
+#         return response
+#
+#     return redirect('cart_summary')
 
 
 
