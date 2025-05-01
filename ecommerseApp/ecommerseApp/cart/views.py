@@ -43,6 +43,7 @@ def cart_add(request):
                     product_id=product_id,
                     option_values__in=options.values(),
                 )
+
                 if not cart.db_add(product=product, quantity=product_qty, options=options, variant=variant):
                     messages.error(request, "Not enough quantity available.")
                     return JsonResponse({'error': 'Not enough quantity available.'}, status=400)
@@ -54,6 +55,10 @@ def cart_add(request):
                 return response
 
         else:
+            if not product.is_available:
+                messages.error(request, 'Product is not available.')
+                return JsonResponse({'error': 'Product is not available.'}, status=400)
+
             if not cart.db_add(product=product, quantity=product_qty, options=options):
                 messages.error(request, "Not enough quantity available.")
                 return JsonResponse({'error': 'Not enough quantity available.'}, status=400)

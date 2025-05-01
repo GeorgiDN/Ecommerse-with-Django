@@ -29,12 +29,14 @@ class Cart:
 
         if item_key in self.cart:
             if not options:
-                if product.track_quantity and self.cart[item_key]["quantity"] + product_qty > product.quantity:
+                if ((not product.is_available) or
+                        (product.track_quantity and self.cart[item_key]["quantity"] + product_qty > product.quantity)):
                     return False
                 else:
                     self.cart[item_key]["quantity"] += product_qty
             else:
-                if variant.track_quantity and self.cart[item_key]["quantity"] + product_qty > variant.quantity:
+                if ((not product.is_available) or
+                        (variant.track_quantity and self.cart[item_key]["quantity"] + product_qty > variant.quantity)):
                     return False
                 else:
                     self.cart[item_key]["quantity"] += product_qty

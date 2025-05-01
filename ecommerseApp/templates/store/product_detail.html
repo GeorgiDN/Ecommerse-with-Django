@@ -42,10 +42,12 @@
                                 <p>Quantity</p>
 
                                 <input type="number" class="form-control" id="qty-cart" value="1" min="1">
-
-                                <button type="button" value="{{ product.id }}"
-                                        class="btn btn-secondary mb-3" id="add-cart">Add to Cart
-                                </button>
+                                
+                                {% if product.is_available %}
+                                    <button type="button" value="{{ product.id }}"
+                                            class="btn btn-secondary mb-3" id="add-cart">Add to Cart
+                                    </button>
+                                {% endif %}
                             </div>
                             {% for option in options %}
                                 <div class="mb-3">
