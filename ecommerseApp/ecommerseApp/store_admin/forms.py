@@ -1,6 +1,7 @@
 from django.forms import ModelForm
 from django import forms
-from ecommerseApp.store.models import Product, Category
+from ecommerseApp.store.models import Product, Category, ProductOption, ProductOptionValue, ProductVariant
+from django.forms import inlineformset_factory
 
 
 class ProductBaseForm(ModelForm):
@@ -113,3 +114,68 @@ class CategoryEditForm(forms.ModelForm):
             self.save_m2m()
             instance.category_products.set(self.cleaned_data['products'])
         return instance
+
+
+
+
+class ProductOptionForm(forms.ModelForm):
+    class Meta:
+        model = ProductOption
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Color, Size'
+            })
+        }
+
+class ProductOptionValueForm(forms.ModelForm):
+    class Meta:
+        model = ProductOptionValue
+        fields = ['value']
+        widgets = {
+            'value': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Red, Large'
+            })
+        }
+
+class ProductVariantForm(forms.ModelForm):
+    class Meta:
+        model = ProductVariant
+        fields = ['sku', 'price', 'is_on_sale', 'sale_price', 'track_quantity', 'quantity', 'weight', 'option_values']
+        widgets = {
+            'option_values': forms.SelectMultiple(attrs={
+                'class': 'form-control select2',
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01'
+            }),
+            'sale_price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01'
+            }),
+        }
+
+# Create formsets
+ProductOptionFormSet = inlineformset_factory(
+    Product, ProductOption,
+    form=ProductOptionForm,
+    extra=1,
+    can_delete=True
+)
+
+ProductOptionValueFormSet = inlineformset_factory(
+    ProductOption, ProductOptionValue,
+    form=ProductOptionValueForm,
+    extra=1,
+    can_delete=True
+)
+
+ProductVariantFormSet = inlineformset_factory(
+    Product, ProductVariant,
+    form=ProductVariantForm,
+    extra=1,
+    can_delete=True
+)

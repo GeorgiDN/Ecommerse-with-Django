@@ -3,7 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
 from ecommerseApp.store.models import Product, Category
-from ecommerseApp.store_admin.forms import ProductEditForm, ProductCreateForm
+from ecommerseApp.store_admin.forms import ProductEditForm, ProductCreateForm, ProductOptionFormSet, \
+    ProductVariantFormSet
 from ecommerseApp.store_admin.models_mixins import StaffRequiredMixin
 from django.views.generic import ListView, TemplateView, UpdateView, DeleteView, CreateView, DetailView
 from django.contrib import messages
@@ -11,10 +12,53 @@ from django.shortcuts import redirect, get_object_or_404
 from ecommerseApp.store_admin.bulk_options import ACTION_HANDLERS
 
 
+# class ProductCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
+#     model = Product
+#     form_class = ProductCreateForm
+#     template_name = 'store_admin/admin_products/product-create.html'
+#
+#     def get_success_url(self):
+#         return reverse_lazy('admin-products')
+
+
 class ProductCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     model = Product
     form_class = ProductCreateForm
     template_name = 'store_admin/admin_products/product-create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['option_formset'] = ProductOptionFormSet(self.request.POST, prefix='options')
+            context['variant_formset'] = ProductVariantFormSet(self.request.POST, prefix='variants')
+        else:
+            context['option_formset'] = ProductOptionFormSet(prefix='options')
+            context['variant_formset'] = ProductVariantFormSet(prefix='variants')
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        option_formset = context['option_formset']
+        variant_formset = context['variant_formset']
+
+        if not (option_formset.is_valid() and variant_formset.is_valid()):
+            return self.form_invalid(form)
+
+        self.object = form.save()
+
+        # Save options and their values
+        options = option_formset.save(commit=False)
+        for option in options:
+            option.product = self.object
+            option.save()
+
+        variants = variant_formset.save(commit=False)
+        for variant in variants:
+            variant.product = self.object
+            variant.save()
+            variant_formset.save_m2m()
+
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('admin-products')
