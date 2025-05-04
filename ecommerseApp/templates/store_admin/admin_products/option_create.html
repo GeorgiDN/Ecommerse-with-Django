@@ -1,0 +1,127 @@
+<!-- templates/store_admin/options/option_create.html -->
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>Create Options for {{ product.name }}</h2>
+    <form method="post" id="option-form">
+        {% csrf_token %}
+        
+        {{ option_formset.management_form }}
+        
+        <div id="options-formset">
+            {% for form in option_formset %}
+            <div class="card mb-3 option-form">
+                <div class="card-header">
+                    {{ form.name.value|default:"New Option" }}
+                    {% if form.DELETE %}
+                        {{ form.DELETE }} Delete
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {{ form.as_p }}
+                    
+                    {% if form.instance.pk or form.prefix %}
+                        {% with form.option_value_formset as value_formset %}
+                            <h5>Option Values</h5>
+                            {{ value_formset.management_form }}
+                            <div class="value-formset ms-4">
+                                {% for value_form in value_formset %}
+                                <div class="value-form mb-2">
+                                    {{ value_form.as_p }}
+                                </div>
+                                {% endfor %}
+                                <button type="button" class="btn btn-sm btn-outline-secondary add-value" 
+                                        data-option-prefix="{{ form.prefix }}">
+                                    Add Value
+                                </button>
+                            </div>
+                        {% endwith %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <button type="button" class="btn btn-secondary" id="add-option">Add Another Option</button>
+        <button type="submit" class="btn btn-primary">Save All Options</button>
+    </form>
+</div>
+
+{#<script src="{% static 'js/dynamic_options.js' %}"></script>#}
+<script>
+    // static/js/dynamic_options.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Add new option form
+    document.getElementById('add-option').addEventListener('click', function() {
+        const formCount = document.getElementById('id_options-TOTAL_FORMS');
+        const formContainer = document.getElementById('options-formset');
+        const newForm = formContainer.querySelector('.option-form').cloneNode(true);
+
+        const newIndex = parseInt(formCount.value);
+        const newPrefix = `options-${newIndex}-`;
+
+        // Update the option form
+        newForm.innerHTML = newForm.innerHTML.replace(/options-\d+-/g, newPrefix);
+        newForm.innerHTML = newForm.innerHTML.replace(/id_options-\d+-/g, `id_${newPrefix}`);
+
+        // Clear values
+        newForm.querySelectorAll('input').forEach(input => {
+            if (input.name.includes('name')) input.value = '';
+            if (input.type === 'checkbox') input.checked = false;
+        });
+
+        // Remove any existing value formsets
+        const valueFormset = newForm.querySelector('.value-formset');
+        if (valueFormset) valueFormset.innerHTML = '';
+
+        // Update the add value button
+        const addValueBtn = newForm.querySelector('.add-value');
+        if (addValueBtn) {
+            addValueBtn.dataset.optionPrefix = newPrefix;
+        }
+
+        formContainer.appendChild(newForm);
+        formCount.value = newIndex + 1;
+    });
+
+    // Add new value to an option
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('add-value')) {
+            const optionPrefix = e.target.dataset.optionPrefix;
+            const formContainer = e.target.closest('.value-formset');
+            const formCount = document.getElementById(`id_${optionPrefix}values-TOTAL_FORMS`);
+
+            // Create new management form if it doesn't exist
+            if (!formCount) {
+                const mgmtForm = document.createElement('input');
+                mgmtForm.type = 'hidden';
+                mgmtForm.name = `${optionPrefix}values-TOTAL_FORMS`;
+                mgmtForm.id = `id_${optionPrefix}values-TOTAL_FORMS`;
+                mgmtForm.value = '0';
+                formContainer.prepend(mgmtForm);
+            }
+
+            const newIndex = parseInt(document.getElementById(`id_${optionPrefix}values-TOTAL_FORMS`).value);
+            const newValuePrefix = `${optionPrefix}values-${newIndex}-`;
+
+            // Create new value form
+            const valueForm = document.createElement('div');
+            valueForm.className = 'value-form mb-2';
+            valueForm.innerHTML = `
+                <div class="form-group">
+                    <label for="id_${newValuePrefix}value">Value:</label>
+                    <input type="text" name="${newValuePrefix}value" class="form-control" id="id_${newValuePrefix}value">
+                    <input type="hidden" name="${newValuePrefix}id" id="id_${newValuePrefix}id">
+                </div>
+            `;
+
+            formContainer.insertBefore(valueForm, e.target);
+            document.getElementById(`id_${optionPrefix}values-TOTAL_FORMS`).value = newIndex + 1;
+        }
+    });
+});
+
+</script>
+{% endblock %}

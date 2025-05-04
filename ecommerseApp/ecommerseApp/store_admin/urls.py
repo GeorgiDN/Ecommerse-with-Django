@@ -12,6 +12,8 @@ urlpatterns = [
     path('product-delete/<int:pk>/', admin_views.ProductDeleteView.as_view(), name='product-delete'),
     path('shop-options', admin_views.ShopOptionsView.as_view(), name='shop-options'),
 
+    path('product/<int:product_id>/options/create/', admin_views.ProductOptionCreateView.as_view(), name='product-options-create'),
+
     path('products-export-csv/', admin_views.products_export_csv, name='products-export-csv'),
     path('products/bulk-edit/', admin_views.bulk_edit_products, name='bulk-edit-products'),
 
