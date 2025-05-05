@@ -86,36 +86,7 @@ class ProductOptionForm(forms.ModelForm):
 
     class Meta:
         model = ProductOption
-        fields = ['name', 'values']  # Add 'values' here
-
-
-# Create a base formset that includes option values
-class BaseProductOptionFormSet(forms.BaseInlineFormSet):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Initialize option value formsets for existing options
-        for form in self.forms:
-            if form.instance.pk:
-                form.option_value_formset = ProductOptionValueFormSet(
-                    instance=form.instance,
-                    prefix=f'option_{form.instance.pk}_values'
-                )
-
-
-ProductOptionValueFormSet = inlineformset_factory(
-    ProductOption, ProductOptionValue,
-    form=ProductOptionValueForm,
-    extra=1,
-    can_delete=True
-)
-
-ProductOptionFormSett = inlineformset_factory(
-    Product, ProductOption,
-    form=ProductOptionForm,
-    formset=BaseProductOptionFormSet,
-    extra=1,
-    can_delete=True
-)
+        fields = ['name', 'values']
 
 
 class ProductVariantForm(forms.ModelForm):

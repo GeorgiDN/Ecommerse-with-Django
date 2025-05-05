@@ -65,7 +65,7 @@ class ProductVariantCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateVie
         variant = form.save(commit=False)
         variant.product = product
         variant.save()
-        form.save_m2m()  # Save the many-to-many option_values
+        form.save_m2m()
         return super().form_valid(form)
 
     def get_success_url(self):

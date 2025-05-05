@@ -1,5 +1,6 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container">
@@ -26,79 +27,4 @@
     </form>
 </div>
 
-
-<script>
-    // static/js/dynamic_options.js
-document.addEventListener('DOMContentLoaded', function() {
-    // Add new option form
-    document.getElementById('add-option').addEventListener('click', function() {
-        const formCount = document.getElementById('id_options-TOTAL_FORMS');
-        const formContainer = document.getElementById('options-formset');
-        const newForm = formContainer.querySelector('.option-form').cloneNode(true);
-
-        const newIndex = parseInt(formCount.value);
-        const newPrefix = `options-${newIndex}-`;
-
-        // Update the option form
-        newForm.innerHTML = newForm.innerHTML.replace(/options-\d+-/g, newPrefix);
-        newForm.innerHTML = newForm.innerHTML.replace(/id_options-\d+-/g, `id_${newPrefix}`);
-
-        // Clear values
-        newForm.querySelectorAll('input').forEach(input => {
-            if (input.name.includes('name')) input.value = '';
-            if (input.type === 'checkbox') input.checked = false;
-        });
-
-        // Remove any existing value formsets
-        const valueFormset = newForm.querySelector('.value-formset');
-        if (valueFormset) valueFormset.innerHTML = '';
-
-        // Update the add value button
-        const addValueBtn = newForm.querySelector('.add-value');
-        if (addValueBtn) {
-            addValueBtn.dataset.optionPrefix = newPrefix;
-        }
-
-        formContainer.appendChild(newForm);
-        formCount.value = newIndex + 1;
-    });
-
-    // Add new value to an option
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('add-value')) {
-            const optionPrefix = e.target.dataset.optionPrefix;
-            const formContainer = e.target.closest('.value-formset');
-            const formCount = document.getElementById(`id_${optionPrefix}values-TOTAL_FORMS`);
-
-            // Create new management form if it doesn't exist
-            if (!formCount) {
-                const mgmtForm = document.createElement('input');
-                mgmtForm.type = 'hidden';
-                mgmtForm.name = `${optionPrefix}values-TOTAL_FORMS`;
-                mgmtForm.id = `id_${optionPrefix}values-TOTAL_FORMS`;
-                mgmtForm.value = '0';
-                formContainer.prepend(mgmtForm);
-            }
-
-            const newIndex = parseInt(document.getElementById(`id_${optionPrefix}values-TOTAL_FORMS`).value);
-            const newValuePrefix = `${optionPrefix}values-${newIndex}-`;
-
-            // Create new value form
-            const valueForm = document.createElement('div');
-            valueForm.className = 'value-form mb-2';
-            valueForm.innerHTML = `
-                <div class="form-group">
-                    <label for="id_${newValuePrefix}value">Value:</label>
-                    <input type="text" name="${newValuePrefix}value" class="form-control" id="id_${newValuePrefix}value">
-                    <input type="hidden" name="${newValuePrefix}id" id="id_${newValuePrefix}id">
-                </div>
-            `;
-
-            formContainer.insertBefore(valueForm, e.target);
-            document.getElementById(`id_${optionPrefix}values-TOTAL_FORMS`).value = newIndex + 1;
-        }
-    });
-});
-
-</script>
 {% endblock %}
