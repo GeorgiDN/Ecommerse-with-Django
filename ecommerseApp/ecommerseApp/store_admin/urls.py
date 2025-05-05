@@ -13,6 +13,7 @@ urlpatterns = [
     path('shop-options', admin_views.ShopOptionsView.as_view(), name='shop-options'),
 
     path('product/<int:product_id>/options/create/', admin_views.ProductOptionCreateView.as_view(), name='product-options-create'),
+    path('product/<int:product_id>/variant/create/', admin_views.ProductVariantCreateView.as_view(), name='product-variant-create'),
 
     path('products-export-csv/', admin_views.products_export_csv, name='products-export-csv'),
     path('products/bulk-edit/', admin_views.bulk_edit_products, name='bulk-edit-products'),

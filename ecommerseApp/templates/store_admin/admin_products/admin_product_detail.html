@@ -14,6 +14,7 @@
                                 <a href="{% url 'product-edit' object.pk %}" class="btn btn-info btn-sm">Edit</a>
                                 <a href="{% url 'product-delete' object.pk %}" class="btn btn-danger btn-sm">Delete</a>
                                 <a href="{% url 'product-options-create' object.pk %}" class="btn btn-success">Add option</a>
+                                <a href="{% url 'product-variant-create' object.pk %}" class="btn btn-success">Add variant</a>
                             {% endif %}
                             <h1 class="card-title">{{ object.name }}</h1>
                             <p class="card-text">

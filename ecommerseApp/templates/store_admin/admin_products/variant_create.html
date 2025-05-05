@@ -1,0 +1,77 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <h2>Create Variant for {{ product.name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.sku.id_for_label }}">SKU</label>
+                            {{ form.sku }}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.price.id_for_label }}">Price</label>
+                            {{ form.price }}
+                        </div>
+                        <div class="form-group form-check">
+                            {{ form.is_on_sale }}
+                            <label class="form-check-label" for="{{ form.is_on_sale.id_for_label }}">
+                                Is on sale?
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.sale_price.id_for_label }}">Sale Price</label>
+                            {{ form.sale_price }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.quantity.id_for_label }}">Quantity</label>
+                            {{ form.quantity }}
+                        </div>
+                        <div class="form-group form-check">
+                            {{ form.track_quantity }}
+                            <label class="form-check-label" for="{{ form.track_quantity.id_for_label }}">
+                                Track quantity?
+                            </label>
+                        </div>
+                        <div class="form-group form-check">
+                            {{ form.is_available }}
+                            <label class="form-check-label" for="{{ form.is_available.id_for_label }}">
+                                Is available?
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.weight.id_for_label }}">Weight</label>
+                            {{ form.weight }}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.option_values.id_for_label }}">Option Values</label>
+                    {{ form.option_values }}
+                    <small class="form-text text-muted">Select the option values that define this variant</small>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Variant</button>
+        <a href="{% url 'admin-product-detail' pk=product.pk %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+    
+
+<script>
+$(document).ready(function() {
+    $('.select2-multiple').select2({
+        placeholder: "Select option values",
+        allowClear: true
+    });
+});
+</script>
+{% endblock %}

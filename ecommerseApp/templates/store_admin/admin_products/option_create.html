@@ -1,55 +1,32 @@
-<!-- templates/store_admin/options/option_create.html -->
 {% extends 'store/base.html' %}
 {% load static %}
 
 {% block content %}
 <div class="container">
-    <h2>Create Options for {{ product.name }}</h2>
-    <form method="post" id="option-form">
+    <h2>Add Option to {{ product.name }}</h2>
+    <form method="post">
         {% csrf_token %}
-        
-        {{ option_formset.management_form }}
-        
-        <div id="options-formset">
-            {% for form in option_formset %}
-            <div class="card mb-3 option-form">
-                <div class="card-header">
-                    {{ form.name.value|default:"New Option" }}
-                    {% if form.DELETE %}
-                        {{ form.DELETE }} Delete
-                    {% endif %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">Option Name</label>
+                    {{ form.name }}
+                    {{ form.name.errors }}
                 </div>
-                <div class="card-body">
-                    {{ form.as_p }}
-                    
-                    {% if form.instance.pk or form.prefix %}
-                        {% with form.option_value_formset as value_formset %}
-                            <h5>Option Values</h5>
-                            {{ value_formset.management_form }}
-                            <div class="value-formset ms-4">
-                                {% for value_form in value_formset %}
-                                <div class="value-form mb-2">
-                                    {{ value_form.as_p }}
-                                </div>
-                                {% endfor %}
-                                <button type="button" class="btn btn-sm btn-outline-secondary add-value" 
-                                        data-option-prefix="{{ form.prefix }}">
-                                    Add Value
-                                </button>
-                            </div>
-                        {% endwith %}
-                    {% endif %}
+                <div class="form-group">
+                    <label for="{{ form.values.id_for_label }}">Option Values</label>
+                    {{ form.values }}
+                    <small class="form-text text-muted">{{ form.values.help_text }}</small>
+                    {{ form.values.errors }}
                 </div>
             </div>
-            {% endfor %}
         </div>
-        
-        <button type="button" class="btn btn-secondary" id="add-option">Add Another Option</button>
-        <button type="submit" class="btn btn-primary">Save All Options</button>
+        <button type="submit" class="btn btn-primary">Save Option</button>
+        <a href="{% url 'admin-product-detail' pk=product.pk %}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 
-{#<script src="{% static 'js/dynamic_options.js' %}"></script>#}
+
 <script>
     // static/js/dynamic_options.js
 document.addEventListener('DOMContentLoaded', function() {
