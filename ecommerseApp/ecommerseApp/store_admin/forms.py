@@ -89,6 +89,30 @@ class ProductOptionForm(forms.ModelForm):
         fields = ['name', 'values']
 
 
+#####################################################
+# EDIT
+class ProductOptionEditForm(forms.ModelForm):
+    values = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'One value per line or comma-separated',
+            'rows': 3
+        }),
+        help_text="Current values will be replaced. Separate with commas or new lines"
+    )
+
+    class Meta:
+        model = ProductOption
+        fields = ['name', 'values']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            existing_values = self.instance.option_values.all()
+            self.initial['values'] = "\n".join([v.value for v in existing_values])
+#####################################################################
+
 class ProductVariantForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         product = kwargs.pop('product', None)

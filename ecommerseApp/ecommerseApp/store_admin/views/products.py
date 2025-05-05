@@ -3,7 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
 from ecommerseApp.store.models import Product, Category, ProductOption, ProductOptionValue, ProductVariant
-from ecommerseApp.store_admin.forms import ProductEditForm, ProductCreateForm, ProductOptionForm, ProductVariantForm
+from ecommerseApp.store_admin.forms import ProductEditForm, ProductCreateForm, ProductOptionForm, ProductVariantForm, \
+     ProductOptionEditForm
 from ecommerseApp.store_admin.models_mixins import StaffRequiredMixin
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView, DetailView
 from django.contrib import messages
@@ -49,6 +50,52 @@ class ProductOptionCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView
     def get_success_url(self):
         return reverse('product-detail', kwargs={'pk': self.kwargs['product_id']})
 
+
+###############################################
+# EDit
+class ProductOptionEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
+    model = ProductOption
+    form_class = ProductOptionEditForm
+    template_name = 'store_admin/admin_products/option_edit.html'
+
+    def get_object(self, queryset=None):
+        product_id = self.kwargs['product_id']
+        option_id = self.kwargs['option_id']
+        return get_object_or_404(
+            ProductOption,
+            pk=option_id,
+            product_id=product_id
+        )
+
+    def form_valid(self, form):
+        option = form.save()
+
+        option.option_values.all().delete()
+
+        values_text = form.cleaned_data.get('values', '')
+        if values_text:
+            values = [
+                v.strip()
+                for line in values_text.split('\n')
+                for v in line.split(',')
+                if v.strip()
+            ]
+
+            for value in values:
+                ProductOptionValue.objects.create(
+                    option=option,
+                    value=value
+                )
+
+        messages.success(self.request, 'Option updated successfully')
+        return redirect('admin-product-detail', pk=option.product.pk)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product'] = self.object.product
+        return context
+
+######################################
 
 class ProductVariantCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     model = ProductVariant

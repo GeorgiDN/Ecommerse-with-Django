@@ -13,8 +13,16 @@
                             {% if user.is_staff %}
                                 <a href="{% url 'product-edit' object.pk %}" class="btn btn-info btn-sm">Edit</a>
                                 <a href="{% url 'product-delete' object.pk %}" class="btn btn-danger btn-sm">Delete</a>
-                                <a href="{% url 'product-options-create' object.pk %}" class="btn btn-success">Add option</a>
-                                <a href="{% url 'product-variant-create' object.pk %}" class="btn btn-success">Add variant</a>
+                                <a href="{% url 'product-options-create' object.pk %}" class="btn btn-success">Add
+                                    option</a>
+                                <a href="{% url 'product-variant-create' object.pk %}" class="btn btn-success">Add
+                                    variant</a>
+                                {% for option in product.product_options.all %}
+                                    <a href="{% url 'admin-option-edit' product_id=product.pk option_id=option.pk %}"
+                                       class="btn btn-sm btn-primary">
+                                        Edit Option
+                                    </a>
+                                {% endfor %}
                             {% endif %}
                             <h1 class="card-title">{{ object.name }}</h1>
                             <p class="card-text">
