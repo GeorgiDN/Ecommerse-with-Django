@@ -142,6 +142,34 @@ class ProductVariantForm(forms.ModelForm):
         }
 
 
+
+class ProductVariantEditForm(forms.ModelForm):
+    class Meta:
+        model = ProductVariant
+        fields = [
+            'sku', 'price', 'is_on_sale', 'sale_price',
+            'track_quantity', 'quantity', 'is_available',
+            'weight', 'option_values'
+        ]
+        widgets = {
+            'option_values': forms.SelectMultiple(attrs={
+                'class': 'select2-multiple',
+                'style': 'width: 100%'
+            }),
+            'price': forms.NumberInput(attrs={'step': '0.01'}),
+            'sale_price': forms.NumberInput(attrs={'step': '0.01'}),
+            'weight': forms.NumberInput(attrs={'step': '0.01'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        product = kwargs.pop('product', None)
+        super().__init__(*args, **kwargs)
+
+        if product:
+            self.fields['option_values'].queryset = \
+                ProductOptionValue.objects.filter(option__product=product)
+
+
 class CategoryBaseForm(ModelForm):
     class Meta:
         model = Category

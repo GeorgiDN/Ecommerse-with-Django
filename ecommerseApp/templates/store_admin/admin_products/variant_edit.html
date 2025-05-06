@@ -1,0 +1,91 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2>Edit Variant for {{ object.product.name }}</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ form.sku.label }}</label>
+                            {{ form.sku }}
+                            {{ form.sku.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.price.label }}</label>
+                            {{ form.price }}
+                            {{ form.price.errors }}
+                        </div>
+                        <div class="form-group form-check">
+                            {{ form.is_on_sale }}
+                            <label class="form-check-label">{{ form.is_on_sale.label }}</label>
+                            {{ form.is_on_sale.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.sale_price.label }}</label>
+                            {{ form.sale_price }}
+                            {{ form.sale_price.errors }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ form.quantity.label }}</label>
+                            {{ form.quantity }}
+                            {{ form.quantity.errors }}
+                        </div>
+                        <div class="form-group form-check">
+                            {{ form.track_quantity }}
+                            <label class="form-check-label">{{ form.track_quantity.label }}</label>
+                            {{ form.track_quantity.errors }}
+                        </div>
+                        <div class="form-group form-check">
+                            {{ form.is_available }}
+                            <label class="form-check-label">{{ form.is_available.label }}</label>
+                            {{ form.is_available.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.weight.label }}</label>
+                            {{ form.weight }}
+                            {{ form.weight.errors }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ form.option_values.label }}</label>
+                    {{ form.option_values }}
+                    {{ form.option_values.errors }}
+                </div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{% url 'admin-product-detail' pk=object.product.pk %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.select2-multiple').select2({
+        placeholder: "Select option values",
+        allowClear: true
+    });
+});
+</script>
+{% endblock %}

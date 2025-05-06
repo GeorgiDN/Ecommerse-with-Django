@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.urls import reverse, reverse_lazy
 from ecommerseApp.store.models import Product, Category, ProductOption, ProductOptionValue, ProductVariant
 from ecommerseApp.store_admin.forms import ProductEditForm, ProductCreateForm, ProductOptionForm, ProductVariantForm, \
-     ProductOptionEditForm
+    ProductOptionEditForm, ProductVariantEditForm
 from ecommerseApp.store_admin.models_mixins import StaffRequiredMixin
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView, DetailView
 from django.contrib import messages
@@ -122,6 +122,35 @@ class ProductVariantCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateVie
         context = super().get_context_data(**kwargs)
         context['product'] = Product.objects.get(pk=self.kwargs['product_id'])
         return context
+
+
+class ProductVariantEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
+    model = ProductVariant
+    form_class = ProductVariantEditForm
+    template_name = 'store_admin/admin_products/variant_edit.html'
+
+    def get_object(self, queryset=None):
+        product_id = self.kwargs['product_id']
+        variant_id = self.kwargs['variant_id']
+        return get_object_or_404(
+            ProductVariant,
+            pk=variant_id,
+            product_id=product_id
+        )
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['product'] = self.object.product
+        return kwargs
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Variant updated successfully')
+        return response
+
+    def get_success_url(self):
+        return reverse('admin-product-detail', kwargs={'pk': self.object.product.pk})
+
 
 
 class AdminProductDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
