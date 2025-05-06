@@ -11,7 +11,6 @@
                     <div class="card-body">
                         <center>
                             <h1 class="card-title">{{ object.name }}</h1>
-                            <p class="card-text">{{ object.description }}</p>
                             
                             {% if user.is_staff %}
                                 <!-- Product Actions -->
@@ -147,101 +146,3 @@
         });
     </script>
 {% endblock %}
-
-
-
-
-
-
-{#{% extends 'store/base.html' %}#}
-{#{% load static %}#}
-{#{% block content %}#}
-{#    <div class="container product-page mt-5">#}
-{#        <div class="card mb-3" style="max-width: 1400px;">#}
-{#            <div class="row g-0">#}
-{#                <div class="col-md-4">#}
-{#                    <img src="{{ object.image.url }}" class="img-fluid rounded-start" alt="{{ object.name }}">#}
-{#                </div>#}
-{#                <div class="col-md-8">#}
-{#                    <div class="card-body">#}
-{##}
-{#                        <center>#}
-{#                            <h1 class="card-title">{{ object.name }}</h1>#}
-{#                            <p class="card-text">#}
-{#                                {{ object.description }}#}
-{#                            </p>#}
-{#                            {% if user.is_staff %}#}
-{#                                <div>#}
-{#                                    <a href="{% url 'product-edit' object.pk %}" class="btn btn-info btn-sm">Edit#}
-{#                                        Product</a>#}
-{#                                    <a href="{% url 'product-delete' object.pk %}" class="btn btn-danger btn-sm">Delete#}
-{#                                        Product</a>#}
-{#                                </div>#}
-{#                                <div class="mt-2">#}
-{#                                    <a href="{% url 'product-options-create' object.pk %}"#}
-{#                                       class="btn btn-sm btn-success">Add#}
-{#                                        option</a>#}
-{#                                    <a href="{% url 'product-variant-create' object.pk %}"#}
-{#                                       class="btn btn-sm btn-success">Add#}
-{#                                        variant</a>#}
-{#                                </div>#}
-{#                                <div class="mt-2">#}
-{#                                    {% for option in product.product_options.all %}#}
-{#                                        <a href="{% url 'admin-option-edit' product_id=product.pk option_id=option.pk %}"#}
-{#                                           class="btn btn-sm btn-info">#}
-{#                                            Edit Options#}
-{#                                        </a>#}
-{#                                    {% endfor %}#}
-{#                                </div>#}
-{#                                <div class="mt-2">#}
-{#                                    <details>#}
-{#                                        <summary class="btn btn-info btn-sm">Edit variants</summary>#}
-{#                                        {% for variant in product.product_variants.all %}#}
-{#                                            <div class="mt-2">#}
-{#                                                <a href="{% url 'admin-variant-edit' product_id=product.pk variant_id=variant.pk %}"#}
-{#                                                   class="btn btn-sm btn-secondary">#}
-{#                                                    {{ variant }}#}
-{#                                                </a>#}
-{#                                            </div>#}
-{#                                        {% endfor %}#}
-{#                                        </details>#}
-{#                                </div>#}
-{##}
-{#                            {% endif %}#}
-{##}
-{#                        </center>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#    <script>#}
-{#        $(document).on('click', '#add-cart', function (e) {#}
-{#            e.preventDefault();#}
-{##}
-{#            let productID = $(this).val();#}
-{##}
-{#            $.ajax({#}
-{#                type: 'POST',#}
-{#                url: "{% url 'cart_add' %}",#}
-{#                data: {#}
-{#                    product_id: productID,#}
-{#                    product_qty: $('#qty-cart option:selected').text(),#}
-{#                    csrfmiddlewaretoken: '{{ csrf_token }}',#}
-{#                    action: 'post'#}
-{#                },#}
-{##}
-{#                success: function (json) {#}
-{#                    document.getElementById("cart_quantity").textContent = json.qty#}
-{#                    location.reload();#}
-{#                },#}
-{##}
-{#                error: function (xhr, errmsg, err) {#}
-{#                    console.log("Error:", xhr.responseText);#}
-{#                }#}
-{#            });#}
-{#        });#}
-{##}
-{#    </script>#}
-{#{% endblock %}#}

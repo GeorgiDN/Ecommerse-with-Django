@@ -22,6 +22,53 @@ class ProductCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
         return reverse_lazy('admin-products')
 
 
+class AdminProductDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
+    model = Product
+    template_name = 'store_admin/admin_products/admin_product_detail.html'
+
+
+class AdminProductListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
+    model = Product
+    template_name = 'store_admin/admin_products/admin_product_list.html'
+    context_object_name = 'products'
+    ordering = ('name',)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query) |
+                Q(description=query) |
+                Q(sku__icontains=query) |
+                Q(model__icontains=query) |
+                Q(tags__icontains=query)
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('q', '')
+        context['categories'] = Category.objects.all()
+        return context
+
+
+class ProductEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
+    model = Product
+    template_name = 'store_admin/admin_products/product-edit.html'
+    form_class = ProductEditForm
+
+    def get_success_url(self):
+        return reverse('admin-product-detail', kwargs={'pk': self.get_object().pk})
+
+
+class ProductDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
+    model = Product
+    success_url = reverse_lazy('admin-products')
+    template_name = 'store_admin/admin_products/product_confirm_delete.html'
+    success_message = 'Product was deleted.'
+
+
 class ProductOptionCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     model = ProductOption
     form_class = ProductOptionForm
@@ -52,10 +99,6 @@ class ProductOptionCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView
         return reverse('product-detail', kwargs={'pk': self.kwargs['product_id']})
 
 
-###############################################
-# EDit
-
-
 class ProductOptionEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
     model = ProductOption
     form_class = ProductOptionEditForm
@@ -75,7 +118,6 @@ class ProductOptionEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
         values_text = form.cleaned_data.get('values', '')
 
         if values_text:
-            # Get current values and new values
             current_values = set(option.option_values.values_list('value', flat=True))
             new_values = {
                 v.strip()
@@ -84,12 +126,10 @@ class ProductOptionEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
                 if v.strip()
             }
 
-            # Delete values that were removed
             values_to_delete = current_values - new_values
             if values_to_delete:
                 option.option_values.filter(value__in=values_to_delete).delete()
 
-            # Add new values that didn't exist before
             values_to_add = new_values - current_values
             for value in values_to_add:
                 ProductOptionValue.objects.create(option=option, value=value)
@@ -105,51 +145,20 @@ class ProductOptionEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
         context['product'] = self.object.product
         return context
 
-# class ProductOptionEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
-#     model = ProductOption
-#     form_class = ProductOptionEditForm
-#     template_name = 'store_admin/admin_products/option_edit.html'
-#
-#     def get_object(self, queryset=None):
-#         product_id = self.kwargs['product_id']
-#         option_id = self.kwargs['option_id']
-#         return get_object_or_404(
-#             ProductOption,
-#             pk=option_id,
-#             product_id=product_id
-#         )
-#
-#     def form_valid(self, form):
-#         option = form.save()
-#
-#         # option.option_values.all().delete()
-#
-#         values_text = form.cleaned_data.get('values', '')
-#         added_values = sorted(set(v.value for v in option.option_values.all()))
-#         if values_text:
-#             values = [
-#                 v.strip()
-#                 for line in values_text.split('\n')
-#                 for v in line.split(',')
-#                 if v.strip()
-#             ]
-#             for value in values:
-#                 if value not in added_values:
-#                     ProductOptionValue.objects.create(
-#                         option=option,
-#                         value=value
-#                     )
-#
-#
-#         messages.success(self.request, 'Option updated successfully')
-#         return redirect('admin-product-detail', pk=option.product.pk)
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['product'] = self.object.product
-#         return context
 
-######################################
+class ProductOptionDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
+    model = ProductOption
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        messages.success(request, 'Option deleted successfully')
+        return JsonResponse({'status': 'success'})
+
+    def get_success_url(self):
+        return reverse('admin-product-detail', kwargs={'pk': self.kwargs['product_id']})
+
 
 class ProductVariantCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     model = ProductVariant
@@ -206,20 +215,6 @@ class ProductVariantEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView)
         return reverse('admin-product-detail', kwargs={'pk': self.object.product.pk})
 
 
-class ProductOptionDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
-    model = ProductOption
-
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        success_url = self.get_success_url()
-        self.object.delete()
-        messages.success(request, 'Option deleted successfully')
-        return JsonResponse({'status': 'success'})
-
-    def get_success_url(self):
-        return reverse('admin-product-detail', kwargs={'pk': self.kwargs['product_id']})
-
-
 class ProductVariantDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
     model = ProductVariant
 
@@ -232,54 +227,6 @@ class ProductVariantDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteVie
 
     def get_success_url(self):
         return reverse('admin-product-detail', kwargs={'pk': self.kwargs['product_id']})
-
-
-
-class AdminProductDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
-    model = Product
-    template_name = 'store_admin/admin_products/admin_product_detail.html'
-
-
-class ProductEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
-    model = Product
-    template_name = 'store_admin/admin_products/product-edit.html'
-    form_class = ProductEditForm
-
-    def get_success_url(self):
-        return reverse('admin-product-detail', kwargs={'pk': self.get_object().pk})
-
-
-class ProductDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
-    model = Product
-    success_url = reverse_lazy('admin-products')
-    template_name = 'store_admin/admin_products/product_confirm_delete.html'
-    success_message = 'Product was deleted.'
-
-
-class AdminProductListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
-    model = Product
-    template_name = 'store_admin/admin_products/admin_product_list.html'
-    context_object_name = 'products'
-    ordering = ('name',)
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        query = self.request.GET.get('q')
-        if query:
-            queryset = queryset.filter(
-                Q(name__icontains=query) |
-                Q(description=query) |
-                Q(sku__icontains=query) |
-                Q(model__icontains=query) |
-                Q(tags__icontains=query)
-            )
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['search_query'] = self.request.GET.get('q', '')
-        context['categories'] = Category.objects.all()
-        return context
 
 
 @staff_member_required

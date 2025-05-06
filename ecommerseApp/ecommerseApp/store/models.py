@@ -4,21 +4,14 @@ from PIL import Image
 from django.utils.text import slugify
 
 from ecommerseApp.accounts.models import Profile
-from ecommerseApp.common.custom_validators import validate_phone_number, validate_lettres
 from ecommerseApp.common.models_mixins import FirstNameMixin, LastNameMixin, PhoneMixin, EmailMixin, QuantityMixin, \
     PriceMixin
 from ecommerseApp.store.models_mixins import UrlMixin, NameMixin, DescriptionMixin, MetaTitleMixin, \
-    MetaDescriptionMixin, IsActiveMixin
+    MetaDescriptionMixin, IsActiveMixin, DescribedModel, BaseProductMixin
 
 
-class Category(UrlMixin, NameMixin, DescriptionMixin, MetaTitleMixin, MetaDescriptionMixin, IsActiveMixin,
-               models.Model):
-    image = models.ImageField(
-        upload_to='category_images',
-        blank=True,
-        null=True,
-        default='default.png',
-    )
+class Category(DescribedModel, IsActiveMixin, models.Model):
+    image = models.ImageField(upload_to='category_images', blank=True, null=True, default='default.png')
 
     def __str__(self):
         return self.name
@@ -45,65 +38,11 @@ class Customer(FirstNameMixin, LastNameMixin, PhoneMixin, EmailMixin, models.Mod
         return f'{self.first_name} {self.last_name}'
 
 
-class Product(UrlMixin, NameMixin, DescriptionMixin, PriceMixin, MetaTitleMixin, MetaDescriptionMixin, IsActiveMixin,
-              models.Model):
-    image = models.ImageField(
-        upload_to='product_images',
-        blank=True,
-        null=True,
-        default='default.png',
-    )
-    categories = models.ManyToManyField(
-        Category,
-        related_name='category_products',
-        blank=True,
-    )
-    is_on_sale = models.BooleanField(
-        default=False,
-    )
-    sale_price = models.DecimalField(
-        default=0,
-        decimal_places=2,
-        max_digits=10,
-        null=True,
-        blank=True
-    )
-    sku = models.CharField(
-        max_length=50,
-        unique=True,
-        blank=True,
-        null=True,
-        help_text="Stock Keeping Unit (unique)"
-    )
-    model = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        help_text="Model number or reference"
-    )
-    tags = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-    )
-    is_available = models.BooleanField(
-        default=True,
-    )
-    quantity = models.PositiveIntegerField(
-        default=0,
-        null=True,
-        blank=True
-    )
-    track_quantity = models.BooleanField(
-        default=True,
-    )
-    weight = models.DecimalField(
-        default=0,
-        decimal_places=3,
-        max_digits=12,
-        null=True,
-        blank=True
-    )
+class Product(DescribedModel, BaseProductMixin, IsActiveMixin, models.Model):
+    image = models.ImageField(upload_to='product_images', blank=True, null=True, default='default.png')
+    categories = models.ManyToManyField(Category, related_name='category_products', blank=True)
+    model = models.CharField(max_length=100, blank=True, null=True, help_text="Model number or reference")
+    tags = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return f'{self.name}'
@@ -129,43 +68,23 @@ class Product(UrlMixin, NameMixin, DescriptionMixin, PriceMixin, MetaTitleMixin,
 
 
 class ProductOption(models.Model):
-    product = models.ForeignKey(
-        Product,
-        related_name='product_options',
-        on_delete=models.CASCADE
-    )
-    name = models.CharField(
-        max_length=100
-    )
+    product = models.ForeignKey( Product, related_name='product_options', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.product.name} - {self.name}"
 
 
 class ProductOptionValue(models.Model):
-    option = models.ForeignKey(
-        ProductOption,
-        related_name='option_values',
-        on_delete=models.CASCADE
-    )
-    value = models.CharField(
-        max_length=200
-    )
+    option = models.ForeignKey(ProductOption, related_name='option_values', on_delete=models.CASCADE)
+    value = models.CharField(max_length=200)
 
     def __str__(self):
         return f"{self.option.name}: {self.value}"
 
 
-class ProductVariant(models.Model):
+class ProductVariant(BaseProductMixin, models.Model):
     product = models.ForeignKey(Product, related_name='product_variants', on_delete=models.CASCADE)
-    sku = models.CharField(max_length=100, unique=True, null=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    is_on_sale = models.BooleanField(default=False)
-    sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    track_quantity = models.BooleanField(default=True)
-    quantity = models.PositiveIntegerField(default=0)
-    is_available = models.BooleanField(default=True)
-    weight = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     option_values = models.ManyToManyField(ProductOptionValue, related_name='variants')
 
     def __str__(self):
@@ -195,17 +114,9 @@ class Order(PhoneMixin, QuantityMixin, models.Model):
         blank=True,
         related_name='customer_order',
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='pending',
-    )
-    address = models.CharField(
-        max_length=200,
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    address = models.CharField(max_length=200)
 
     def __str__(self):
         return f'Order {self.id} - {self.customer}'
@@ -215,167 +126,3 @@ class Order(PhoneMixin, QuantityMixin, models.Model):
     #         self.phone = self.phone or self.customer.phone
     #         self.email = self.email or self.customer.email
     #     super().save(*args, **kwargs)
-
-###############################################################################################
-###############################################################################################
-# from django.core.validators import MinLengthValidator
-# from django.db import models
-# from PIL import Image
-#
-# from ecommerseApp.accounts.models import Customer
-# from ecommerseApp.common.custom_validators import validate_phone_number
-#
-#
-# class Category(models.Model):
-#     name = models.CharField(
-#         max_length=50,
-#     )
-#     description = models.CharField(
-#         max_length=1500,
-#         blank=True,
-#         null=True,
-#     )
-#     image = models.ImageField(
-#         upload_to='category_images',
-#         blank=True,
-#         null=True,
-#         default='default.png',
-#     )
-#
-#     def __str__(self):
-#         return self.name
-#
-#     class Meta:
-#         verbose_name_plural = 'Categories'
-#
-#
-# class Product(models.Model):
-#     name = models.CharField(
-#         max_length=100,
-#     )
-#     price = models.DecimalField(
-#         default=0,
-#         decimal_places=2,
-#         max_digits=10
-#     )
-#     category = models.ForeignKey(
-#         to=Category,
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True,
-#         related_name='category_products',
-#     )
-#     description = models.CharField(
-#         max_length=1500,
-#         blank=True,
-#         null=True,
-#     )
-#     image = models.ImageField(
-#         upload_to='product_images',
-#         blank=True,
-#         null=True,
-#         default='default.png',
-#     )
-#     is_on_sale = models.BooleanField(
-#         default=False,
-#     )
-#     sale_price = models.DecimalField(
-#         default=0,
-#         decimal_places=2,
-#         max_digits=10,
-#         null=True,
-#         blank=True
-#     )
-#
-#     # def save(self, *args, **kwargs):
-#     #     super().save(*args, **kwargs)
-#     #
-#     #     img = Image.open(self.image.path)
-#     #
-#     #     if img.height > 300 or img.width > 300:
-#     #         output_size = (300, 300)
-#     #         img.thumbnail(output_size)
-#     #         img.save(self.image.path)
-#
-#     def __str__(self):
-#         return f'{self.name}'
-#
-#
-# class Order(models.Model):
-#     STATUS_CHOICES = [
-#         ('pending', 'Pending'),
-#         ('shipped', 'Shipped'),
-#         ('delivered', 'Delivered'),
-#         ('cancelled', 'Cancelled'),
-#     ]
-#
-#     customer = models.ForeignKey(
-#         to=Customer,
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True,
-#         related_name='customer_order',
-#     )
-#     created_at = models.DateTimeField(
-#         auto_now_add=True,
-#     )
-#     status = models.CharField(
-#         max_length=20,
-#         choices=STATUS_CHOICES,
-#         default='pending',
-#     )
-#     phone = models.CharField(
-#         max_length=20,
-#         validators=[
-#             MinLengthValidator(
-#                 4,
-#                 message='Phone number must be between 4 and 20 digits.'),
-#             validate_phone_number],
-#         null=True,
-#         blank=True,
-#     )
-#     email = models.EmailField(
-#         null=True,
-#         blank=True,
-#     )
-#
-#     def __str__(self):
-#         return f'Order {self.id} - {self.customer}'
-#
-#     def save(self, *args, **kwargs):
-#         if self.customer:
-#             self.phone = self.phone or self.customer.phone
-#             self.email = self.email or self.customer.email
-#         super().save(*args, **kwargs)
-#
-#
-# class OrderItem(models.Model):
-#     order = models.ForeignKey(
-#         to=Order,
-#         on_delete=models.CASCADE,
-#         related_name='order_items',
-#     )
-#     product = models.ForeignKey(
-#         to=Product,
-#         on_delete=models.CASCADE,
-#         related_name='product_items',
-#     )
-#     quantity = models.PositiveIntegerField(
-#         default=1,
-#     )
-#     price_at_time_of_order = models.DecimalField(
-#         max_digits=10,
-#         decimal_places=2,
-#         null=True,
-#         blank=True
-#     )
-#
-#     def save(self, *args, **kwargs):
-#         if not self.product.is_on_sale:
-#             self.price_at_time_of_order = self.product.price * self.quantity
-#         else:
-#             self.price_at_time_of_order = self.product.sale_price * self.quantity
-#         super().save(*args, **kwargs)
-#
-#     def __str__(self):
-#         return f"{self.quantity} x {self.product.name} in Order {self.order.id}"
