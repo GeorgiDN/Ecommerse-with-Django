@@ -1,6 +1,7 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.http import JsonResponse
 from django.urls import reverse, reverse_lazy
 from ecommerseApp.store.models import Product, Category, ProductOption, ProductOptionValue, ProductVariant
 from ecommerseApp.store_admin.forms import ProductEditForm, ProductCreateForm, ProductOptionForm, ProductVariantForm, \
@@ -53,6 +54,8 @@ class ProductOptionCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView
 
 ###############################################
 # EDit
+
+
 class ProductOptionEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
     model = ProductOption
     form_class = ProductOptionEditForm
@@ -69,23 +72,30 @@ class ProductOptionEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         option = form.save()
-
-        option.option_values.all().delete()
-
         values_text = form.cleaned_data.get('values', '')
+
         if values_text:
-            values = [
+            # Get current values and new values
+            current_values = set(option.option_values.values_list('value', flat=True))
+            new_values = {
                 v.strip()
                 for line in values_text.split('\n')
                 for v in line.split(',')
                 if v.strip()
-            ]
+            }
 
-            for value in values:
-                ProductOptionValue.objects.create(
-                    option=option,
-                    value=value
-                )
+            # Delete values that were removed
+            values_to_delete = current_values - new_values
+            if values_to_delete:
+                option.option_values.filter(value__in=values_to_delete).delete()
+
+            # Add new values that didn't exist before
+            values_to_add = new_values - current_values
+            for value in values_to_add:
+                ProductOptionValue.objects.create(option=option, value=value)
+
+            # Keep track of unchanged values (important for variants)
+            unchanged_values = current_values & new_values
 
         messages.success(self.request, 'Option updated successfully')
         return redirect('admin-product-detail', pk=option.product.pk)
@@ -94,6 +104,50 @@ class ProductOptionEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['product'] = self.object.product
         return context
+
+# class ProductOptionEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
+#     model = ProductOption
+#     form_class = ProductOptionEditForm
+#     template_name = 'store_admin/admin_products/option_edit.html'
+#
+#     def get_object(self, queryset=None):
+#         product_id = self.kwargs['product_id']
+#         option_id = self.kwargs['option_id']
+#         return get_object_or_404(
+#             ProductOption,
+#             pk=option_id,
+#             product_id=product_id
+#         )
+#
+#     def form_valid(self, form):
+#         option = form.save()
+#
+#         # option.option_values.all().delete()
+#
+#         values_text = form.cleaned_data.get('values', '')
+#         added_values = sorted(set(v.value for v in option.option_values.all()))
+#         if values_text:
+#             values = [
+#                 v.strip()
+#                 for line in values_text.split('\n')
+#                 for v in line.split(',')
+#                 if v.strip()
+#             ]
+#             for value in values:
+#                 if value not in added_values:
+#                     ProductOptionValue.objects.create(
+#                         option=option,
+#                         value=value
+#                     )
+#
+#
+#         messages.success(self.request, 'Option updated successfully')
+#         return redirect('admin-product-detail', pk=option.product.pk)
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['product'] = self.object.product
+#         return context
 
 ######################################
 
@@ -150,6 +204,34 @@ class ProductVariantEditView(LoginRequiredMixin, StaffRequiredMixin, UpdateView)
 
     def get_success_url(self):
         return reverse('admin-product-detail', kwargs={'pk': self.object.product.pk})
+
+
+class ProductOptionDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
+    model = ProductOption
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        messages.success(request, 'Option deleted successfully')
+        return JsonResponse({'status': 'success'})
+
+    def get_success_url(self):
+        return reverse('admin-product-detail', kwargs={'pk': self.kwargs['product_id']})
+
+
+class ProductVariantDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
+    model = ProductVariant
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        messages.success(request, 'Variant deleted successfully')
+        return JsonResponse({'status': 'success'})
+
+    def get_success_url(self):
+        return reverse('admin-product-detail', kwargs={'pk': self.kwargs['product_id']})
 
 
 
