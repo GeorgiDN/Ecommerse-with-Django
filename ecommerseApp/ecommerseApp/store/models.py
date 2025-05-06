@@ -6,8 +6,8 @@ from django.utils.text import slugify
 from ecommerseApp.accounts.models import Profile
 from ecommerseApp.common.models_mixins import FirstNameMixin, LastNameMixin, PhoneMixin, EmailMixin, QuantityMixin, \
     PriceMixin
-from ecommerseApp.store.models_mixins import UrlMixin, NameMixin, DescriptionMixin, MetaTitleMixin, \
-    MetaDescriptionMixin, IsActiveMixin, DescribedModel, BaseProductMixin
+from ecommerseApp.store.models_mixins import NameMixin, \
+ IsActiveMixin, DescribedModel, BaseProductMixin
 
 
 class Category(DescribedModel, IsActiveMixin, models.Model):
@@ -43,6 +43,7 @@ class Product(DescribedModel, BaseProductMixin, IsActiveMixin, models.Model):
     categories = models.ManyToManyField(Category, related_name='category_products', blank=True)
     model = models.CharField(max_length=100, blank=True, null=True, help_text="Model number or reference")
     tags = models.CharField(max_length=200, blank=True, null=True)
+    has_options = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.name}'

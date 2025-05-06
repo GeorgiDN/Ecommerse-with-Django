@@ -35,7 +35,7 @@ class ProductEditForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'description', 'image', 'price', 'is_on_sale', 'sale_price', 'sku', 'model', 'tags',
-                  'is_active', 'is_available', 'quantity', 'track_quantity', 'weight', 'categories',
+                  'is_active', 'is_available', 'quantity', 'track_quantity', 'weight', 'categories', 'has_options',
                   'url_slug', 'meta_title', 'meta_description',
                   ]
 
@@ -89,8 +89,6 @@ class ProductOptionForm(forms.ModelForm):
         fields = ['name', 'values']
 
 
-#####################################################
-# EDIT
 class ProductOptionEditForm(forms.ModelForm):
     values = forms.CharField(
         required=False,
@@ -111,7 +109,7 @@ class ProductOptionEditForm(forms.ModelForm):
         if self.instance.pk:
             existing_values = self.instance.option_values.all()
             self.initial['values'] = "\n".join([v.value for v in existing_values])
-#####################################################################
+
 
 class ProductVariantForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
