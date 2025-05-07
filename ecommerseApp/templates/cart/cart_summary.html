@@ -52,18 +52,6 @@
                                         </select>
                                     {% endfor %}
                                 {% endif %}
-{#                                {% if item.option_details %}#}
-{#                                    {% for opt in item.option_details %}#}
-{#                                        <p class="card-text fs-6">#}
-{#                                            <b>{{ opt.name }}:</b> {{ opt.value }}#}
-{#                                        </p>#}
-{#                                        <!-- Add a data attribute to store the option value ID -->#}
-{#                                        <span class="option-value"#}
-{#                                              data-product-id="{{ item.key }}"#}
-{#                                              data-option-id="{{ opt.value_id }}"#}
-{#                                              style="display: none"></span>#}
-{#                                    {% endfor %}#}
-{#                                {% endif %}#}
 
                             </div>
                         </section>
@@ -121,6 +109,5 @@
 
     <script src="{% static 'js/cart/updateCart.js' %}"></script>
     <script src="{% static 'js/cart/deleteCart.js' %}"></script>
-    {#    <script src="{% static 'js/cart/updateTotalPrice.js' %}"></script>#}
 
 {% endblock %}

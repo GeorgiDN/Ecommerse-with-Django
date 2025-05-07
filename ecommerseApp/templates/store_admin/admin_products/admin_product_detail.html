@@ -121,28 +121,6 @@
                     }
                 });
             });
-            
-            $(document).on('click', '#add-cart', function(e) {
-                e.preventDefault();
-                let productID = $(this).val();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'cart_add' %}",
-                    data: {
-                        product_id: productID,
-                        product_qty: $('#qty-cart option:selected').text(),
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                        action: 'post'
-                    },
-                    success: function(json) {
-                        document.getElementById("cart_quantity").textContent = json.qty
-                        location.reload();
-                    },
-                    error: function(xhr, errmsg, err) {
-                        console.log("Error:", xhr.responseText);
-                    }
-                });
-            });
         });
     </script>
 {% endblock %}
