@@ -34,6 +34,7 @@ def products_export_csv(request):
          'track_quantity',
          'quantity',
          'weight',
+         'has_options',
          'category_names',
          'category_ids',
          ]
@@ -62,6 +63,7 @@ def products_export_csv(request):
             product.track_quantity,
             product.quantity,
             product.weight,
+            product.has_options,
             category_names,
             category_ids,
         ])
