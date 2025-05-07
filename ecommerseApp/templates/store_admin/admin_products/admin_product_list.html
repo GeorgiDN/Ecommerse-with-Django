@@ -9,8 +9,16 @@
                 <button type="submit" class="btn btn-primary">Search</button>
             </div>
         </form>
-        <a href="{% url 'product-create' %}" class="btn btn-success">Add product</a>
-        <a href="{% url 'products-export-csv' %}" class="btn btn-info">Export products</a>
+        <a href="{% url 'product-create' %}" class="btn btn-secondary">Add product</a>
+        <a href="{% url 'products-export' 'csv' %}" class="btn btn-info">
+            Export to CSV
+        </a>
+        <a href="{% url 'products-export' 'excel' %}" class="btn btn-success">
+            Export to Excel
+        </a>
+        <a href="{% url 'export-products-full' %}" class="btn btn-info">
+            Export Full Product Data (Excel)
+        </a>
         <form method="post" action="{% url 'bulk-edit-products' %}" class="product-bulk-edit">
             {% csrf_token %}
             <table class="table table-bordered table-hover mt-3">
@@ -68,7 +76,7 @@
                 </select>
             </div>
         </form>
-    
+
         <!--Bulk delete confirm form -->
         <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel"
              aria-hidden="true">

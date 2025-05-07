@@ -19,8 +19,11 @@ urlpatterns = [
 
     path('product/<int:product_id>/option/<int:pk>/delete/', admin_views.ProductOptionDeleteView.as_view(),name='admin-option-delete'),
     path('product/<int:product_id>/variant/<int:pk>/delete/', admin_views.ProductVariantDeleteView.as_view(),name='admin-variant-delete'),
+    path('products/export/full/', admin_views.export_products_full, name='export-products-full'),
 
-    path('products-export-csv/', admin_views.products_export_csv, name='products-export-csv'),
+    path('products/export/<str:format_type>/', admin_views.products_export, name='products-export'),
+    path('products/export/', admin_views.products_export, name='products-export'),
+
     path('products/bulk-edit/', admin_views.bulk_edit_products, name='bulk-edit-products'),
 
     path('admin-categories/', admin_views.AdminCategoryListView.as_view(), name='admin-categories'),

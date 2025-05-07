@@ -48,16 +48,6 @@ class Product(DescribedModel, BaseProductMixin, IsActiveMixin, models.Model):
     def __str__(self):
         return f'{self.name}'
 
-    # def save(self, *args, **kwargs):
-    #     super().save(*args, **kwargs)
-    #
-    #     img = Image.open(self.image.path)
-    #
-    #     if img.height > 300 or img.width > 300:
-    #         output_size = (300, 300)
-    #         img.thumbnail(output_size)
-    #         img.save(self.image.path)
-
     def save(self, *args, **kwargs):
         if not self.url_slug:
             self.url_slug = slugify(self.name)
@@ -65,11 +55,21 @@ class Product(DescribedModel, BaseProductMixin, IsActiveMixin, models.Model):
             self.meta_title = self.name
         if not self.meta_description:
             self.meta_description = self.description
+        if self.track_quantity and self.quantity == 0:
+            self.is_available = False
+
+        img = Image.open(self.image.path)
+
+        if img.height > 500 or img.width > 500:
+            output_size = (500, 500)
+            img.thumbnail(output_size)
+            img.save(self.image.path)
+
         super().save(*args, **kwargs)
 
 
 class ProductOption(models.Model):
-    product = models.ForeignKey( Product, related_name='product_options', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='product_options', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
 
     def __str__(self):
