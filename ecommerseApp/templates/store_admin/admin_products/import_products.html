@@ -1,0 +1,31 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Import Products</h2>
+    <div class="card">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Import</button>
+                <a href="{% url 'admin-products' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+    
+    <div class="mt-4 card">
+        <div class="card-header">
+            <h4>Import Instructions</h4>
+        </div>
+        <div class="card-body">
+            <ol>
+                <li>Download the <a href="{% url 'export-products-full' %}">product template</a></li>
+                <li>Keep the header row intact</li>
+                <li>Fill in your product data</li>
+                <li>Upload the modified file</li>
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}

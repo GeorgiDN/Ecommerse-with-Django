@@ -126,7 +126,6 @@ def export_products_full(request):
     ws = wb.active
     ws.title = "Products"
 
-    # Header row with styling
     headers = [
         'id', 'url_slug', 'name', 'description', 'meta_title',
         'meta_description', 'model', 'sku', 'tags', 'price',
@@ -136,7 +135,10 @@ def export_products_full(request):
         'Option 1 Name', 'Option 1 Values',
         'Option 2 Name', 'Option 2 Values',
         'Option 3 Name', 'Option 3 Values',
-        'Variant SKU', 'Variant Price', 'Variant Options',
+        'Variant SKU', 'Variant Price', 'Variant is_on_sale',
+        'Variant sale_price', 'Variant track_quantity', 'Variant quantity',
+        'Variant weight', 'Variant is_available',
+        'Variant Options',
     ]
     ws.append(headers)
 
@@ -155,27 +157,13 @@ def export_products_full(request):
         category_names = ', '.join([cat.name for cat in product.categories.all()])
         category_ids = ', '.join([str(cat.id) for cat in product.categories.all()])
         base_data = [
-            product.id,
-            product.url_slug,
-            product.name,
-            product.description,
-            product.meta_title,
-            product.meta_description,
-            product.model,
-            product.sku,
-            product.tags,
-            product.price,
+            product.id, product.url_slug, product.name, product.description, product.meta_title,
+            product.meta_description, product.model, product.sku, product.tags, product.price,
             product.is_on_sale,
             product.sale_price if product.sale_price else 0,
             product.image.url if product.image else '',
-            product.is_available,
-            product.is_active,
-            product.track_quantity,
-            product.quantity,
-            product.weight,
-            product.has_options,
-            category_names,
-            category_ids,
+            product.is_available, product.is_active, product.track_quantity, product.quantity,
+            product.weight, product.has_options, category_names, category_ids,
         ]
 
         # Get options (max 3 for this example)
@@ -196,8 +184,9 @@ def export_products_full(request):
         if product.product_variants.exists():
             for variant in product.product_variants.all():
                 variant_data = [
-                    variant.sku,
-                    variant.price,
+                    variant.sku, variant.price, variant.is_on_sale,
+                    variant.sale_price, variant.track_quantity,
+                    variant.quantity, variant.weight, variant.is_available,
                     " / ".join(
                         f"{ov.option.name}: {ov.value}"
                         for ov in variant.option_values.all()
@@ -208,72 +197,3 @@ def export_products_full(request):
     wb.save(response)
     return response
 
-
-
-###
-
-
-
-# def products_export_csv(request):
-#     if not request.user.is_staff:
-#         messages.error(request, "You don't have permission to access this.")
-#         return redirect('home')
-#
-#     response = HttpResponse(content_type='text/csv')
-#     response['Content-Disposition'] = 'attachment; filename="products.csv"'
-#
-#     writer = csv.writer(response)
-#     writer.writerow(
-#         ['id',
-#          'url_slug',
-#          'name',
-#          'description',
-#          'meta_title',
-#          'meta_description',
-#          'model',
-#          'sku',
-#          'tags',
-#          'price',
-#          'is_on_sale',
-#          'sale_price',
-#          'image',
-#          'is_available',
-#          'is_active',
-#          'track_quantity',
-#          'quantity',
-#          'weight',
-#          'has_options',
-#          'category_names',
-#          'category_ids',
-#          ]
-#     )
-#
-#     products = Product.objects.all()
-#     for product in products:
-#         category_names = ', '.join([cat.name for cat in product.categories.all()])
-#         category_ids = ', '.join([str(cat.id) for cat in product.categories.all()])
-#         writer.writerow([
-#             product.id,
-#             product.url_slug,
-#             product.name,
-#             product.description,
-#             product.meta_title,
-#             product.meta_description,
-#             product.model,
-#             product.sku,
-#             product.tags,
-#             product.price,
-#             product.is_on_sale,
-#             product.sale_price if product.sale_price else 0,
-#             product.image.url if product.image else '',
-#             product.is_available,
-#             product.is_active,
-#             product.track_quantity,
-#             product.quantity,
-#             product.weight,
-#             product.has_options,
-#             category_names,
-#             category_ids,
-#         ])
-#
-#     return response

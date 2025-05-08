@@ -19,7 +19,9 @@ urlpatterns = [
 
     path('product/<int:product_id>/option/<int:pk>/delete/', admin_views.ProductOptionDeleteView.as_view(),name='admin-option-delete'),
     path('product/<int:product_id>/variant/<int:pk>/delete/', admin_views.ProductVariantDeleteView.as_view(),name='admin-variant-delete'),
+
     path('products/export/full/', admin_views.export_products_full, name='export-products-full'),
+    path('products/import/', admin_views.import_products, name='import-products'),
 
     path('products/export/<str:format_type>/', admin_views.products_export, name='products-export'),
     path('products/export/', admin_views.products_export, name='products-export'),

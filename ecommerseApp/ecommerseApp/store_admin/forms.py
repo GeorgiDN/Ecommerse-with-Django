@@ -1,3 +1,4 @@
+from django.core.validators import FileExtensionValidator
 from django.forms import ModelForm, BaseInlineFormSet
 from django import forms
 from ecommerseApp.store.models import Product, Category, ProductOption, ProductOptionValue, ProductVariant
@@ -140,7 +141,6 @@ class ProductVariantForm(forms.ModelForm):
         }
 
 
-
 class ProductVariantEditForm(forms.ModelForm):
     class Meta:
         model = ProductVariant
@@ -221,3 +221,14 @@ class CategoryEditForm(forms.ModelForm):
             instance.category_products.set(self.cleaned_data['products'])
         return instance
 
+
+class ProductImportForm(forms.Form):
+    file = forms.FileField(
+        label='Excel File',
+        validators=[FileExtensionValidator(allowed_extensions=['xlsx'])]
+    )
+    overwrite = forms.BooleanField(
+        required=False,
+        initial=False,
+        help_text="Overwrite existing products with matching IDs"
+    )
