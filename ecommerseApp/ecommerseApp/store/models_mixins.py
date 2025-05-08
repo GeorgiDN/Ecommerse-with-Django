@@ -13,7 +13,7 @@ class DescribedModel(models.Model):
 
 
 class BaseProductMixin(models.Model):
-    sku = models.CharField(max_length=50, unique=True, blank=True, null=True, help_text="Stock Keeping Unit (unique)")
+    sku = models.CharField(max_length=50, unique=True, help_text="Stock Keeping Unit (unique)")
     price = models.DecimalField(default=0, decimal_places=2, max_digits=10)
     is_on_sale = models.BooleanField(default=False)
     sale_price = models.DecimalField(default=0, decimal_places=2, max_digits=10, null=True, blank=True)
