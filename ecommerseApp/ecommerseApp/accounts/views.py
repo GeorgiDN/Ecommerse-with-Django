@@ -95,7 +95,14 @@ class UserRegisterView(CreateView):
     template_name = 'accounts/register.html'
     success_url = reverse_lazy('home')
 
-
+    async def send_welcome_email(self, user_email, username):
+        await sync_to_async(send_mail)(
+            f'Welcome to our shop {username}!',
+            'Thank you for you registration!',
+            os.environ['EMAIL_HOST_USER'],
+            [user_email],
+            fail_silently=False,
+        )
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -103,7 +110,9 @@ class UserRegisterView(CreateView):
         login(self.request, self.object)
         messages.success(self.request, 'Your account has been created!')
 
-
+        email = self.object.email
+        username = self.object.username
+        async_to_sync(self.send_welcome_email)(email, username)
 
         return response
 
