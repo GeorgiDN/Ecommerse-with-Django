@@ -32,6 +32,7 @@ class AdminProductListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
     template_name = 'store_admin/admin_products/admin_product_list.html'
     context_object_name = 'products'
     ordering = ('name',)
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -39,7 +40,7 @@ class AdminProductListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
         if query:
             queryset = queryset.filter(
                 Q(name__icontains=query) |
-                Q(description=query) |
+                Q(description__icontains=query) |
                 Q(sku__icontains=query) |
                 Q(model__icontains=query) |
                 Q(tags__icontains=query)
