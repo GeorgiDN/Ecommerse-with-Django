@@ -104,6 +104,14 @@ class UserRegisterView(CreateView):
             fail_silently=False,
         )
 
+        await sync_to_async(send_mail)(
+            f'New user registration: {username}',
+            f'A new user has registered:\n\nUsername: {username}\nEmail: {user_email}',
+            os.environ['EMAIL_HOST_USER'],
+            [os.environ['EMAIL_HOST_USER']],
+            fail_silently=False,
+        )
+
     def form_valid(self, form):
         response = super().form_valid(form)
 
