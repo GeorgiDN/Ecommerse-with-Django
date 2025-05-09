@@ -1,3 +1,6 @@
+import os
+
+from asgiref.sync import sync_to_async, async_to_sync
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -13,7 +16,7 @@ from ecommerseApp.cart.cart import Cart
 from ecommerseApp.payment.forms import ShippingForm
 from ecommerseApp.payment.models import ShippingAddress
 from ecommerseApp.store.models import Product
-
+from django.core.mail import send_mail
 User = get_user_model()
 
 
@@ -92,11 +95,15 @@ class UserRegisterView(CreateView):
     template_name = 'accounts/register.html'
     success_url = reverse_lazy('home')
 
+
+
     def form_valid(self, form):
         response = super().form_valid(form)
 
         login(self.request, self.object)
         messages.success(self.request, 'Your account has been created!')
+
+
 
         return response
 

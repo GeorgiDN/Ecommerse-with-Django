@@ -14,17 +14,17 @@ urlpatterns = [
 
     path('product/<int:product_id>/options/create/', admin_views.ProductOptionCreateView.as_view(), name='product-options-create'),
     path('product/<int:product_id>/variant/create/', admin_views.ProductVariantCreateView.as_view(), name='product-variant-create'),
-    path('product/<int:product_id>/option/<int:option_id>/edit/',admin_views.ProductOptionEditView.as_view(),name='admin-option-edit'),
+    path('product/<int:product_id>/option/<int:option_id>/edit/', admin_views.ProductOptionEditView.as_view(), name='admin-option-edit'),
     path('product/<int:product_id>/variant/<int:variant_id>/edit/', admin_views.ProductVariantEditView.as_view(), name='admin-variant-edit'),
 
-    path('product/<int:product_id>/option/<int:pk>/delete/', admin_views.ProductOptionDeleteView.as_view(),name='admin-option-delete'),
-    path('product/<int:product_id>/variant/<int:pk>/delete/', admin_views.ProductVariantDeleteView.as_view(),name='admin-variant-delete'),
+    path('product/<int:product_id>/option/<int:pk>/delete/', admin_views.ProductOptionDeleteView.as_view(), name='admin-option-delete'),
+    path('product/<int:product_id>/variant/<int:pk>/delete/', admin_views.ProductVariantDeleteView.as_view(), name='admin-variant-delete'),
 
     path('products/export/full/', admin_views.export_products_full, name='export-products-full'),
     path('products/import/', admin_views.import_products, name='import-products'),
 
-    path('products/export/<str:format_type>/', admin_views.products_export, name='products-export'),
-    path('products/export/', admin_views.products_export, name='products-export'),
+    # path('products/export/<str:format_type>/', admin_views.products_export, name='products-export'),
+    # path('products/export/', admin_views.products_export, name='products-export'),
 
     path('products/bulk-edit/', admin_views.bulk_edit_products, name='bulk-edit-products'),
 
