@@ -10,11 +10,24 @@
     <h3>Order Summary</h3>
     <ul>
     {% for item in cart_items %}
-        <li>{{ item.product.name }} x {{ item.quantity }} - ${{ item.price }}</li>
+        {% if not item.variant %}
+            {% if item.product.is_on_sale %}
+                <li>{{ item.product.name }} x {{ item.quantity }} - ${{ item.product.sale_price }}</li>
+            {% else %}
+                <li>{{ item.product.name }} x {{ item.quantity }} - ${{ item.price }}</li>
+            {% endif %}
+            
+        {% else %}
+            {% if item.variant.is_on_sale %}
+                <li>{{ item.product.name }} x {{ item.quantity }} - ${{ item.variant.sale_price }}</li>
+            {% else %}
+                <li>{{ item.product.name }} x {{ item.quantity }} - ${{ item.variant.price }}</li>
+            {% endif %}
+        {% endif %}
     {% endfor %}
     </ul>
     
-    <p><strong>Total: ${{ order.amount_paid }}</strong></p>
+    <p class="fs-2"><strong>Total: ${{ order.amount_paid }}</strong></p>
     
     <h3>Shipping Address</h3>
     <pre>{{ order.shipping_address }}</pre>

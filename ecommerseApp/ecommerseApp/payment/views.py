@@ -59,7 +59,7 @@ def billing_info(request):
 
 
 def send_order_emails(order, cart_items):
-    customer_subject = f"Your Order Confirmation #{order.pk}"
+    customer_subject = f'Your Order Confirmation #{order.pk}'
     customer_html_message = render_to_string('payment/order_confirmation.html', {
         'order': order,
         'cart_items': cart_items,
@@ -67,8 +67,8 @@ def send_order_emails(order, cart_items):
     customer_plain_message = strip_tags(customer_html_message)
 
     # Admin Email (Simpler format)
-    admin_subject = f"New Order #{order.pk} - {order.full_name}"
-    admin_message = f"""
+    admin_subject = f'New Order #{order.pk} - {order.full_name}'
+    admin_message = f'''
     New Order Received!
 
     Order ID: {order.pk}
@@ -81,9 +81,18 @@ def send_order_emails(order, cart_items):
     {order.shipping_address}
 
     Items Ordered:
-    """
+    '''
     for item in cart_items:
-        admin_message += f"- {item.product.name} x {item.quantity} (${item.price})\n"
+        if not item.variant:
+            if item.product.is_on_sale:
+                admin_message += f'- {item.product.name} x {item.quantity} (${item.product.sale_price})\n'
+            else:
+                admin_message += f'- {item.product.name} x {item.quantity} (${item.price})\n'
+        else:
+            if item.variant.is_on_sale:
+                admin_message += f'- {item.product.name} x {item.quantity} (${item.variant.sale_price})\n'
+            else:
+                admin_message += f'- {item.product.name} x {item.quantity} (${item.variant.price})\n'
 
     # Send both emails
     send_mail(
@@ -103,6 +112,7 @@ def send_order_emails(order, cart_items):
         fail_silently=False,
     )
 
+
 def process_order(request):
     if request.POST:
         cart = Cart(request)
@@ -117,12 +127,12 @@ def process_order(request):
         email = my_shipping['shipping_email']
         phone = my_shipping['shipping_phone']
 
-        shipping_address = (f"{my_shipping['shipping_address1']}\n"
-                            f"{my_shipping['shipping_address2']}\n"
-                            f"{my_shipping['shipping_city']}\n"
-                            f"{my_shipping['shipping_state']}\n"
-                            f"{my_shipping['shipping_zip']}\n"
-                            f"{my_shipping['shipping_country']}\n")
+        shipping_address = (f'{my_shipping['shipping_address1']}\n'
+                            f'{my_shipping['shipping_address2']}\n'
+                            f'{my_shipping['shipping_city']}\n'
+                            f'{my_shipping['shipping_state']}\n'
+                            f'{my_shipping['shipping_zip']}\n'
+                            f'{my_shipping['shipping_country']}\n')
 
         amount_paid = totals
 
@@ -132,7 +142,6 @@ def process_order(request):
             order_created.save()
             order_id = order_created.pk
             create_order_item(cart_products, quantities, order_id, user=user)
-            # order_item_created.save()
             delete_order(request)
 
             current_user = Profile.objects.filter(user_id=request.user.id)
@@ -143,7 +152,6 @@ def process_order(request):
             order_created.save()
             order_id = order_created.pk
             create_order_item(cart_products, quantities, order_id)
-            # order_item_created.save()
             delete_order(request)
 
         order_items = OrderItem.objects.filter(order=order_created)
@@ -192,7 +200,6 @@ def not_shipped_dash(request):
 def orders(request, pk):
     if request.user.is_authenticated and request.user.is_superuser:
         order = Order.objects.get(id=pk)
-        # items = OrderItem.objects.filter(order=pk)
         products = OrderItem.objects.filter(order=pk)
 
         if request.method == 'POST':
