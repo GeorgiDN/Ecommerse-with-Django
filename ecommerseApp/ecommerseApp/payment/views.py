@@ -1,7 +1,10 @@
 import datetime
+import os
 
 from django.shortcuts import render, redirect
-
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import send_mail
 from ecommerseApp.accounts.models import Profile
 from ecommerseApp.cart.cart import Cart
 from ecommerseApp.payment.forms import ShippingForm, PaymentForm
@@ -55,6 +58,51 @@ def billing_info(request):
         return redirect('home')
 
 
+def send_order_emails(order, cart_items):
+    customer_subject = f"Your Order Confirmation #{order.pk}"
+    customer_html_message = render_to_string('payment/order_confirmation.html', {
+        'order': order,
+        'cart_items': cart_items,
+    })
+    customer_plain_message = strip_tags(customer_html_message)
+
+    # Admin Email (Simpler format)
+    admin_subject = f"New Order #{order.pk} - {order.full_name}"
+    admin_message = f"""
+    New Order Received!
+
+    Order ID: {order.pk}
+    Customer: {order.full_name}
+    Email: {order.email}
+    Phone: {order.phone}
+    Amount: ${order.amount_paid}
+
+    Shipping Address:
+    {order.shipping_address}
+
+    Items Ordered:
+    """
+    for item in cart_items:
+        admin_message += f"- {item.product.name} x {item.quantity} (${item.price})\n"
+
+    # Send both emails
+    send_mail(
+        customer_subject,
+        customer_plain_message,
+        os.environ['EMAIL_HOST_USER'],
+        [order.email],  # To customer
+        html_message=customer_html_message,
+        fail_silently=False,
+    )
+
+    send_mail(
+        admin_subject,
+        admin_message,
+        os.environ['EMAIL_HOST_USER'],
+        [os.environ['EMAIL_HOST_USER']],  # To admin (you)
+        fail_silently=False,
+    )
+
 def process_order(request):
     if request.POST:
         cart = Cart(request)
@@ -97,6 +145,10 @@ def process_order(request):
             create_order_item(cart_products, quantities, order_id)
             # order_item_created.save()
             delete_order(request)
+
+        order_items = OrderItem.objects.filter(order=order_created)
+
+        send_order_emails(order_created, order_items)
 
         messages.success(request, 'Ordered placed test')
         return redirect('home')
