@@ -1,0 +1,74 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Your Favorites ({{ favorites_count }})</h2>
+    
+    {% if favorites %}
+    <div class="row">
+        {% for favorite in favorites %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-50">
+                <img src="{{ favorite.product.image.url }}" class="card-img-top" alt="{{ favorite.product.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ favorite.product.name }}</h5>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'product-detail' slug=favorite.product.url_slug %}" class="btn btn-primary">
+                            View Product
+                        </a>
+                        <button class="btn btn-outline-danger remove-favorite" 
+                                data-product-id="{{ favorite.product.id }}"
+                                data-product-slug="{{ favorite.product.url_slug }}">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        You haven't added any products to your favorites yet.
+        <a href="{% url 'home' %}" class="alert-link">Browse products</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.querySelectorAll('.remove-favorite').forEach(button => {
+    button.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        const card = this.closest('.col-md-4');
+        
+        fetch(`{% url 'remove_from_favorites' 0 %}`.replace('0', productId), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                card.remove();
+                
+                const countElement = document.querySelector('h2');
+                const currentCount = parseInt(countElement.textContent.match(/\d+/)[0]);
+                countElement.textContent = `Your Favorites (${currentCount - 1})`;
+                
+                if (currentCount - 1 === 0) {
+                    document.querySelector('.row').innerHTML = `
+                        <div class="alert alert-info col-12">
+                            You haven't added any products to your favorites yet.
+                            <a href="{% url 'home' %}" class="alert-link">Browse products</a>
+                        </div>
+                    `;
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

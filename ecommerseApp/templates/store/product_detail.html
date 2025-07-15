@@ -1,4 +1,5 @@
 {% extends 'store/base.html' %}
+{% load favorite_tags %}
 {% load static %}
 {% block content %}
     <div class="container product-page mt-5">
@@ -33,7 +34,8 @@
                                     <span class="card-text fs-5 product-sku"><b>Code: </b>{{ product.sku }}</span><br>
                                 {% endif %}
                                 {% if product.weight > 0 %}
-                                    <span class="card-text fs-5 product-weight"><b>Weight: </b>{{ product.weight }}</span><br>
+                                    <span class="card-text fs-5 product-weight"><b>Weight: </b>{{ product.weight }}</span>
+                                    <br>
                                 {% else %}
                                     <span class="card-text fs-5 product-weight"><b>Weight: </b>-</span><br>
                                 {% endif %}
@@ -42,12 +44,26 @@
                                 <p>Quantity</p>
 
                                 <input type="number" class="form-control" id="qty-cart" value="1" min="1">
-                                
+
                                 {% if product.is_available %}
                                     <button type="button" value="{{ product.id }}"
                                             class="btn btn-secondary mb-3" id="add-cart">Add to Cart
                                     </button>
                                 {% endif %}
+
+                                {% if request.user.is_authenticated %}
+                                    <button id="favorite-btn-{{ product.id }}"
+                                            class="btn mb-3 btn-{% if product|is_favorite:request.user %}danger{% else %}info{% endif %}"
+                                            data-product-id="{{ product.id }}"
+                                            data-is-favorite="{% if product|is_favorite:request.user %}true{% else %}false{% endif %}">
+                                        {% if product|is_favorite:request.user %}
+                                            Remove from Favorites
+                                        {% else %}
+                                            Add to Favorites
+                                        {% endif %}
+                                    </button>
+                                {% endif %}
+
                             </div>
                             {% for option in options %}
                                 <div class="mb-3">
@@ -171,4 +187,53 @@
         });
     </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Handle all favorite buttons on the page
+            document.querySelectorAll('[id^="favorite-btn-"]').forEach(button => {
+                button.addEventListener('click', function () {
+                    const productId = this.dataset.productId;
+                    const isFavorite = this.dataset.isFavorite === 'true';
+                    const url = isFavorite ? `/favorites/remove/${productId}/` : `/favorites/add/${productId}/`;
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'same-origin'
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.status === 'success') {
+                                // Toggle button appearance
+                                this.classList.toggle('btn-secondary');
+                                this.classList.toggle('btn-danger');
+
+                                // Update button text
+                                this.textContent = isFavorite ? 'Add to Favorites' : 'Remove from Favorites';
+
+                                // Update data attribute
+                                this.dataset.isFavorite = !isFavorite;
+
+                                // Optional: Show a toast notification
+                                const toastMessage = isFavorite ? 'Removed from favorites' : 'Added to favorites';
+                                console.log(toastMessage); // Replace with actual toast implementation
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+        });
+    </script>
+
 {% endblock %}
+

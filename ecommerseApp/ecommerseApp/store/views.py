@@ -1,10 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, TemplateView, UpdateView, DeleteView, CreateView
 from ecommerseApp.common.forms import SearchForm
 
-from ecommerseApp.store.models import Product, Category, ProductVariant
+from ecommerseApp.store.models import Product, Category, ProductVariant, Favorite
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 
@@ -125,3 +126,40 @@ class CategoryProductsView(ListView):
         slug = self.kwargs.get('slug')
         context['category'] = get_object_or_404(Category, url_slug=slug, is_active=True)
         return context
+
+
+@login_required
+def add_to_favorites(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    favorite, created = Favorite.objects.get_or_create(
+        user=request.user,
+        product=product
+    )
+    if created:
+        return JsonResponse({
+            'status': 'success',
+            'action': 'added',
+            'product_slug': product.url_slug
+        })
+    return JsonResponse({'status': 'info', 'action': 'already_exists'})
+
+
+@login_required
+def remove_from_favorites(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    Favorite.objects.filter(user=request.user, product=product).delete()
+    return JsonResponse({
+        'status': 'success',
+        'action': 'removed',
+        'product_slug': product.url_slug
+    })
+
+
+@login_required
+def list_favorites(request):
+    favorites = request.user.user_favorites.select_related('product').all()
+    context = {
+        'favorites': favorites,
+        'favorites_count': favorites.count()
+    }
+    return render(request, 'store/favorites_list.html', context)

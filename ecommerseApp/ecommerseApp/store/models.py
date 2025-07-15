@@ -8,6 +8,8 @@ from ecommerseApp.common.models_mixins import FirstNameMixin, LastNameMixin, Pho
     PriceMixin
 from ecommerseApp.store.models_mixins import NameMixin, \
  IsActiveMixin, DescribedModel, BaseProductMixin
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class Category(DescribedModel, IsActiveMixin, models.Model):
@@ -127,3 +129,12 @@ class Order(PhoneMixin, QuantityMixin, models.Model):
     #         self.phone = self.phone or self.customer.phone
     #         self.email = self.email or self.customer.email
     #     super().save(*args, **kwargs)
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_favorites')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_favorites')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
